@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio
 
-## Getting Started
+Personal portfolio site. The goal is that projects are **usable**, not just
+screenshotted: where a project can be made to run in a browser, it does.
 
-First, run the development server:
+## Running it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev          # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Checks
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run check        # typecheck + lint + test
+npm run build        # static export into out/
+npx serve out        # verify the exported build, not just dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Always check `out/` before deploying — static export surfaces problems that dev
+mode hides, such as a route missing from `generateStaticParams`.
 
-## Learn More
+## How demos work
 
-To learn more about Next.js, take a look at the following resources:
+Every project declares a demo *kind* in `src/content/projects/*.ts`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Kind      | Used when                                              |
+| --------- | ------------------------------------------------------ |
+| `live`    | The project runs in the browser (ported or reimplemented) |
+| `iframe`  | It is deployed somewhere and can be embedded           |
+| `video`   | It needs hardware — a phone, a headset, Windows        |
+| `gallery` | Screenshots are the honest option                      |
+| `writeup` | The code itself is the story                           |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`DemoRenderer` dispatches on that discriminated union, so adding a kind fails
+the build until every branch handles it.
 
-## Deploy on Vercel
+Live demos are registered in `src/components/demos/registry.tsx` and loaded via
+`next/dynamic` with `ssr: false`. **Content files must never import the
+registry** — they reference demos by id only. That is what keeps demo code off
+pages that do not render one; the whole Sudoku demo is a 5KB gzipped chunk that
+the landing page never downloads.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`DemoShell` wraps every kind with shared chrome, reset handling and an error
+boundary, so one broken demo degrades to a card instead of blanking the page.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Adding a live demo
+
+1. Write the component under `src/components/demos/<name>/`.
+2. Add it to `demoRegistry` and to the `LiveDemoId` union in `src/lib/types.ts`.
+3. Set `demo: { kind: "live", componentId: "<name>" }` on the project.
+
+## Layout
+
+```
+src/
+├── app/                    routes (App Router, static export)
+├── components/
+│   ├── demos/              the demo system + one folder per demo
+│   ├── layout/  project/  ui/
+├── content/projects/       typed project data, one file each
+├── hooks/  lib/
+```
+
+## Deployment
+
+Static export (`output: "export"`) to Vercel. No server, no serverless
+functions. `npm run build` produces `out/`.
