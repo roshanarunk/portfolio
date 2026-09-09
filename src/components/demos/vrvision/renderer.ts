@@ -90,6 +90,19 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
   const gl = canvas.getContext("webgl", { preserveDrawingBuffer: false });
   if (!gl) throw new Error("WebGL is not available in this browser");
 
+  // getContext returns the SAME context object for the life of a canvas, so a
+  // context lost earlier comes back lost. Every GL call on it then fails
+  // silently — compiles return null with a null info log — so recover it here
+  // rather than reporting a meaningless shader error.
+  if (gl.isContextLost()) {
+    gl.getExtension("WEBGL_lose_context")?.restoreContext();
+    if (gl.isContextLost()) {
+      throw new Error(
+        "The WebGL context was lost and could not be restored — reload the page",
+      );
+    }
+  }
+
   // Both programs share one vertex shader, so it is compiled once and only
   // released after every program that attaches it has been linked.
   const vertex = compile(gl, gl.VERTEX_SHADER, VERTEX_SHADER, "vertex");
@@ -193,9 +206,12 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
       gl.deleteBuffer(buffer);
       gl.deleteTexture(texture);
       for (const program of Object.values(programs)) gl.deleteProgram(program);
-      // Frees the backing context rather than waiting for GC; browsers cap how
-      // many live WebGL contexts a page may hold.
-      gl.getExtension("WEBGL_lose_context")?.loseContext();
+
+      // Deliberately NOT calling loseContext(). A canvas hands out one context
+      // for its lifetime, so killing it here also kills every later renderer on
+      // the same canvas — which is what React Strict Mode does in development
+      // when it mounts, unmounts and remounts an effect. Releasing the buffers,
+      // texture and programs above frees what actually holds memory.
     },
   };
 }

@@ -20,6 +20,12 @@ export interface GLCalls {
    * a link failure into the useless message "failed to compile: null".
    */
   queriedAfterDelete: boolean;
+  /**
+   * Set if the renderer calls loseContext(). A canvas hands out one context for
+   * its lifetime, so destroying it breaks every later renderer on that canvas —
+   * exactly what React Strict Mode's double mount triggers in development.
+   */
+  contextDestroyed: boolean;
 }
 
 export function stubWebGL(): GLCalls {
@@ -30,6 +36,7 @@ export function stubWebGL(): GLCalls {
     programs: 0,
     disposed: false,
     queriedAfterDelete: false,
+    contextDestroyed: false,
   };
 
   // Track deletion so the stub can model the one behaviour that matters here:
@@ -115,11 +122,16 @@ export function stubWebGL(): GLCalls {
       calls.drawArrays++;
     },
     viewport: () => {},
+    isContextLost: () => calls.contextDestroyed,
     getExtension: (name: string) =>
       name === "WEBGL_lose_context"
         ? {
             loseContext: () => {
               calls.disposed = true;
+              calls.contextDestroyed = true;
+            },
+            restoreContext: () => {
+              calls.contextDestroyed = false;
             },
           }
         : null,

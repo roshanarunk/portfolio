@@ -218,10 +218,25 @@ describe("VRVisionDemo", () => {
     expect(screen.getByLabelText(/Camera view/)).toBeInTheDocument();
   });
 
-  it("releases the GL context when the demo unmounts", () => {
+  /**
+   * Regression test for the Strict Mode failure. A canvas returns one context
+   * for its whole life, so destroying it on unmount also breaks the remount
+   * that React performs in development — every later compile then returns null
+   * with a null log, surfacing as "failed to compile: no driver message".
+   */
+  it("does not destroy the shared context when the demo unmounts", () => {
     const { unmount } = renderDemo();
     unmount();
-    expect(gl.disposed).toBe(true);
+    expect(gl.contextDestroyed).toBe(false);
+  });
+
+  it("survives being mounted, unmounted and mounted again", () => {
+    const first = renderDemo();
+    first.unmount();
+
+    renderDemo();
+    expect(screen.getByLabelText(/Magnifier size/)).toBeInTheDocument();
+    expect(screen.queryByText(/failed to compile/i)).not.toBeInTheDocument();
   });
 
   it("releases the camera when the demo unmounts", async () => {
