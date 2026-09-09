@@ -24,14 +24,29 @@ export const valheatmap: Project = {
   ],
   highlights: [
     "Per-map coordinate transforms mapping world space onto minimap images",
-    "Filtering by player, team, side and round to isolate a single pattern",
+    "Filtering by player, team and round to isolate a single pattern",
     "Sample matches committed to the repo, so the tool runs without an API key",
+    "667 real kills across six matches, plotted client-side with no backend",
+  ],
+  challenges: [
+    {
+      problem:
+        "The raw match files are about 3.7MB, almost all of it damage, economy and ability records the map never draws. Shipping them as-is would make the demo slower to load than the analysis is worth.",
+      solution:
+        "A build step reduces each match to its kill feed and roster: 3.7MB becomes 58KB. It also handles both Riot API schema versions, since the older sample matches identify players by `subject` where newer ones use `puuid`.",
+    },
+    {
+      problem:
+        "Rebuilding the filters in the browser, I defaulted the round range to start at 1 and quietly lost every pistol-round kill.",
+      solution:
+        "Riot numbers rounds from 0. A test asserting the unfiltered plot shows every kill in the file caught it — the kind of off-by-one that looks like plausible data rather than a bug.",
+    },
   ],
   demo: {
     kind: "live",
     componentId: "valheatmap",
     title: "Explore a real match",
-    instructions: "Pick a map and filter down to a player or a round.",
+    instructions: "Pick a map, then filter to a player or a range of rounds.",
     badge: "Real match data",
     mobileFallback: "scaled",
     sourceUrl: "https://github.com/roshanarunk/ValHeatMap/blob/main/utils.py",

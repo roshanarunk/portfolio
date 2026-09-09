@@ -1,0 +1,38 @@
+[
+  {
+    "slug": "ascent",
+    "map": "Ascent",
+    "rounds": 13,
+    "kills": 13
+  },
+  {
+    "slug": "bind",
+    "map": "Bind",
+    "rounds": 22,
+    "kills": 171
+  },
+  {
+    "slug": "fracture",
+    "map": "Fracture",
+    "rounds": 18,
+    "kills": 130
+  },
+  {
+    "slug": "haven",
+    "map": "Haven",
+    "rounds": 32,
+    "kills": 32
+  },
+  {
+    "slug": "icebox",
+    "map": "Icebox",
+    "rounds": 20,
+    "kills": 152
+  },
+  {
+    "slug": "split",
+    "map": "Split",
+    "rounds": 23,
+    "kills": 169
+  }
+]
