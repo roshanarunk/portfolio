@@ -1,0 +1,251 @@
+{
+  "version": 1,
+  "features": [
+    {
+      "key": "Gold_diff",
+      "label": "Gold lead",
+      "group": "Economy",
+      "min": -10000,
+      "max": 10000,
+      "step": 100,
+      "unit": "g",
+      "default": 0.0
+    },
+    {
+      "key": "Gold",
+      "label": "Total gold",
+      "group": "Economy",
+      "min": 15000,
+      "max": 40000,
+      "step": 100,
+      "unit": "g",
+      "default": 26150.5
+    },
+    {
+      "key": "Level",
+      "label": "Average level",
+      "group": "Economy",
+      "min": 6,
+      "max": 12,
+      "step": 0.1,
+      "default": 9.0
+    },
+    {
+      "key": "Minions",
+      "label": "Minions killed",
+      "group": "Economy",
+      "min": 150,
+      "max": 500,
+      "step": 1,
+      "default": 346.0
+    },
+    {
+      "key": "Jungle_minions",
+      "label": "Jungle farm",
+      "group": "Economy",
+      "min": 20,
+      "max": 150,
+      "step": 1,
+      "default": 77.0
+    },
+    {
+      "key": "Kills",
+      "label": "Kills",
+      "group": "Combat",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 11.0
+    },
+    {
+      "key": "Deaths",
+      "label": "Deaths",
+      "group": "Combat",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 11.0
+    },
+    {
+      "key": "Assists",
+      "label": "Assists",
+      "group": "Combat",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 13.0
+    },
+    {
+      "key": "Towers",
+      "label": "Towers",
+      "group": "Objectives",
+      "min": 0,
+      "max": 6,
+      "step": 1,
+      "default": 0.0
+    },
+    {
+      "key": "Plates",
+      "label": "Turret plates",
+      "group": "Objectives",
+      "min": 0,
+      "max": 15,
+      "step": 1,
+      "default": 0.0
+    },
+    {
+      "key": "Dragons",
+      "label": "Dragons",
+      "group": "Objectives",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "default": 0.0
+    },
+    {
+      "key": "Heralds",
+      "label": "Heralds",
+      "group": "Objectives",
+      "min": 0,
+      "max": 2,
+      "step": 1,
+      "default": 0.0
+    },
+    {
+      "key": "Sight_wards",
+      "label": "Sight wards",
+      "group": "Vision",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "default": 19.0
+    },
+    {
+      "key": "Control_wards",
+      "label": "Control wards",
+      "group": "Vision",
+      "min": 0,
+      "max": 25,
+      "step": 1,
+      "default": 8.0
+    }
+  ],
+  "scaler": {
+    "mean": [
+      0.0,
+      26439.52137728,
+      8.91612272,
+      344.73678198,
+      77.77268277,
+      11.21263055,
+      11.21263055,
+      13.80842037,
+      0.68129896,
+      2.18456266,
+      0.51876632,
+      0.49477807,
+      18.55972585,
+      7.76060705
+    ],
+    "scale": [
+      5156.32990467,
+      3010.54545835,
+      0.38679389,
+      30.58011358,
+      13.21749145,
+      4.90297411,
+      4.90297411,
+      6.99173194,
+      0.92670146,
+      3.03392103,
+      0.60619112,
+      0.49997273,
+      3.23961839,
+      2.41803664
+    ]
+  },
+  "coef": [
+    2.39701144,
+    -0.23602223,
+    0.08846734,
+    0.06041461,
+    0.00536846,
+    0.04813093,
+    -0.03846493,
+    0.26165381,
+    0.01230689,
+    0.00621185,
+    0.35518013,
+    -0.03651362,
+    0.08371982,
+    -0.15041
+  ],
+  "intercept": 0.00356782,
+  "metrics": {
+    "accuracy": 0.7953,
+    "auc": 0.8856,
+    "nSamples": 7662,
+    "nGames": 3831,
+    "nTest": 1534,
+    "trainedAt": "2026-09-09"
+  },
+  "testVectors": [
+    {
+      "x": [
+        -3035.0,
+        23605.0,
+        8.4,
+        319.0,
+        70.0,
+        9.0,
+        6.0,
+        13.0,
+        0.0,
+        2.0,
+        0.0,
+        0.0,
+        18.0,
+        9.0
+      ],
+      "expectedP": 0.1496917311
+    },
+    {
+      "x": [
+        3035.0,
+        26640.0,
+        8.8,
+        387.0,
+        97.0,
+        6.0,
+        9.0,
+        12.0,
+        2.0,
+        7.0,
+        1.0,
+        1.0,
+        18.0,
+        11.0
+      ],
+      "expectedP": 0.8050961198
+    },
+    {
+      "x": [
+        16891.0,
+        42770.0,
+        9.8,
+        354.0,
+        96.0,
+        40.0,
+        12.0,
+        46.0,
+        5.0,
+        0.0,
+        2.0,
+        1.0,
+        24.0,
+        7.0
+      ],
+      "expectedP": 0.999913574
+    }
+  ]
+}
