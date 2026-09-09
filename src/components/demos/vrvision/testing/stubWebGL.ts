@@ -14,6 +14,12 @@ export interface GLCalls {
   texImage2D: number;
   programs: number;
   disposed: boolean;
+  /**
+   * Set when the renderer queries a program or shader it has already deleted.
+   * Real drivers answer such a query with a null info log, which is what turned
+   * a link failure into the useless message "failed to compile: null".
+   */
+  queriedAfterDelete: boolean;
 }
 
 export function stubWebGL(): GLCalls {
@@ -23,7 +29,12 @@ export function stubWebGL(): GLCalls {
     texImage2D: 0,
     programs: 0,
     disposed: false,
+    queriedAfterDelete: false,
   };
+
+  // Track deletion so the stub can model the one behaviour that matters here:
+  // a deleted object still exists as a JS handle but no longer reports status.
+  const deleted = new WeakSet<object>();
 
   // Uniform locations carry their own name, so uniform1f can record which
   // uniform was set without a real GL object.
@@ -51,19 +62,31 @@ export function stubWebGL(): GLCalls {
     createShader: () => ({}),
     shaderSource: () => {},
     compileShader: () => {},
-    getShaderParameter: () => true,
-    getShaderInfoLog: () => "",
-    deleteShader: () => {},
+    getShaderParameter: (shader: object) => {
+      if (deleted.has(shader)) calls.queriedAfterDelete = true;
+      return !deleted.has(shader);
+    },
+    getShaderInfoLog: (shader: object) => (deleted.has(shader) ? null : ""),
+    deleteShader: (shader: object) => {
+      deleted.add(shader);
+    },
 
     createProgram: () => {
       calls.programs++;
       return {};
     },
     attachShader: () => {},
+    detachShader: () => {},
     linkProgram: () => {},
-    getProgramParameter: () => true,
-    getProgramInfoLog: () => "",
-    deleteProgram: () => {},
+    getProgramParameter: (program: object) => {
+      if (deleted.has(program)) calls.queriedAfterDelete = true;
+      return !deleted.has(program);
+    },
+    getProgramInfoLog: (program: object) =>
+      deleted.has(program) ? null : "",
+    deleteProgram: (program: object) => {
+      deleted.add(program);
+    },
     useProgram: () => {},
 
     createBuffer: () => ({}),

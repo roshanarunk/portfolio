@@ -17,43 +17,65 @@ import {
 
 export type ShaderMode = "magnifier" | "invert";
 
-function compile(gl: WebGLRenderingContext, type: number, source: string) {
+/**
+ * Compiles one shader stage.
+ *
+ * The info log is only meaningful while the shader object is alive, so it is
+ * read before deletion. Some drivers also return null rather than a string for
+ * an empty log, hence the fallback message.
+ */
+function compile(
+  gl: WebGLRenderingContext,
+  type: number,
+  source: string,
+  label: string,
+) {
   const shader = gl.createShader(type);
-  if (!shader) throw new Error("Could not create shader");
+  if (!shader) {
+    throw new Error(
+      `Could not create the ${label} shader (the WebGL context may be lost)`,
+    );
+  }
 
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
 
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    const log = gl.getShaderInfoLog(shader);
+    const log = gl.getShaderInfoLog(shader) || "no driver message";
     gl.deleteShader(shader);
-    throw new Error(`Shader failed to compile: ${log}`);
+    throw new Error(`The ${label} shader failed to compile: ${log}`);
   }
   return shader;
 }
 
 function link(
   gl: WebGLRenderingContext,
-  vertexSource: string,
+  vertex: WebGLShader,
   fragmentSource: string,
+  label: string,
 ) {
   const program = gl.createProgram();
-  if (!program) throw new Error("Could not create program");
+  if (!program) throw new Error(`Could not create the ${label} program`);
 
-  const vertex = compile(gl, gl.VERTEX_SHADER, vertexSource);
-  const fragment = compile(gl, gl.FRAGMENT_SHADER, fragmentSource);
+  const fragment = compile(gl, gl.FRAGMENT_SHADER, fragmentSource, label);
   gl.attachShader(program, vertex);
   gl.attachShader(program, fragment);
   gl.linkProgram(program);
 
-  // Shaders are reference-counted by the program once attached.
-  gl.deleteShader(vertex);
+  // Read link status BEFORE detaching or deleting: querying a program whose
+  // shaders have already been released is what produces a null info log.
+  const linked = gl.getProgramParameter(program, gl.LINK_STATUS);
+  const log = linked ? "" : gl.getProgramInfoLog(program) || "no driver message";
+
+  // The fragment shader belongs to this program alone, so it can go now. The
+  // vertex shader is shared between programs and is deleted by the caller once
+  // every program has been linked.
+  gl.detachShader(program, fragment);
   gl.deleteShader(fragment);
 
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    const log = gl.getProgramInfoLog(program);
+  if (!linked) {
     gl.deleteProgram(program);
-    throw new Error(`Program failed to link: ${log}`);
+    throw new Error(`The ${label} program failed to link: ${log}`);
   }
   return program;
 }
@@ -68,10 +90,18 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
   const gl = canvas.getContext("webgl", { preserveDrawingBuffer: false });
   if (!gl) throw new Error("WebGL is not available in this browser");
 
-  const programs: Record<ShaderMode, WebGLProgram> = {
-    magnifier: link(gl, VERTEX_SHADER, MAGNIFIER_SHADER),
-    invert: link(gl, VERTEX_SHADER, INVERT_SHADER),
-  };
+  // Both programs share one vertex shader, so it is compiled once and only
+  // released after every program that attaches it has been linked.
+  const vertex = compile(gl, gl.VERTEX_SHADER, VERTEX_SHADER, "vertex");
+  let programs: Record<ShaderMode, WebGLProgram>;
+  try {
+    programs = {
+      magnifier: link(gl, vertex, MAGNIFIER_SHADER, "magnifier"),
+      invert: link(gl, vertex, INVERT_SHADER, "invert"),
+    };
+  } finally {
+    gl.deleteShader(vertex);
+  }
 
   // A single quad covering clip space, with texture coordinates flipped
   // vertically: GL samples from the bottom left, images arrive top left.

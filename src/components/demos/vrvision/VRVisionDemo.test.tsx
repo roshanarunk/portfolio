@@ -198,6 +198,26 @@ describe("VRVisionDemo", () => {
     expect(screen.getByLabelText(/Magnifier size/)).toBeInTheDocument();
   });
 
+  /**
+   * Regression test. The renderer used to delete its shaders before reading
+   * LINK_STATUS, so a real driver reported a null info log and every failure
+   * surfaced as "Shader failed to compile: null" — no diagnostic at all, and
+   * the demo would not start. The stub now models deletion, so querying a
+   * released object is detectable here.
+   */
+  it("never queries a shader or program after deleting it", () => {
+    renderDemo();
+    expect(gl.queriedAfterDelete).toBe(false);
+    expect(screen.queryByText(/failed to compile/i)).not.toBeInTheDocument();
+  });
+
+  it("builds both programs and starts without an error message", () => {
+    renderDemo();
+    expect(gl.programs).toBe(2);
+    // The canvas renders, rather than the error card replacing it.
+    expect(screen.getByLabelText(/Camera view/)).toBeInTheDocument();
+  });
+
   it("releases the GL context when the demo unmounts", () => {
     const { unmount } = renderDemo();
     unmount();
