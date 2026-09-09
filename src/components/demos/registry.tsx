@@ -37,4 +37,8 @@ export const demoRegistry: Record<
       import("./leagueml/WinProbabilityDemo").then((m) => m.WinProbabilityDemo),
     { ssr: false, loading: () => <DemoSkeleton label="Loading model…" /> },
   ),
+  vrvision: dynamic(
+    () => import("./vrvision/VRVisionDemo").then((m) => m.VRVisionDemo),
+    { ssr: false, loading: () => <DemoSkeleton label="Starting WebGL…" /> },
+  ),
 };

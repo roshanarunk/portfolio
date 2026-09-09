@@ -99,7 +99,12 @@ describe("live demos", () => {
    * turning a content test into a React one. The LiveDemoId union keeps the two
    * honest — a new demo fails to compile until it is added in both places.
    */
-  const registeredIds = new Set(["sudoku", "valheatmap", "league-ml"]);
+  const registeredIds = new Set([
+    "sudoku",
+    "valheatmap",
+    "league-ml",
+    "vrvision",
+  ]);
 
   it("points every live demo at a registered component", () => {
     for (const project of projects) {

@@ -28,7 +28,7 @@ export type Collection = "hooj" | "coursework" | "personal";
  * Identifiers for interactive demos. Each must have a matching entry in
  * `demoRegistry` (src/components/demos/registry.ts) — enforced by a unit test.
  */
-export type LiveDemoId = "sudoku" | "valheatmap" | "league-ml";
+export type LiveDemoId = "sudoku" | "valheatmap" | "league-ml" | "vrvision";
 
 /**
  * How a project is demonstrated. Not every project can run in a browser, so the
