@@ -10,6 +10,9 @@ import { whjStudentUpdate } from "./whj-student-update";
 import { springbootCrud } from "./springboot-crud";
 import { atm } from "./atm";
 import { bankWebsite } from "./bank-website";
+import { wattravl } from "./wattravl";
+import { cc3k } from "./cc3k";
+import { subspleasio } from "./subspleasio";
 
 /**
  * Ordered by tier, then by how much each project shows. This is the order the
@@ -21,6 +24,9 @@ export const projects: Project[] = [
   leagueMl,
   valheatmap,
   vrvision,
+  wattravl,
+  cc3k,
+  subspleasio,
   valoLineup,
   mangareader,
   whjStudentUpdate,

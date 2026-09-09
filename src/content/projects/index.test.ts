@@ -56,11 +56,23 @@ describe("project content", () => {
     }
   });
 
-  it("links every project to its repository", () => {
+  it("points every repo link at Roshan's GitHub", () => {
     for (const project of projects) {
+      if (!project.repoUrl) continue;
       expect(project.repoUrl, project.slug).toMatch(
         /^https:\/\/github\.com\/roshanarunk\//,
       );
+    }
+  });
+
+  /**
+   * A project with no repository link is private, and a visitor should be told
+   * why rather than left wondering where the code is.
+   */
+  it("explains why a project has no public repository", () => {
+    for (const project of projects) {
+      if (project.repoUrl) continue;
+      expect(project.disclosure, project.slug).toBeTruthy();
     }
   });
 
