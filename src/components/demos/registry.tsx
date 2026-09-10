@@ -41,4 +41,12 @@ export const demoRegistry: Record<
     () => import("./vrvision/VRVisionDemo").then((m) => m.VRVisionDemo),
     { ssr: false, loading: () => <DemoSkeleton label="Starting WebGL…" /> },
   ),
+  cc3k: dynamic(() => import("./cc3k/CC3KDemo").then((m) => m.CC3KDemo), {
+    ssr: false,
+    loading: () => <DemoSkeleton label="Loading combat…" />,
+  }),
+  wattravl: dynamic(
+    () => import("./wattravl/WatTravlDemo").then((m) => m.WatTravlDemo),
+    { ssr: false, loading: () => <DemoSkeleton label="Loading the building…" /> },
+  ),
 };

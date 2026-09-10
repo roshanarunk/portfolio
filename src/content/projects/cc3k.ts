@@ -33,36 +33,13 @@ export const cc3k: Project = {
         "Pushing the behaviour down into virtual methods removed the branching entirely. The lasting lesson was that asking an object what it is usually means the hierarchy is wrong.",
     },
   ],
-  disclosure:
-    "University coursework, so the repository is private. Happy to walk through the design or share the code on request.",
+  disclosure: "Source code unavailable at the University of Waterloo's request.",
   demo: {
-    kind: "writeup",
-    title: "The hierarchy",
-    instructions: "How the design keeps the game loop from growing.",
-    excerpts: [
-      {
-        file: "enemy.h",
-        language: "cpp",
-        code: `class Enemy : public Character {
-    int tick = 0;
-public:
-    virtual void getAttackedby(Player &p) = 0;
-    virtual void attack(Player &p) = 0;
-    virtual bool isEnemy() override { return true; }
-};`,
-        note: "Enemy fixes what every enemy must do and leaves how to the subclass, so the combat code never branches on type.",
-      },
-      {
-        file: "potion.h",
-        language: "cpp",
-        code: `class Potion : public Object {
-public:
-    Potion() : Object('P') {}
-    virtual void useItem(Player &p) = 0;
-    virtual std::string itemType() = 0;
-};`,
-        note: "One method is the whole contract. Each of the six effects is a small class implementing it, rather than another case in a growing switch.",
-      },
-    ],
+    kind: "live",
+    componentId: "cc3k",
+    title: "Pick a fight",
+    instructions:
+      "Choose a race and an enemy — the combat maths is the C++ original's.",
+    badge: "Ported from the C++",
   },
 };

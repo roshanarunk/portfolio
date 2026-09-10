@@ -116,6 +116,8 @@ describe("live demos", () => {
     "valheatmap",
     "league-ml",
     "vrvision",
+    "cc3k",
+    "wattravl",
   ]);
 
   it("points every live demo at a registered component", () => {

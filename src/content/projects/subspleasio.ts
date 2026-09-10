@@ -14,6 +14,7 @@ export const subspleasio: Project = {
     { label: "Stremio SDK", category: "library" },
     { label: "Real-Debrid API", category: "platform" },
   ],
+  repoUrl: "https://github.com/roshanarunk/Subspleasio",
   summary:
     "A Stremio addon that resolves an anime episode across three sources, checks a debrid service for what is already cached, and hands back a direct stream.",
   longDescription: [
@@ -41,8 +42,6 @@ export const subspleasio: Project = {
         "Sources are queried together and failures degrade to an empty list rather than an error, so one dead source costs a few options instead of the whole response.",
     },
   ],
-  disclosure:
-    "Private repository — it is built for my own use and indexes third-party sources. Happy to walk through the code.",
   demo: {
     kind: "writeup",
     title: "Keeping credentials out of the server",
@@ -64,5 +63,6 @@ app.get('/:rdToken/:nekobtKey/stream/:type/:id.json', async (req, res) => {
         note: "Stremio replays whatever URL it was installed with, so the token arrives per request and is never persisted. The single-segment route below it keeps older installs working.",
       },
     ],
+    sourceUrl: "https://github.com/roshanarunk/Subspleasio/blob/main/index.js",
   },
 };

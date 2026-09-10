@@ -42,31 +42,13 @@ export const wattravl: Project = {
         "Splitting along MVVM boundaries meant the graph and pathfinding could be built and tested independently of the map UI. Being able to run the routing without the app attached is what kept the work parallel.",
     },
   ],
-  disclosure:
-    "A CS446 team project with five collaborators, kept private as coursework. My work was concentrated on the routing and graph model.",
+  disclosure: "Source code unavailable at the University of Waterloo's request.",
   demo: {
-    kind: "writeup",
-    title: "Routing between floors",
-    instructions: "How the building becomes one graph.",
-    excerpts: [
-      {
-        file: "model/MC/Dijkstra.kt",
-        language: "kotlin",
-        code: `val staircases = mapOf(
-    1 to listOf(1099, 1106, 1096, 1091),
-    2 to listOf(2077, 2099, 2074, 2068),
-    // …one entry per floor
-)
-
-val elevators = mapOf(
-    1 to listOf(1100, 1092),
-    2 to listOf(2078, 2070),
-)
-
-fun findFloor(number: Int): Int =
-    number.toString()[0].toString().toInt()`,
-        note: "Room numbers already encode the floor, so the first digit gives it for free. Stairs and elevators are parallel lists, which is what makes elevator-only routing a one-line change at the call site.",
-      },
-    ],
+    kind: "live",
+    componentId: "wattravl",
+    title: "Route through the building",
+    instructions:
+      "Pick two rooms, then try it step-free to see the route change.",
+    badge: "Dijkstra, running here",
   },
 };
