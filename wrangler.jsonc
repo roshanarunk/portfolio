@@ -1,0 +1,18 @@
+{
+  // Deploy config lives here rather than in dashboard fields, so the build is
+  // reproducible from the repository alone.
+  //
+  //   npm run deploy     — build, then upload out/ to Cloudflare
+  //
+  // The site is a static export: no Worker script, no server, no adapter. The
+  // `assets` block is the whole deployment.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "roshanarun",
+  "compatibility_date": "2026-09-11",
+  "assets": {
+    "directory": "./out",
+    // Next's export writes a real 404.html; let Cloudflare serve it rather than
+    // rewriting unknown paths to index.html as it would for a single-page app.
+    "not_found_handling": "404-page"
+  }
+}

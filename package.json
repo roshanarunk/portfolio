@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "format": "prettier --write .",
-    "check": "npm run typecheck && npm run lint && npm run test"
+    "check": "npm run typecheck && npm run lint && npm run test",
+    "deploy": "next build && wrangler deploy"
   },
   "dependencies": {
     "lucide-react": "^1.43.0",
@@ -35,7 +36,8 @@
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^5.0.0"
+    "vitest": "^5.0.0",
+    "wrangler": "^4.131.1"
   },
   "engines": {
     "node": ">=20.9.0",
