@@ -58,7 +58,7 @@ export function SudokuDemo({ reducedMotion }: DemoComponentProps) {
       </div>
 
       <div className="flex flex-col items-start gap-6 sm:flex-row">
-        <div className="flex w-full justify-center sm:w-auto">
+        <div className="flex w-full shrink-0 justify-center sm:w-auto">
           <SudokuBoard
             state={state}
             reducedMotion={reducedMotion}

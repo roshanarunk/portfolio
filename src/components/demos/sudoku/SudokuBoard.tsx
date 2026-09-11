@@ -99,7 +99,7 @@ export function SudokuBoard({
       role="grid"
       aria-label="Sudoku board"
       onKeyDown={handleKeyDown}
-      className="grid aspect-square w-full max-w-[min(90vw,32rem)] grid-cols-9 gap-px overflow-hidden rounded-lg bg-neutral-300 p-px dark:bg-neutral-700"
+      className="grid aspect-square w-[min(90vw,28rem)] shrink-0 grid-cols-9 gap-px overflow-hidden rounded-lg bg-neutral-300 p-px dark:bg-neutral-700"
     >
       {state.board.map((cells, row) =>
         cells.map((value, col) => {
