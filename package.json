@@ -36,5 +36,9 @@
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=20.9.0",
+    "npm": ">=10"
   }
 }
