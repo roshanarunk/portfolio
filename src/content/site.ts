@@ -10,8 +10,8 @@ export const site = {
   intro:
     "Software engineer working across full-stack web, machine learning and mobile. " +
     "Most of what I have built started as a problem someone I knew actually had.",
-  // Placeholder until the site is deployed — used for canonical URLs and OG tags.
-  url: "https://roshanarunk.vercel.app",
+  // Canonical origin: feeds metadataBase, sitemap.xml and robots.txt.
+  url: "https://roshanarun.com",
   email: "roshan.arun.k@gmail.com",
   github: "https://github.com/roshanarunk",
   githubUser: "roshanarunk",
