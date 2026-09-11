@@ -46,6 +46,10 @@ next-env.d.ts
 # Static export output
 /out/
 
-# Claude Code skills and agent definitions (local tooling, not part of the site)
+# Claude Code skills and agent definitions (local tooling, not part of the site).
+# The same tooling is mirrored under .github; workflows/ stays tracked.
 .claude/skills/
 .claude/agents/
+.github/skills/
+.github/agents/
+.github/hooks/
