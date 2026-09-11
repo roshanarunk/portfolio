@@ -3,7 +3,7 @@ import type { Project } from "@/lib/types";
 export const cc3k: Project = {
   slug: "cc3k",
   title: "ChamberCrawler3000",
-  tagline: "A roguelike built to make the inheritance hierarchy do the work.",
+  tagline: "A roguelike you can play here, ported from the C++.",
   year: "2021",
   tier: 2,
   featured: false,
@@ -23,7 +23,8 @@ export const cc3k: Project = {
     "38 classes across a single Object hierarchy — characters, terrain, items and gold",
     "Potions and enemies behind pure virtual interfaces, so behaviour lives in subclasses",
     "Five playable races and seven enemy types, each with distinct rules",
-    "Procedural floor generation with chamber, passage and stairway placement",
+    "Procedural spawning across five chambers, with dragons guarding their hoards",
+    "Ported to TypeScript in full — the same map file, spawn weights and combat maths",
   ],
   challenges: [
     {
@@ -32,14 +33,21 @@ export const cc3k: Project = {
       solution:
         "Pushing the behaviour down into virtual methods removed the branching entirely. The lasting lesson was that asking an object what it is usually means the hierarchy is wrong.",
     },
+    {
+      problem:
+        "Porting it to the browser, I gave ordinary enemies a guaranteed hit and reserved the miss roll for dragons and merchants. The rules all tested green, but the game was unplayable: four of the five races won none of sixty simulated runs.",
+      solution:
+        "Every enemy in the C++ rolls rand() % 2 before dealing damage — there is no always-hits enemy, and that coin flip is most of what makes the game survivable. Fixing it took the Troll from 8 wins in 60 to 20, and gave every race except the Vampire a route through. It only surfaced because a bot played hundreds of full runs; no unit test on the rules would have caught it.",
+    },
   ],
   disclosure: "Source code unavailable at the University of Waterloo's request.",
   demo: {
     kind: "live",
     componentId: "cc3k",
-    title: "Pick a fight",
+    title: "Play it",
     instructions:
-      "Choose a race and an enemy — the combat maths is the C++ original's.",
-    badge: "Ported from the C++",
+      "Arrow keys or the number pad to move. Reach the stairs on all five floors.",
+    badge: "The full game, in your browser",
+    mobileFallback: "scaled",
   },
 };
