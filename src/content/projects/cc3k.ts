@@ -41,6 +41,13 @@ export const cc3k: Project = {
     },
   ],
   disclosure: "Source code unavailable at the University of Waterloo's request.",
+  cardImage: {
+    src: "/images/cards/cc3k.png",
+    alt: "The ChamberCrawler3000 dungeon, rendered as tiles in the browser",
+    width: 960,
+    height: 600,
+    placeholder: true,
+  },
   demo: {
     kind: "live",
     componentId: "cc3k",

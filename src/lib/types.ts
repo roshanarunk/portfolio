@@ -140,6 +140,22 @@ export interface Project {
   challenges?: Challenge[];
   demo: Demo;
   /**
+   * Card artwork for the landing-page carousel. Optional: a project without one
+   * still renders, with the title block standing in for the image.
+   *
+   * Static export disables the Next image optimiser, so these are plain <img>
+   * tags — give every entry real pixel dimensions or the card shifts as it
+   * loads.
+   */
+  cardImage?: {
+    src: string;
+    alt: string;
+    width: number;
+    height: number;
+    /** Marks generated stand-ins so a real screenshot can replace them. */
+    placeholder?: boolean;
+  };
+  /**
    * Set when the work is not original or not production-grade, so the site can
    * say so plainly rather than letting a recruiter discover it from the repo.
    */

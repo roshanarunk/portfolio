@@ -23,6 +23,10 @@ function assetPaths(): { project: string; src: string }[] {
     if (demo.kind === "iframe" || demo.kind === "video") {
       paths.push({ project: project.slug, src: demo.posterSrc });
     }
+    // Carousel artwork: a missing file would ship as a broken image.
+    if (project.cardImage) {
+      paths.push({ project: project.slug, src: project.cardImage.src });
+    }
   }
   return paths;
 }
@@ -73,6 +77,15 @@ describe("project content", () => {
     for (const project of projects) {
       if (project.repoUrl) continue;
       expect(project.disclosure, project.slug).toBeTruthy();
+    }
+  });
+
+  it("gives every featured project card artwork", () => {
+    for (const project of featuredProjects) {
+      expect(project.cardImage, project.slug).toBeDefined();
+      expect(project.cardImage!.width, project.slug).toBeGreaterThan(0);
+      expect(project.cardImage!.height, project.slug).toBeGreaterThan(0);
+      expect(project.cardImage!.alt, project.slug).toBeTruthy();
     }
   });
 

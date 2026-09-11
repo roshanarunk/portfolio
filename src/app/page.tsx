@@ -2,15 +2,13 @@ import Link from "next/link";
 import { ArrowRight, Mail } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
 import { HeroSolver } from "@/components/home/HeroSolver";
-import { ProjectCard } from "@/components/project/ProjectCard";
+import { ProjectCarousel } from "@/components/home/ProjectCarousel";
 import { featuredProjects, hoojProjects, projects } from "@/content/projects";
 import { site } from "@/content/site";
 
 const playableCount = projects.filter((p) => p.demo.kind === "live").length;
 
 export default function HomePage() {
-  const [lead, ...rest] = featuredProjects;
-
   return (
     <div className="mx-auto max-w-5xl px-6">
       {/*
@@ -88,12 +86,20 @@ export default function HomePage() {
             All projects
           </Link>
         </div>
-        {/* Three, not six: one lead card and a pair, so there is a first choice. */}
-        <div className="grid gap-4 sm:grid-cols-2">
-          {lead && <ProjectCard project={lead} featured />}
-          {rest.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
-          ))}
+        {/*
+          One project at a time, driven only by the visitor. Nothing advances on
+          its own, so a card cannot slide away while it is being read.
+        */}
+        <ProjectCarousel projects={featuredProjects} />
+
+        <div className="mt-8 flex justify-center">
+          <Link
+            href="/projects"
+            className="inline-flex items-center gap-1.5 rounded-md border border-neutral-300 px-4 py-2.5 text-sm font-medium text-neutral-900 transition hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-100 dark:hover:bg-neutral-800"
+          >
+            See all {projects.length} projects
+            <ArrowRight aria-hidden className="size-4" />
+          </Link>
         </div>
       </section>
 
