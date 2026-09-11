@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored Impeccable tooling: not our source, and gitignored.
+    ".claude/**",
+    ".github/skills/**",
   ]),
 ]);
 

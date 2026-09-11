@@ -286,7 +286,7 @@ export function CC3KGame() {
             </button>
           ))}
         </div>
-        <p className="mt-4 text-xs text-neutral-500 dark:text-neutral-500">
+        <p className="mt-4 text-xs text-neutral-500 dark:text-neutral-400">
           Five floors, the same map and spawn rules as the C++ original. Find the
           staircase on each one.
         </p>
@@ -520,7 +520,7 @@ export function CC3KGame() {
             ))}
           </dl>
 
-          <p className="text-xs leading-relaxed text-neutral-500 dark:text-neutral-500">
+          <p className="text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
             Arrows or 1–9 move, <kbd>a</kbd> then a direction attacks,{" "}
             <kbd>p</kbd> drinks a potion beside you. Merchants leave you alone
             until you hit one.

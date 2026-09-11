@@ -32,7 +32,7 @@ export default function ProjectsPage() {
 
         return (
           <section key={tier} className="mt-12">
-            <h2 className="mb-5 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-500">
+            <h2 className="mb-5 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
               {label}
             </h2>
             <div className="grid gap-4 sm:grid-cols-2">

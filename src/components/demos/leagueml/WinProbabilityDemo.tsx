@@ -136,7 +136,7 @@ export function WinProbabilityDemo() {
         <div className="space-y-6">
           {groups.map((group) => (
             <fieldset key={group}>
-              <legend className="mb-3 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-500">
+              <legend className="mb-3 text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
                 {group}
               </legend>
               <div className="space-y-3">
@@ -197,10 +197,10 @@ export function WinProbabilityDemo() {
 
         <aside className="space-y-4">
           <div>
-            <h4 className="text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-500">
+            <h4 className="text-xs font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
               What is driving this
             </h4>
-            <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-500">
+            <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
               Each feature&apos;s push on the log-odds.
             </p>
             <ul className="mt-3 space-y-2">
@@ -263,7 +263,7 @@ export function WinProbabilityDemo() {
             </div>
           </dl>
 
-          <p className="text-xs leading-relaxed text-neutral-500 dark:text-neutral-500">
+          <p className="text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
             Logistic regression over {model.metrics.nGames.toLocaleString()}{" "}
             Korean ranked games, held out by game so no match appears in both
             training and test. It describes what tends to follow a given

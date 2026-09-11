@@ -47,7 +47,7 @@ export default async function ProjectPage({ params }: Params) {
           <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
             {project.title}
           </h1>
-          <span className="text-sm text-neutral-500 dark:text-neutral-500">
+          <span className="text-sm text-neutral-500 dark:text-neutral-400">
             {project.year}
           </span>
         </div>

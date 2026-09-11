@@ -74,7 +74,7 @@ export function VideoDemoView({ demo }: { demo: VideoDemo }) {
               <Download aria-hidden className="size-3.5" />
               {file.label}
               {file.note && (
-                <span className="text-neutral-500 no-underline dark:text-neutral-500">
+                <span className="text-neutral-500 no-underline dark:text-neutral-400">
                   ({file.note})
                 </span>
               )}

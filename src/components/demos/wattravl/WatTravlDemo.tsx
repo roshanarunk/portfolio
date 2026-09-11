@@ -171,7 +171,7 @@ export function WatTravlDemo() {
               onPick={(id) => setEnd(id)}
             />
           ))}
-          <p className="text-xs text-neutral-500 dark:text-neutral-500">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">
             Click any room to route to it.
           </p>
         </div>
@@ -265,14 +265,14 @@ export function WatTravlDemo() {
           )}
 
           {route && comparison && comparison.distance !== route.distance && (
-            <p className="text-xs leading-relaxed text-neutral-500 dark:text-neutral-500">
+            <p className="text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
               {avoidStairs
                 ? `Taking the stairs would be ${route.distance - comparison.distance} m shorter.`
                 : `A step-free route costs ${comparison.distance - route.distance} m more.`}
             </p>
           )}
 
-          <p className="border-t border-neutral-200 pt-3 text-xs leading-relaxed text-neutral-500 dark:border-neutral-800 dark:text-neutral-500">
+          <p className="border-t border-neutral-200 pt-3 text-xs leading-relaxed text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
             One Dijkstra search over the whole building, with staircases and
             elevators as ordinary weighted edges — so the route picks the
             transition that suits the whole journey, not just the current floor.

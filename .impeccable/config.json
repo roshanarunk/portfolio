@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gray-on-color",
+        "value": "*",
+        "files": [
+          "src/app/page.tsx"
+        ],
+        "createdAt": "2026-09-11T03:27:36.116Z",
+        "reason": "false positive: the flagged CTA is text-white on bg-emerald-600, and dark:text-neutral-950 on bg-emerald-500 — white/near-white on colour, which is what the rule prescribes"
+      }
+    ]
+  }
+}

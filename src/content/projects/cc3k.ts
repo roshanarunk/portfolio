@@ -5,8 +5,8 @@ export const cc3k: Project = {
   title: "ChamberCrawler3000",
   tagline: "A roguelike you can play here, ported from the C++.",
   year: "2021",
-  tier: 2,
-  featured: false,
+  tier: 1,
+  featured: true,
   collection: "coursework",
   tech: [
     { label: "C++", category: "language" },

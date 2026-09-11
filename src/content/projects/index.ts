@@ -35,7 +35,23 @@ export const projects: Project[] = [
   bankWebsite,
 ];
 
-export const featuredProjects = projects.filter((p) => p.featured);
+/**
+ * Three, not six. Six equally-weighted cards is the classic paralysis count and
+ * gives a visitor no first choice; the rest live on /projects. Order is
+ * deliberate: the lead card is the one that proves the site's claim fastest.
+ */
+/**
+ * Three, not six: six equally-weighted cards gives a visitor no first choice.
+ * The `featured` flag decides membership; this order decides which leads, and
+ * the lead is whichever project proves the site's claim fastest.
+ */
+const FEATURED_ORDER = ["cc3k", "league-ml", "underpeel"];
+
+export const featuredProjects = projects
+  .filter((p) => p.featured)
+  .sort(
+    (a, b) => FEATURED_ORDER.indexOf(a.slug) - FEATURED_ORDER.indexOf(b.slug),
+  );
 
 export function getProject(slug: string): Project | undefined {
   return projects.find((project) => project.slug === slug);

@@ -6,7 +6,7 @@ export const wattravl: Project = {
   tagline: "Indoor navigation for a building where GPS gives up.",
   year: "2024",
   tier: 1,
-  featured: true,
+  featured: false,
   role: "One of six on the team",
   collection: "coursework",
   tech: [

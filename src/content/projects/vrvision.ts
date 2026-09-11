@@ -6,7 +6,7 @@ export const vrvision: Project = {
   tagline: "Augmented reality as an aid for low vision.",
   year: "2021–2023",
   tier: 1,
-  featured: true,
+  featured: false,
   role: "Solo developer",
   collection: "coursework",
   tech: [

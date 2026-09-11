@@ -6,7 +6,7 @@ export const valheatmap: Project = {
   tagline: "Where rounds are actually won, plotted from match data.",
   year: "2023",
   tier: 1,
-  featured: true,
+  featured: false,
   collection: "hooj",
   tech: [
     { label: "Python", category: "language" },

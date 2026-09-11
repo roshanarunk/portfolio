@@ -143,7 +143,7 @@ export function SudokuBoard({
               {value !== 0 ? (
                 value
               ) : notes.length > 0 ? (
-                <span className="grid size-full grid-cols-3 p-0.5 text-[0.5rem] leading-none text-neutral-500 dark:text-neutral-500">
+                <span className="grid size-full grid-cols-3 p-0.5 text-[0.5rem] leading-none text-neutral-500 dark:text-neutral-400">
                   {Array.from({ length: 9 }, (_, i) => (
                     <span key={i} className="flex items-center justify-center">
                       {notes.includes(i + 1) ? i + 1 : ""}

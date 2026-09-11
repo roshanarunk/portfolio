@@ -27,7 +27,7 @@ const buttonClass =
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
-      <dt className="text-xs text-neutral-500 dark:text-neutral-500">{label}</dt>
+      <dt className="text-xs text-neutral-500 dark:text-neutral-400">{label}</dt>
       <dd className="font-mono text-lg tabular-nums text-neutral-900 dark:text-neutral-100">
         {value}
       </dd>
@@ -73,7 +73,7 @@ export function SudokuControls({
             </option>
           ))}
         </select>
-        <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-500">
+        <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
           {puzzles.find((p) => p.id === state.puzzleId)?.note}
         </p>
       </div>
@@ -140,7 +140,7 @@ export function SudokuControls({
               className="w-full accent-neutral-900 dark:accent-neutral-100"
             />
             {reducedMotion && (
-              <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-500">
+              <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
                 Started slow because you prefer reduced motion.
               </p>
             )}
@@ -190,7 +190,7 @@ export function SudokuControls({
             />
           </dl>
 
-          <p className="text-xs text-neutral-500 dark:text-neutral-500">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">
             Arrow keys move, 1–9 enters a number, Shift+1–9 leaves a pencil mark.
           </p>
         </>

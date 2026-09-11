@@ -241,7 +241,7 @@ export function VRVisionDemo({ reducedMotion }: DemoComponentProps) {
             className="sr-only"
             aria-hidden
           />
-          <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-500">
+          <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
             {source === "camera"
               ? "Live camera, processed in your browser — no video leaves your device."
               : "Sample image. Use your camera for the real thing."}
@@ -289,13 +289,13 @@ export function VRVisionDemo({ reducedMotion }: DemoComponentProps) {
             Reset sliders
           </button>
 
-          <p className="border-t border-neutral-200 pt-3 text-xs leading-relaxed text-neutral-500 dark:border-neutral-800 dark:text-neutral-500">
+          <p className="border-t border-neutral-200 pt-3 text-xs leading-relaxed text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
             These are the app&apos;s own fragment shaders from MyShaders.java,
             running in WebGL. On the phone the same GLSL reads the camera through
             a samplerExternalOES and renders to both eyes of a Cardboard headset.
           </p>
           {reducedMotion && (
-            <p className="text-xs text-neutral-500 dark:text-neutral-500">
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">
               The view updates continuously while the camera is on.
             </p>
           )}

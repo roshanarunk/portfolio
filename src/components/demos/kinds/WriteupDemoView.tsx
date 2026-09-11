@@ -18,7 +18,7 @@ export function WriteupDemoView({ demo }: { demo: WriteupDemo }) {
       <div className="divide-y divide-neutral-200 dark:divide-neutral-800">
         {demo.excerpts.map((excerpt) => (
           <div key={excerpt.file} className="p-4">
-            <p className="mb-2 font-mono text-xs text-neutral-500 dark:text-neutral-500">
+            <p className="mb-2 font-mono text-xs text-neutral-500 dark:text-neutral-400">
               {excerpt.file}
             </p>
             <pre className="overflow-x-auto rounded-lg bg-neutral-950 p-4 text-sm text-neutral-100 dark:bg-black">

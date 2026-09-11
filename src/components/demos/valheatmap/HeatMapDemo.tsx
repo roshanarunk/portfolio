@@ -311,7 +311,7 @@ export function HeatMapDemo({ reducedMotion }: DemoComponentProps) {
             Clear filters
           </button>
 
-          <p className="border-t border-neutral-200 pt-4 text-xs leading-relaxed text-neutral-500 dark:border-neutral-800 dark:text-neutral-500">
+          <p className="border-t border-neutral-200 pt-4 text-xs leading-relaxed text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
             Real kill positions from a recorded match. The playable area is drawn
             from the match data rather than Riot&apos;s map art.
           </p>

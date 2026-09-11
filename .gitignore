@@ -53,3 +53,8 @@ next-env.d.ts
 .github/skills/
 .github/agents/
 .github/hooks/
+
+# Impeccable: per-machine state. config.json (the reasoned detector
+# ignores) and critique/ snapshots are tracked deliberately.
+.impeccable/config.local.json
+.impeccable/hook.cache.json
