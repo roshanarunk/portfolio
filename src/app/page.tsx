@@ -10,13 +10,13 @@ const playableCount = projects.filter((p) => p.demo.kind === "live").length;
 
 export default function HomePage() {
   return (
-    <div className="mx-auto max-w-5xl px-6">
+    <div className="mx-auto max-w-7xl px-6 sm:px-8">
       {/*
         Experience mode: the artifact leads. The board on the right is the real
         solver from the Sudoku project working the hardest known board, so the
         first thing a visitor meets is the work rather than a claim about it.
       */}
-      <section className="grid items-center gap-10 py-16 sm:py-20 lg:grid-cols-[1.1fr_minmax(0,20rem)] lg:gap-14">
+      <section className="grid items-center gap-10 py-10 sm:py-14 lg:grid-cols-[1fr_minmax(0,26rem)] lg:gap-16">
         <div>
           <h1 className="text-4xl font-semibold tracking-tight text-balance text-neutral-900 sm:text-5xl dark:text-neutral-100">
             {site.tagline}
@@ -53,7 +53,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="w-full max-w-sm justify-self-center lg:justify-self-end">
+        <div className="w-full max-w-md justify-self-center lg:max-w-none lg:justify-self-end">
           <HeroSolver />
           <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
             My Python solver, ported and running live —{" "}
