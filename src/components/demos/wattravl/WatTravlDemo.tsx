@@ -6,6 +6,7 @@ import {
   buildingOf,
   findFloor,
   findRoute,
+  firstFloorIn,
   nodeById,
   nodesOnFloor,
   rooms,
@@ -168,9 +169,11 @@ export function WatTravlDemo() {
                 value={viewBuilding}
                 onChange={(event) => {
                   const next = event.target.value as BuildingId;
-                  setViewBuilding(next);
                   const b = CAMPUS.buildings.find((x) => x.id === next)!;
-                  if (!b.floors.includes(viewFloor)) setViewFloor(b.floors[0]);
+                  setViewBuilding(next);
+                  // Land on a floor the route actually uses, rather than
+                  // keeping a number that leaves the map blank.
+                  setViewFloor(firstFloorIn(route, next, b.floors[0]));
                 }}
                 className="flex-1 rounded border border-black/20 bg-white/80 px-2 py-1 text-sm text-neutral-900"
               >

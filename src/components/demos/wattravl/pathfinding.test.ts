@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   CAMPUS,
   buildingOf,
+  firstFloorIn,
   findFloor,
   findRoute,
   nodeById,
@@ -167,6 +168,29 @@ describe("crossing between buildings", () => {
     const route = findRoute(CAMPUS, 101, 10301)!;
     const buildings = new Set<BuildingId>(route.legs.map((l) => l.building));
     expect([...buildings].sort()).toEqual(["DC", "MC"]);
+  });
+});
+
+describe("firstFloorIn", () => {
+  /**
+   * Regression: switching the building picker used to keep the current floor
+   * number when it happened to exist in the other building, landing on a floor
+   * the route never touches and showing an empty map.
+   */
+  it("picks the floor the route actually uses, not the one already selected", () => {
+    const route = findRoute(CAMPUS, 101, 10201)!;
+    // The route crosses into DC on floor 2 only; DC also has a floor 3.
+    expect(firstFloorIn(route, "DC", 1)).toBe(2);
+    expect(firstFloorIn(route, "MC", 1)).toBe(1);
+  });
+
+  it("falls back when the route never enters that building", () => {
+    const route = findRoute(CAMPUS, 101, 105)!;
+    expect(firstFloorIn(route, "DC", 1)).toBe(1);
+  });
+
+  it("falls back when there is no route", () => {
+    expect(firstFloorIn(null, "DC", 3)).toBe(3);
   });
 });
 

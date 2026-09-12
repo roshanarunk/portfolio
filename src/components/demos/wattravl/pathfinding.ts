@@ -309,6 +309,22 @@ export function rooms(campus: Campus, building?: BuildingId): Node[] {
   );
 }
 
+/**
+ * The first floor of `building` that this route actually passes through.
+ *
+ * Switching the building picker used to keep the current floor number if it
+ * happened to exist in the new building, which could land on a floor the route
+ * never touches and show an empty map with no explanation.
+ */
+export function firstFloorIn(
+  route: Route | null,
+  building: BuildingId,
+  fallback: number,
+): number {
+  const leg = route?.legs.find((l) => l.building === building);
+  return leg ? leg.floor : fallback;
+}
+
 /** Nodes drawn on one floor of one building. */
 export function nodesOnFloor(
   campus: Campus,
