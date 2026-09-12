@@ -1,19 +1,18 @@
 /**
- * Dijkstra over a multi-building, multi-floor graph, ported from the Kotlin
- * original.
+ * Multi-building routing, ported from the Kotlin original.
  *
- * The real app walks hand-mapped hallway nodes across two University of
- * Waterloo buildings — MC and DC — joined by a link bridge, and renders one
- * floor at a time over the building's own floor-plan SVG. Those plans are not
- * reproduced here (see the project page), so this uses a synthetic building of
- * the same shape: rooms off a corridor on each floor, stairs at one end, a lift
- * at the other, and a link between the two buildings on a single floor.
+ * The real app does NOT run one search across both buildings. `drawPath`
+ * concatenates two separate searches through fixed bridge nodes — MC node 30
+ * and DC node 28521 — and the interface then walks you through the join in
+ * stages: route to the transition on your current floor, be told which floor
+ * the bridge is on, cross it, then route again in the destination building.
  *
- * What is preserved is the part that matters: floor and building transitions
- * are ordinary weighted edges, so one search spans everything and picks the
- * staircase or bridge that suits the whole journey.
+ * That staging is reproduced here as an ordered list of legs, each carrying the
+ * notification the app would raise at that point. The University's floor plans
+ * are not reproduced (see the project page), so the same structure sits over a
+ * synthetic building with real-looking room numbers.
  *
- * Room numbers encode their floor in the first digit, exactly as in the source.
+ * Room numbers encode their floor in the first digit, as in the Kotlin source.
  */
 
 export type BuildingId = "MC" | "DC";
@@ -21,7 +20,10 @@ export type BuildingId = "MC" | "DC";
 export interface Node {
   id: number;
   building: BuildingId;
+  /** What the app would show: a room number, or a named feature. */
   label: string;
+  /** Short glyph drawn on the plan so a node is identifiable at a glance. */
+  glyph: string;
   /** Position on that floor's plan, 0-1 in both axes. */
   x: number;
   y: number;
@@ -38,6 +40,10 @@ export interface Building {
   id: BuildingId;
   name: string;
   floors: number[];
+  /** The node where this building meets the link bridge. */
+  bridgeNode: number;
+  /** The floor that bridge sits on. */
+  bridgeFloor: number;
 }
 
 export interface Campus {
@@ -48,30 +54,49 @@ export interface Campus {
 
 /** First digit of a room number is its floor, as in the Kotlin `findFloor`. */
 export function findFloor(id: number): number {
-  return Number(String(Math.abs(id) % 1000)[0]);
+  return Number(String(Math.abs(id) % 10000)[0]);
 }
 
-/** DC ids are offset so the two buildings never collide. */
-const DC_OFFSET = 10000;
+/** The Kotlin uses `nodeId < 1000` to mean MC; the same split applies here. */
+const DC_OFFSET = 20000;
 
 export function buildingOf(id: number): BuildingId {
   return id >= DC_OFFSET ? "DC" : "MC";
 }
 
-/**
- * Builds two buildings of the same shape: a corridor per floor with rooms off
- * it, stairs at one end and a lift at the other. MC has four floors, DC has
- * three, and a link bridge joins them on one floor only — which is what forces
- * a cross-building route through a specific level, as it does in the real app.
- */
+/** Bridge endpoints, mirroring the app's hard-coded node 30 and node 28521. */
+export const MC_BRIDGE = 330;
+export const DC_BRIDGE = DC_OFFSET + 2521;
+
 function makeCampus(): Campus {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
   const perFloor = 5;
 
-  const spec: { id: BuildingId; name: string; floors: number[]; offset: number }[] = [
-    { id: "MC", name: "Math & Computer", floors: [1, 2, 3, 4], offset: 0 },
-    { id: "DC", name: "Davis Centre", floors: [1, 2, 3], offset: DC_OFFSET },
+  const spec: {
+    id: BuildingId;
+    name: string;
+    floors: number[];
+    offset: number;
+    bridgeFloor: number;
+    bridgeNode: number;
+  }[] = [
+    {
+      id: "MC",
+      name: "Mathematics and Computer (MC)",
+      floors: [1, 2, 3, 4],
+      offset: 0,
+      bridgeFloor: 3,
+      bridgeNode: MC_BRIDGE,
+    },
+    {
+      id: "DC",
+      name: "Davis Centre (DC)",
+      floors: [1, 2, 3],
+      offset: DC_OFFSET,
+      bridgeFloor: 2,
+      bridgeNode: DC_BRIDGE,
+    },
   ];
 
   for (const building of spec) {
@@ -83,7 +108,8 @@ function makeCampus(): Campus {
         nodes.push({
           id,
           building: building.id,
-          label: `Corridor ${floor}-${i + 1}`,
+          label: `${building.id} corridor`,
+          glyph: "",
           x: 0.12 + (i * 0.76) / (perFloor - 1),
           y: 0.5,
           kind: "hallway",
@@ -91,13 +117,17 @@ function makeCampus(): Campus {
         if (i > 0) edges.push({ from: id - 1, to: id, weight: 12 });
       }
 
+      // Rooms are numbered the way the app's picker lists them: floor digit
+      // then a two-digit room, e.g. 1023, 3048.
       for (let i = 0; i < perFloor; i++) {
         const corridor = base + 50 + i;
         const id = base + i + 1;
+        const roomNumber = `${floor}${String(11 + i * 13).padStart(3, "0")}`;
         nodes.push({
           id,
           building: building.id,
-          label: `${building.id} ${floor}${String(i + 1).padStart(2, "0")}`,
+          label: `${building.id} ${roomNumber}`,
+          glyph: roomNumber,
           x: 0.12 + (i * 0.76) / (perFloor - 1),
           y: i % 2 === 0 ? 0.22 : 0.78,
           kind: "room",
@@ -109,7 +139,8 @@ function makeCampus(): Campus {
       nodes.push({
         id: stairId,
         building: building.id,
-        label: `Stairs ${floor}`,
+        label: `Stairwell, floor ${floor}`,
+        glyph: "Stairs",
         x: 0.04,
         y: 0.5,
         kind: "stairs",
@@ -120,7 +151,8 @@ function makeCampus(): Campus {
       nodes.push({
         id: liftId,
         building: building.id,
-        label: `Elevator ${floor}`,
+        label: `Elevator, floor ${floor}`,
+        glyph: "Lift",
         x: 0.96,
         y: 0.5,
         kind: "elevator",
@@ -128,8 +160,6 @@ function makeCampus(): Campus {
       edges.push({ from: liftId, to: base + 50 + perFloor - 1, weight: 6 });
     }
 
-    // Stairs are quicker per floor than waiting for a lift, so the choice is
-    // a real one rather than automatic.
     for (let i = 0; i < building.floors.length - 1; i++) {
       const lower = building.offset + building.floors[i] * 100;
       const upper = building.offset + building.floors[i + 1] * 100;
@@ -138,32 +168,38 @@ function makeCampus(): Campus {
     }
   }
 
-  // The link bridge: MC floor 3 to DC floor 2, mirroring the real app's single
-  // crossing point between the two buildings.
-  const mcLink = 380;
-  const dcLink = DC_OFFSET + 280;
+  // Bridge endpoints. Each is an ordinary node inside its own building; the
+  // crossing between them is handled as a separate leg, not an edge, because
+  // the app searches each building independently.
   nodes.push({
-    id: mcLink,
+    id: MC_BRIDGE,
     building: "MC",
-    label: "Link to DC",
+    label: "Link bridge to DC",
+    glyph: "DC Link",
     x: 0.5,
-    y: 0.06,
+    y: 0.08,
     kind: "link",
   });
   nodes.push({
-    id: dcLink,
+    id: DC_BRIDGE,
     building: "DC",
-    label: "Link to MC",
+    label: "Link bridge to MC",
+    glyph: "MC Link",
     x: 0.5,
-    y: 0.94,
+    y: 0.92,
     kind: "link",
   });
-  edges.push({ from: mcLink, to: 352, weight: 8 });
-  edges.push({ from: dcLink, to: DC_OFFSET + 252, weight: 8 });
-  edges.push({ from: mcLink, to: dcLink, weight: 45 });
+  edges.push({ from: MC_BRIDGE, to: 352, weight: 8 });
+  edges.push({ from: DC_BRIDGE, to: DC_OFFSET + 252, weight: 8 });
 
   return {
-    buildings: spec.map(({ id, name, floors }) => ({ id, name, floors })),
+    buildings: spec.map(({ id, name, floors, bridgeNode, bridgeFloor }) => ({
+      id,
+      name,
+      floors,
+      bridgeNode,
+      bridgeFloor,
+    })),
     nodes,
     edges,
   };
@@ -171,47 +207,51 @@ function makeCampus(): Campus {
 
 export const CAMPUS = makeCampus();
 
-export interface Route {
-  path: number[];
-  distance: number;
-  /** Floors the route passes through, as building/floor pairs, in order. */
-  legs: { building: BuildingId; floor: number }[];
-  transitions: number;
-  /** The app's toast text, e.g. "Head to Floor 3". Empty when none is shown. */
-  toast: string;
-}
-
 export interface RouteOptions {
-  /**
-   * Excludes staircases, which is what makes the route usable for someone who
-   * cannot take stairs. In the original this is the same switch between the
-   * `staircases` and `elevators` maps.
-   */
+  /** Excludes staircases, so the route is usable without taking stairs. */
   avoidStairs?: boolean;
 }
 
 /**
- * Shortest path by Dijkstra.
- *
- * The Kotlin version uses a PriorityQueue; this uses a linear scan for the
- * minimum, which is the same algorithm and indistinguishable at this size.
+ * One stage of a journey: a path the visitor walks on a single floor of a
+ * single building, plus the instruction the app gives when they reach its end.
  */
-export function findRoute(
+export interface Leg {
+  building: BuildingId;
+  floor: number;
+  /** Node ids walked on this floor, in order. */
+  path: number[];
+  /** The app's toast at the end of this leg, e.g. "Take DC Link". */
+  notice: string;
+}
+
+export interface Journey {
+  legs: Leg[];
+  distance: number;
+  /** Every node in order, across all legs. */
+  path: number[];
+}
+
+/** Dijkstra within one building. The Kotlin uses a PriorityQueue; same result. */
+function search(
   campus: Campus,
   start: number,
   end: number,
-  options: RouteOptions = {},
-): Route | null {
+  options: RouteOptions,
+): { path: number[]; distance: number } | null {
+  const building = buildingOf(start);
   const blocked = new Set(
     options.avoidStairs
       ? campus.nodes.filter((n) => n.kind === "stairs").map((n) => n.id)
       : [],
   );
-
   if (blocked.has(start) || blocked.has(end)) return null;
+
+  const inBuilding = (id: number) => buildingOf(id) === building;
 
   const adjacency = new Map<number, { to: number; weight: number }[]>();
   for (const edge of campus.edges) {
+    if (!inBuilding(edge.from) || !inBuilding(edge.to)) continue;
     if (blocked.has(edge.from) || blocked.has(edge.to)) continue;
     if (!adjacency.has(edge.from)) adjacency.set(edge.from, []);
     if (!adjacency.has(edge.to)) adjacency.set(edge.to, []);
@@ -222,9 +262,8 @@ export function findRoute(
   const distances = new Map<number, number>();
   const previous = new Map<number, number>();
   const unvisited = new Set<number>();
-
   for (const node of campus.nodes) {
-    if (blocked.has(node.id)) continue;
+    if (!inBuilding(node.id) || blocked.has(node.id)) continue;
     distances.set(node.id, Infinity);
     unvisited.add(node.id);
   }
@@ -241,10 +280,8 @@ export function findRoute(
         current = id;
       }
     }
-
     if (current === null || best === Infinity) break;
     if (current === end) break;
-
     unvisited.delete(current);
 
     for (const { to, weight } of adjacency.get(current) ?? []) {
@@ -267,34 +304,79 @@ export function findRoute(
     step = previous.get(step);
   }
   if (path[0] !== start) return null;
+  return { path, distance: total };
+}
 
-  const legs: { building: BuildingId; floor: number }[] = [];
+/** Splits a single-building path into one leg per floor. */
+function toLegs(campus: Campus, path: number[]): Leg[] {
+  const legs: Leg[] = [];
   for (const id of path) {
     const building = buildingOf(id);
     const floor = findFloor(id);
     const last = legs.at(-1);
-    if (!last || last.building !== building || last.floor !== floor) {
-      legs.push({ building, floor });
+    if (last && last.building === building && last.floor === floor) {
+      last.path.push(id);
+    } else {
+      legs.push({ building, floor, path: [id], notice: "" });
     }
   }
+  return legs;
+}
 
-  // The real app raises a toast when the route leaves the floor you are on.
-  const startFloor = findFloor(start);
-  const endFloor = findFloor(end);
-  const crossesBuilding = buildingOf(start) !== buildingOf(end);
-  let toast = "";
-  if (crossesBuilding) {
-    toast = `Go to Floor ${findFloor(legs.find((l) => l.building !== buildingOf(start))?.floor ?? endFloor)}`;
-  } else if (startFloor !== endFloor) {
-    toast = `Head to Floor ${endFloor}`;
+/**
+ * Plans a journey the way the app does.
+ *
+ * Within one building it is a single search, with a "Head to Floor N" notice
+ * when the destination is on another floor. Across buildings it is two
+ * searches joined at the bridge, with a notice telling you which floor the
+ * bridge is on and then to take the link.
+ */
+export function planJourney(
+  campus: Campus,
+  start: number,
+  end: number,
+  options: RouteOptions = {},
+): Journey | null {
+  const startBuilding = buildingOf(start);
+  const endBuilding = buildingOf(end);
+
+  if (startBuilding === endBuilding) {
+    const found = search(campus, start, end, options);
+    if (!found) return null;
+    const legs = toLegs(campus, found.path);
+
+    // "Head to Floor N" when the journey leaves the floor you are on.
+    for (let i = 0; i < legs.length - 1; i++) {
+      legs[i].notice = `Head to Floor ${legs[i + 1].floor}`;
+    }
+    return { legs, distance: found.distance, path: found.path };
+  }
+
+  const from = campus.buildings.find((b) => b.id === startBuilding)!;
+  const to = campus.buildings.find((b) => b.id === endBuilding)!;
+
+  const first = search(campus, start, from.bridgeNode, options);
+  const second = search(campus, to.bridgeNode, end, options);
+  if (!first || !second) return null;
+
+  const firstLegs = toLegs(campus, first.path);
+  const secondLegs = toLegs(campus, second.path);
+
+  // Inside the first building, each floor change is announced as usual.
+  for (let i = 0; i < firstLegs.length - 1; i++) {
+    firstLegs[i].notice = `Head to Floor ${firstLegs[i + 1].floor}`;
+  }
+  // At the bridge floor, the app tells you to take the link.
+  firstLegs[firstLegs.length - 1].notice = `Take ${to.id} Link`;
+
+  for (let i = 0; i < secondLegs.length - 1; i++) {
+    secondLegs[i].notice = `Head to Floor ${secondLegs[i + 1].floor}`;
   }
 
   return {
-    path,
-    distance: total,
-    legs,
-    transitions: Math.max(0, legs.length - 1),
-    toast,
+    legs: [...firstLegs, ...secondLegs],
+    distance: first.distance + second.distance,
+    path: [...first.path, ...second.path],
   };
 }
 
@@ -309,22 +391,6 @@ export function rooms(campus: Campus, building?: BuildingId): Node[] {
   );
 }
 
-/**
- * The first floor of `building` that this route actually passes through.
- *
- * Switching the building picker used to keep the current floor number if it
- * happened to exist in the new building, which could land on a floor the route
- * never touches and show an empty map with no explanation.
- */
-export function firstFloorIn(
-  route: Route | null,
-  building: BuildingId,
-  fallback: number,
-): number {
-  const leg = route?.legs.find((l) => l.building === building);
-  return leg ? leg.floor : fallback;
-}
-
 /** Nodes drawn on one floor of one building. */
 export function nodesOnFloor(
   campus: Campus,
@@ -333,5 +399,16 @@ export function nodesOnFloor(
 ): Node[] {
   return campus.nodes.filter(
     (n) => n.building === building && findFloor(n.id) === floor,
+  );
+}
+
+/** The leg of a journey shown on a given floor, if any. */
+export function legFor(
+  journey: Journey | null,
+  building: BuildingId,
+  floor: number,
+): Leg | undefined {
+  return journey?.legs.find(
+    (l) => l.building === building && l.floor === floor,
   );
 }

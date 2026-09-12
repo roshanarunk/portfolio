@@ -5,10 +5,10 @@ import {
   CAMPUS,
   buildingOf,
   findFloor,
-  findRoute,
-  firstFloorIn,
+  legFor,
   nodeById,
   nodesOnFloor,
+  planJourney,
   rooms,
   type BuildingId,
   type Node,
@@ -17,25 +17,25 @@ import {
 /**
  * A reconstruction of the WatTravl map screen.
  *
- * The real app showed ONE floor at a time in a full-screen image view, with an
- * amber bar carrying a back arrow and building/floor pickers, a Refresh button,
- * and the route drawn over the building's own floor plan: blue lines with
- * arrowheads, a red start marker, a cyan destination, and green markers where
- * the path continued onto another floor. A toast announced floor changes.
+ * The app showed ONE floor at a time: an amber bar with a back arrow and
+ * building/floor pickers, a Refresh button, and the route over the building's
+ * floor plan as blue arrowed lines with a red start and a cyan destination.
  *
- * The University's floor plans are deliberately not reproduced — see the
- * project page — so the same chrome and route rendering sit over a synthetic
- * building instead.
+ * Crossing between buildings is staged, as in the original: you are routed to
+ * the bridge on your current floor, told which floor the bridge is on, told to
+ * take the link, and then routed again from the far side. Each leg carries the
+ * instruction the app would raise at that point.
+ *
+ * The University's floor plans are not reproduced — see the project page — so
+ * the same chrome and route rendering sit over a synthetic building.
  */
 
 const W = 520;
 const H = 340;
-
-/** The app's own bar colour. */
 const BAR = "#ffd54f";
 
 const NODE_FILL: Record<Node["kind"], string> = {
-  room: "#9ca3af",
+  room: "#6b7280",
   hallway: "#c8c8c8",
   stairs: "#f59e0b",
   elevator: "#0ea5e9",
@@ -48,7 +48,6 @@ function Arrowhead({ from, to }: { from: Node; to: Node }) {
   const bx = to.x * W;
   const by = to.y * H;
   const angle = Math.atan2(by - ay, bx - ax);
-  // Sits just short of the endpoint so it reads as direction, not a join.
   const hx = bx - Math.cos(angle) * 9;
   const hy = by - Math.sin(angle) * 9;
   const spread = 0.45;
@@ -67,21 +66,19 @@ function Arrowhead({ from, to }: { from: Node; to: Node }) {
 
 export function WatTravlDemo() {
   const [start, setStart] = useState(101);
-  const [end, setEnd] = useState(10201);
+  const [end, setEnd] = useState(20301);
   const [avoidStairs, setAvoidStairs] = useState(false);
-
-  // The two pickers drive which floor is on screen; the route is computed once
-  // and only the current floor's portion is drawn, as the app does.
   const [viewBuilding, setViewBuilding] = useState<BuildingId>("MC");
   const [viewFloor, setViewFloor] = useState(1);
 
-  const route = useMemo(
-    () => findRoute(CAMPUS, start, end, { avoidStairs }),
+  const journey = useMemo(
+    () => planJourney(CAMPUS, start, end, { avoidStairs }),
     [start, end, avoidStairs],
   );
 
   const building = CAMPUS.buildings.find((b) => b.id === viewBuilding)!;
   const floorNodes = nodesOnFloor(CAMPUS, viewBuilding, viewFloor);
+  const leg = legFor(journey, viewBuilding, viewFloor);
 
   const onFloor = (n: Node) =>
     n.building === viewBuilding && findFloor(n.id) === viewFloor;
@@ -89,10 +86,7 @@ export function WatTravlDemo() {
   const floorEdges = useMemo(
     () =>
       CAMPUS.edges
-        .map((e) => ({
-          a: nodeById(CAMPUS, e.from),
-          b: nodeById(CAMPUS, e.to),
-        }))
+        .map((e) => ({ a: nodeById(CAMPUS, e.from), b: nodeById(CAMPUS, e.to) }))
         .filter(
           (pair): pair is { a: Node; b: Node } =>
             !!pair.a && !!pair.b && onFloor(pair.a) && onFloor(pair.b),
@@ -101,52 +95,49 @@ export function WatTravlDemo() {
     [viewBuilding, viewFloor],
   );
 
-  // Consecutive path pairs that both sit on the displayed floor.
+  // Only this floor's leg is drawn, as the app draws one floor at a time.
   const segments = useMemo(() => {
-    if (!route) return [];
+    if (!leg) return [];
     const out: { a: Node; b: Node }[] = [];
-    for (let i = 1; i < route.path.length; i++) {
-      const a = nodeById(CAMPUS, route.path[i - 1]);
-      const b = nodeById(CAMPUS, route.path[i]);
-      if (a && b && onFloor(a) && onFloor(b)) out.push({ a, b });
+    for (let i = 1; i < leg.path.length; i++) {
+      const a = nodeById(CAMPUS, leg.path[i - 1]);
+      const b = nodeById(CAMPUS, leg.path[i]);
+      if (a && b) out.push({ a, b });
     }
     return out;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [route, viewBuilding, viewFloor]);
-
-  // Where the path enters and leaves this floor, which the app marks green.
-  const visited = useMemo(() => {
-    if (!route) return [] as Node[];
-    return route.path
-      .map((id) => nodeById(CAMPUS, id))
-      .filter((n): n is Node => !!n && onFloor(n));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [route, viewBuilding, viewFloor]);
+  }, [leg]);
 
   const startNode = nodeById(CAMPUS, start);
   const endNode = nodeById(CAMPUS, end);
   const showStart = !!startNode && onFloor(startNode);
   const showEnd = !!endNode && onFloor(endNode);
+  const legNodes = leg?.path.map((id) => nodeById(CAMPUS, id)!) ?? [];
 
-  const jumpToStart = () => {
-    setViewBuilding(buildingOf(start));
-    setViewFloor(findFloor(start));
+  const goToLeg = (index: number) => {
+    const target = journey?.legs[index];
+    if (!target) return;
+    setViewBuilding(target.building);
+    setViewFloor(target.floor);
   };
+
+  const currentLegIndex =
+    journey?.legs.findIndex(
+      (l) => l.building === viewBuilding && l.floor === viewFloor,
+    ) ?? -1;
 
   return (
     <div className="p-4">
-      <div className="grid gap-6 lg:grid-cols-[1fr_15rem]">
+      <div className="grid gap-6 lg:grid-cols-[1fr_16rem]">
         <div>
           <div className="overflow-hidden rounded-lg border border-neutral-300 dark:border-neutral-700">
-            {/* The app's chrome: amber bar, back arrow, two pickers. */}
             <div
               className="flex items-center gap-2 p-2"
               style={{ backgroundColor: BAR }}
             >
               <button
                 type="button"
-                onClick={jumpToStart}
-                aria-label="Back to the starting floor"
+                onClick={() => goToLeg(0)}
+                aria-label="Back to the first leg"
                 className="rounded p-1.5 text-neutral-900 transition hover:bg-black/10"
               >
                 <svg viewBox="0 0 24 24" className="size-5" aria-hidden>
@@ -171,15 +162,14 @@ export function WatTravlDemo() {
                   const next = event.target.value as BuildingId;
                   const b = CAMPUS.buildings.find((x) => x.id === next)!;
                   setViewBuilding(next);
-                  // Land on a floor the route actually uses, rather than
-                  // keeping a number that leaves the map blank.
-                  setViewFloor(firstFloorIn(route, next, b.floors[0]));
+                  const entered = journey?.legs.find((l) => l.building === next);
+                  setViewFloor(entered ? entered.floor : b.floors[0]);
                 }}
                 className="flex-1 rounded border border-black/20 bg-white/80 px-2 py-1 text-sm text-neutral-900"
               >
                 {CAMPUS.buildings.map((b) => (
                   <option key={b.id} value={b.id}>
-                    {b.id} — {b.name}
+                    {b.name}
                   </option>
                 ))}
               </select>
@@ -204,20 +194,19 @@ export function WatTravlDemo() {
             <div className="flex justify-center bg-neutral-100 py-1.5 dark:bg-neutral-900">
               <button
                 type="button"
-                onClick={jumpToStart}
+                onClick={() => goToLeg(0)}
                 className="rounded border border-neutral-400 bg-white px-4 py-1 text-xs font-medium text-neutral-800 transition hover:bg-neutral-50"
               >
                 Refresh
               </button>
             </div>
 
-            {/* One floor at a time, as the app rendered it. */}
             <svg
               viewBox={`0 0 ${W} ${H}`}
               className="w-full bg-white"
               role="img"
               aria-label={`${viewBuilding} floor ${viewFloor}${
-                segments.length ? ", showing the route on this floor" : ""
+                leg ? ", showing this leg of the route" : ", not on this route"
               }`}
             >
               {floorEdges.map(({ a, b }, i) => (
@@ -227,23 +216,36 @@ export function WatTravlDemo() {
                   y1={a.y * H}
                   x2={b.x * W}
                   y2={b.y * H}
-                  stroke="#d4d4d4"
-                  strokeWidth={6}
+                  stroke="#e0e0e0"
+                  strokeWidth={7}
                   strokeLinecap="round"
                 />
               ))}
 
+              {/* Every node carries its label, so the plan is readable. */}
               {floorNodes.map((n) => (
-                <circle
-                  key={n.id}
-                  cx={n.x * W}
-                  cy={n.y * H}
-                  r={n.kind === "room" ? 5 : 3.5}
-                  fill={NODE_FILL[n.kind]}
-                />
+                <g key={n.id}>
+                  <circle
+                    cx={n.x * W}
+                    cy={n.y * H}
+                    r={n.kind === "room" ? 6 : 5}
+                    fill={NODE_FILL[n.kind]}
+                  />
+                  {n.glyph && (
+                    <text
+                      x={n.x * W}
+                      y={n.y * H + (n.y > 0.5 ? 20 : -12)}
+                      textAnchor="middle"
+                      fontSize="11"
+                      fill="#404040"
+                      fontWeight={n.kind === "room" ? 600 : 400}
+                    >
+                      {n.glyph}
+                    </text>
+                  )}
+                </g>
               ))}
 
-              {/* Route: blue 2px lines with arrowheads, as in ViewModel.draw(). */}
               {segments.map(({ a, b }, i) => (
                 <g key={i}>
                   <line
@@ -258,29 +260,27 @@ export function WatTravlDemo() {
                 </g>
               ))}
 
-              {/* Green where the path enters or leaves this floor. */}
-              {visited.length > 0 && !showStart && (
+              {legNodes.length > 0 && !showStart && (
                 <circle
-                  cx={visited[0].x * W}
-                  cy={visited[0].y * H}
-                  r={5}
+                  cx={legNodes[0].x * W}
+                  cy={legNodes[0].y * H}
+                  r={6}
                   fill="#16a34a"
                 />
               )}
-              {visited.length > 0 && !showEnd && (
+              {legNodes.length > 0 && !showEnd && (
                 <circle
-                  cx={visited.at(-1)!.x * W}
-                  cy={visited.at(-1)!.y * H}
-                  r={5}
+                  cx={legNodes.at(-1)!.x * W}
+                  cy={legNodes.at(-1)!.y * H}
+                  r={6}
                   fill="#166534"
                 />
               )}
-
               {showStart && startNode && (
                 <circle
                   cx={startNode.x * W}
                   cy={startNode.y * H}
-                  r={5}
+                  r={6}
                   fill="#dc2626"
                 />
               )}
@@ -288,17 +288,16 @@ export function WatTravlDemo() {
                 <circle
                   cx={endNode.x * W}
                   cy={endNode.y * H}
-                  r={5}
+                  r={6}
                   fill="#06b6d4"
                 />
               )}
             </svg>
           </div>
 
-          {/* The app raised this as a toast when the route left your floor. */}
-          {route?.toast && (
+          {leg?.notice && (
             <p className="mx-auto mt-3 w-fit rounded-full bg-neutral-800 px-4 py-1.5 text-sm text-neutral-100">
-              {route.toast}
+              {leg.notice}
             </p>
           )}
 
@@ -372,34 +371,40 @@ export function WatTravlDemo() {
             </span>
           </label>
 
-          {route ? (
-            <dl
-              className="grid grid-cols-2 gap-2 border-t border-neutral-200 pt-4 text-xs dark:border-neutral-800"
-              aria-live="polite"
-            >
-              <div>
-                <dt className="text-neutral-500 dark:text-neutral-400">
-                  Distance
-                </dt>
-                <dd className="font-mono tabular-nums text-neutral-900 dark:text-neutral-100">
-                  {route.distance} m
-                </dd>
-              </div>
-              <div>
-                <dt className="text-neutral-500 dark:text-neutral-400">
-                  Changes
-                </dt>
-                <dd className="font-mono tabular-nums text-neutral-900 dark:text-neutral-100">
-                  {route.transitions}
-                </dd>
-              </div>
-              <div className="col-span-2">
-                <dt className="text-neutral-500 dark:text-neutral-400">Route</dt>
-                <dd className="font-mono text-neutral-900 dark:text-neutral-100">
-                  {route.legs.map((l) => `${l.building} ${l.floor}`).join(" → ")}
-                </dd>
-              </div>
-            </dl>
+          {/* The journey as the app sequences it, one instruction per leg. */}
+          {journey ? (
+            <div className="border-t border-neutral-200 pt-4 dark:border-neutral-800">
+              <p className="mb-2 text-xs font-medium text-neutral-600 dark:text-neutral-400">
+                Directions
+              </p>
+              <ol className="space-y-1">
+                {journey.legs.map((l, i) => (
+                  <li key={`${l.building}-${l.floor}-${i}`}>
+                    <button
+                      type="button"
+                      onClick={() => goToLeg(i)}
+                      className={`w-full rounded px-2 py-1.5 text-left text-xs transition ${
+                        i === currentLegIndex
+                          ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
+                          : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+                      }`}
+                    >
+                      <span className="font-mono">
+                        {l.building} Floor {l.floor}
+                      </span>
+                      {l.notice && (
+                        <span className="mt-0.5 block opacity-80">
+                          → {l.notice}
+                        </span>
+                      )}
+                    </button>
+                  </li>
+                ))}
+              </ol>
+              <p className="mt-3 font-mono text-xs tabular-nums text-neutral-500 dark:text-neutral-400">
+                {journey.distance} m · {journey.legs.length} legs
+              </p>
+            </div>
           ) : (
             <p className="border-t border-neutral-200 pt-4 text-xs text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
               No step-free route exists between these rooms.
@@ -411,8 +416,8 @@ export function WatTravlDemo() {
               [
                 ["#dc2626", "start"],
                 ["#06b6d4", "destination"],
-                ["#16a34a", "continues on another floor"],
-                ["#2563eb", "route on this floor"],
+                ["#16a34a", "continues from here"],
+                ["#a855f7", "link bridge"],
               ] as const
             ).map(([colour, meaning]) => (
               <div key={meaning} className="flex items-center gap-2">

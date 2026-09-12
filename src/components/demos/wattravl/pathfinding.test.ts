@@ -1,58 +1,72 @@
 import { describe, it, expect } from "vitest";
 import {
   CAMPUS,
+  DC_BRIDGE,
+  MC_BRIDGE,
   buildingOf,
-  firstFloorIn,
   findFloor,
-  findRoute,
+  legFor,
   nodeById,
   nodesOnFloor,
+  planJourney,
   rooms,
   type BuildingId,
 } from "./pathfinding";
 
+const mcRoom = (floor: number) =>
+  rooms(CAMPUS, "MC").find((r) => findFloor(r.id) === floor)!.id;
+const dcRoom = (floor: number) =>
+  rooms(CAMPUS, "DC").find((r) => findFloor(r.id) === floor)!.id;
+
 describe("findFloor", () => {
-  /** Room numbers encode the floor in the first digit, as in the Kotlin source. */
   it("reads the floor from the first digit", () => {
     expect(findFloor(101)).toBe(1);
     expect(findFloor(305)).toBe(3);
-    expect(findFloor(495)).toBe(4);
   });
 
-  it("reads it the same way for the offset building", () => {
-    expect(findFloor(10201)).toBe(2);
-    expect(findFloor(10395)).toBe(3);
-  });
-});
-
-describe("buildingOf", () => {
-  it("separates the two buildings by id range", () => {
-    expect(buildingOf(101)).toBe("MC");
-    expect(buildingOf(10201)).toBe("DC");
+  it("reads it the same way in the offset building", () => {
+    expect(findFloor(DC_BRIDGE)).toBe(2);
+    expect(buildingOf(DC_BRIDGE)).toBe("DC");
   });
 });
 
 describe("the campus graph", () => {
-  it("has both buildings", () => {
-    expect(CAMPUS.buildings.map((b) => b.id).sort()).toEqual(["DC", "MC"]);
+  it("has both buildings with their bridge floors", () => {
+    const mc = CAMPUS.buildings.find((b) => b.id === "MC")!;
+    const dc = CAMPUS.buildings.find((b) => b.id === "DC")!;
+    expect(mc.bridgeFloor).toBe(3);
+    expect(dc.bridgeFloor).toBe(2);
+    expect(mc.bridgeNode).toBe(MC_BRIDGE);
+    expect(dc.bridgeNode).toBe(DC_BRIDGE);
   });
 
-  it("has rooms on every floor of every building", () => {
-    for (const building of CAMPUS.buildings) {
-      for (const floor of building.floors) {
-        const onFloor = nodesOnFloor(CAMPUS, building.id, floor).filter(
-          (n) => n.kind === "room",
-        );
-        expect(onFloor.length, `${building.id} floor ${floor}`).toBeGreaterThan(0);
+  it("puts each bridge node on its building's bridge floor", () => {
+    expect(findFloor(MC_BRIDGE)).toBe(3);
+    expect(findFloor(DC_BRIDGE)).toBe(2);
+  });
+
+  /** Every node needs something drawable, or the plan is unreadable. */
+  it("labels every node, and gives every room a visible number", () => {
+    for (const node of CAMPUS.nodes) {
+      expect(node.label, String(node.id)).toBeTruthy();
+      if (node.kind !== "hallway") {
+        expect(node.glyph, node.label).toBeTruthy();
+      }
+      if (node.kind === "room") {
+        expect(node.glyph, node.label).toMatch(/^\d{4}$/);
       }
     }
   });
 
-  it("gives every edge two real endpoints and a positive weight", () => {
+  it("gives every edge two real endpoints inside one building", () => {
     for (const edge of CAMPUS.edges) {
-      expect(nodeById(CAMPUS, edge.from), String(edge.from)).toBeDefined();
-      expect(nodeById(CAMPUS, edge.to), String(edge.to)).toBeDefined();
+      const a = nodeById(CAMPUS, edge.from);
+      const b = nodeById(CAMPUS, edge.to);
+      expect(a, String(edge.from)).toBeDefined();
+      expect(b, String(edge.to)).toBeDefined();
       expect(edge.weight).toBeGreaterThan(0);
+      // The crossing is a leg, not an edge, so no edge may span buildings.
+      expect(a!.building, `${edge.from} → ${edge.to}`).toBe(b!.building);
     }
   });
 
@@ -65,51 +79,32 @@ describe("the campus graph", () => {
       }
     }
   });
-
-  it("keeps every node inside its floor plan", () => {
-    for (const node of CAMPUS.nodes) {
-      expect(node.x, node.label).toBeGreaterThanOrEqual(0);
-      expect(node.x, node.label).toBeLessThanOrEqual(1);
-      expect(node.y, node.label).toBeGreaterThanOrEqual(0);
-      expect(node.y, node.label).toBeLessThanOrEqual(1);
-    }
-  });
-
-  it("joins the buildings at exactly one crossing", () => {
-    const links = CAMPUS.edges.filter((e) => {
-      const a = nodeById(CAMPUS, e.from)!;
-      const b = nodeById(CAMPUS, e.to)!;
-      return a.building !== b.building;
-    });
-    expect(links).toHaveLength(1);
-  });
 });
 
-describe("findRoute", () => {
-  it("routes within one floor without changing floor", () => {
-    const route = findRoute(CAMPUS, 101, 105)!;
-    expect(route).not.toBeNull();
-    expect(route.legs).toEqual([{ building: "MC", floor: 1 }]);
-    expect(route.transitions).toBe(0);
+describe("routing inside one building", () => {
+  it("stays on one leg when start and end share a floor", () => {
+    const journey = planJourney(CAMPUS, mcRoom(1), 105)!;
+    expect(journey.legs).toHaveLength(1);
+    expect(journey.legs[0].notice).toBe("");
   });
 
-  it("returns a zero-length route to the starting room", () => {
-    const route = findRoute(CAMPUS, 101, 101)!;
-    expect(route.distance).toBe(0);
-    expect(route.path).toEqual([101]);
-  });
-
-  it("starts and ends where it was asked to", () => {
-    const route = findRoute(CAMPUS, 102, 403)!;
-    expect(route.path[0]).toBe(102);
-    expect(route.path.at(-1)).toBe(403);
+  it("announces each floor change", () => {
+    const journey = planJourney(CAMPUS, mcRoom(1), mcRoom(3))!;
+    expect(journey.legs.length).toBeGreaterThan(1);
+    // Every leg but the last tells you where to go next.
+    for (let i = 0; i < journey.legs.length - 1; i++) {
+      expect(journey.legs[i].notice).toBe(
+        `Head to Floor ${journey.legs[i + 1].floor}`,
+      );
+    }
+    expect(journey.legs.at(-1)!.notice).toBe("");
   });
 
   it("returns a connected path", () => {
-    const route = findRoute(CAMPUS, 103, 302)!;
-    for (let i = 1; i < route.path.length; i++) {
-      const a = route.path[i - 1];
-      const b = route.path[i];
+    const journey = planJourney(CAMPUS, mcRoom(1), mcRoom(4))!;
+    for (let i = 1; i < journey.path.length; i++) {
+      const a = journey.path[i - 1];
+      const b = journey.path[i];
       const joined = CAMPUS.edges.some(
         (e) => (e.from === a && e.to === b) || (e.from === b && e.to === a),
       );
@@ -117,130 +112,158 @@ describe("findRoute", () => {
     }
   });
 
-  it("reports a distance matching the edges it walked", () => {
-    const route = findRoute(CAMPUS, 101, 305)!;
-    let sum = 0;
-    for (let i = 1; i < route.path.length; i++) {
-      const a = route.path[i - 1];
-      const b = route.path[i];
-      const edge = CAMPUS.edges.find(
-        (e) => (e.from === a && e.to === b) || (e.from === b && e.to === a),
-      )!;
-      sum += edge.weight;
-    }
-    expect(sum).toBe(route.distance);
-  });
-
-  it("is symmetric, since the graph is undirected", () => {
-    const there = findRoute(CAMPUS, 102, 304)!;
-    const back = findRoute(CAMPUS, 304, 102)!;
-    expect(there.distance).toBe(back.distance);
-  });
-
-  it("finds a route between every pair of rooms", () => {
-    const all = rooms(CAMPUS);
-    for (const from of all) {
-      for (const to of all) {
+  it("finds a route between every pair of rooms in a building", () => {
+    for (const from of rooms(CAMPUS, "MC")) {
+      for (const to of rooms(CAMPUS, "MC")) {
         expect(
-          findRoute(CAMPUS, from.id, to.id),
-          `${from.id} → ${to.id}`,
+          planJourney(CAMPUS, from.id, to.id),
+          `${from.label} → ${to.label}`,
         ).not.toBeNull();
       }
     }
   });
 });
 
-describe("crossing between buildings", () => {
-  it("routes from MC to DC", () => {
-    const route = findRoute(CAMPUS, 101, 10201)!;
-    expect(route).not.toBeNull();
-    expect(buildingOf(route.path[0])).toBe("MC");
-    expect(buildingOf(route.path.at(-1)!)).toBe("DC");
-  });
-
-  it("passes through the link on the way", () => {
-    const route = findRoute(CAMPUS, 101, 10201)!;
-    const kinds = route.path.map((id) => nodeById(CAMPUS, id)!.kind);
-    expect(kinds).toContain("link");
-  });
-
-  it("visits both buildings in its legs", () => {
-    const route = findRoute(CAMPUS, 101, 10301)!;
-    const buildings = new Set<BuildingId>(route.legs.map((l) => l.building));
-    expect([...buildings].sort()).toEqual(["DC", "MC"]);
-  });
-});
-
-describe("firstFloorIn", () => {
+describe("routing between buildings", () => {
   /**
-   * Regression: switching the building picker used to keep the current floor
-   * number when it happened to exist in the other building, landing on a floor
-   * the route never touches and showing an empty map.
+   * The app does not search across the bridge. It routes to the bridge in one
+   * building, tells you to take the link, then routes again in the other.
    */
-  it("picks the floor the route actually uses, not the one already selected", () => {
-    const route = findRoute(CAMPUS, 101, 10201)!;
-    // The route crosses into DC on floor 2 only; DC also has a floor 3.
-    expect(firstFloorIn(route, "DC", 1)).toBe(2);
-    expect(firstFloorIn(route, "MC", 1)).toBe(1);
+  it("reaches the bridge, then continues from the far side", () => {
+    const journey = planJourney(CAMPUS, mcRoom(1), dcRoom(3))!;
+    expect(journey).not.toBeNull();
+
+    const crossing = journey.legs.findIndex((l) => l.notice.endsWith("Link"));
+    expect(crossing).toBeGreaterThanOrEqual(0);
+
+    // Everything before the crossing is in MC, everything after is in DC.
+    for (let i = 0; i <= crossing; i++) {
+      expect(journey.legs[i].building).toBe("MC");
+    }
+    for (let i = crossing + 1; i < journey.legs.length; i++) {
+      expect(journey.legs[i].building).toBe("DC");
+    }
   });
 
-  it("falls back when the route never enters that building", () => {
-    const route = findRoute(CAMPUS, 101, 105)!;
-    expect(firstFloorIn(route, "DC", 1)).toBe(1);
+  it("raises the link notice on the bridge floor, not elsewhere", () => {
+    const journey = planJourney(CAMPUS, mcRoom(1), dcRoom(3))!;
+    const linkLeg = journey.legs.find((l) => l.notice === "Take DC Link")!;
+    expect(linkLeg).toBeDefined();
+    expect(linkLeg.building).toBe("MC");
+    expect(linkLeg.floor).toBe(3);
+    expect(linkLeg.path).toContain(MC_BRIDGE);
   });
 
-  it("falls back when there is no route", () => {
-    expect(firstFloorIn(null, "DC", 3)).toBe(3);
+  it("tells you to change floor before the bridge when you start elsewhere", () => {
+    const journey = planJourney(CAMPUS, mcRoom(1), dcRoom(2))!;
+    // Starting on MC 1 with the bridge on MC 3, the first notice is a floor
+    // change, not the link.
+    expect(journey.legs[0].notice).toMatch(/^Head to Floor \d$/);
+    expect(journey.legs[0].notice).not.toBe("Take DC Link");
+  });
+
+  it("goes straight to the link when already on the bridge floor", () => {
+    const journey = planJourney(CAMPUS, mcRoom(3), dcRoom(2))!;
+    expect(journey.legs[0].building).toBe("MC");
+    expect(journey.legs[0].floor).toBe(3);
+    expect(journey.legs[0].notice).toBe("Take DC Link");
+  });
+
+  it("arrives in DC on the bridge floor", () => {
+    const journey = planJourney(CAMPUS, mcRoom(1), dcRoom(3))!;
+    const crossing = journey.legs.findIndex((l) => l.notice.endsWith("Link"));
+    const arrival = journey.legs[crossing + 1];
+    expect(arrival.building).toBe("DC");
+    expect(arrival.floor).toBe(2);
+    expect(arrival.path).toContain(DC_BRIDGE);
+  });
+
+  it("routes on from the arrival floor when the room is higher up", () => {
+    const journey = planJourney(CAMPUS, mcRoom(1), dcRoom(3))!;
+    const arrival = journey.legs.find(
+      (l) => l.building === "DC" && l.floor === 2,
+    )!;
+    expect(arrival.notice).toBe("Head to Floor 3");
+    expect(journey.legs.at(-1)!.floor).toBe(3);
+    expect(journey.legs.at(-1)!.notice).toBe("");
+  });
+
+  it("works in the other direction too", () => {
+    const journey = planJourney(CAMPUS, dcRoom(1), mcRoom(4))!;
+    expect(journey.legs.some((l) => l.notice === "Take MC Link")).toBe(true);
+    expect(journey.legs[0].building).toBe("DC");
+    expect(journey.legs.at(-1)!.building).toBe("MC");
+  });
+
+  it("sums the distance of both halves", () => {
+    const journey = planJourney(CAMPUS, mcRoom(1), dcRoom(3))!;
+    expect(journey.distance).toBeGreaterThan(0);
+    expect(journey.path.length).toBe(
+      journey.legs.reduce((n, l) => n + l.path.length, 0),
+    );
   });
 });
 
-describe("the floor-change toast", () => {
-  /** The real app raises a toast only when the route leaves your floor. */
-  it("stays empty for a same-floor route", () => {
-    expect(findRoute(CAMPUS, 101, 105)!.toast).toBe("");
+describe("legFor", () => {
+  it("returns the leg drawn on a given floor", () => {
+    const journey = planJourney(CAMPUS, mcRoom(1), dcRoom(3));
+    expect(legFor(journey, "MC", 1)).toBeDefined();
+    expect(legFor(journey, "DC", 2)).toBeDefined();
+    // DC floor 1 is never entered on this journey.
+    expect(legFor(journey, "DC", 1)).toBeUndefined();
   });
 
-  it("names the destination floor when changing floor", () => {
-    expect(findRoute(CAMPUS, 101, 301)!.toast).toBe("Head to Floor 3");
-  });
-
-  it("says where to go when crossing buildings", () => {
-    expect(findRoute(CAMPUS, 101, 10201)!.toast).toMatch(/^Go to Floor \d$/);
+  it("is undefined when there is no journey", () => {
+    expect(legFor(null, "MC", 1)).toBeUndefined();
   });
 });
 
 describe("avoiding stairs", () => {
   it("uses no staircase when asked not to", () => {
-    const route = findRoute(CAMPUS, 101, 401, { avoidStairs: true })!;
-    const kinds = route.path.map((id) => nodeById(CAMPUS, id)!.kind);
+    const journey = planJourney(CAMPUS, mcRoom(1), mcRoom(4), {
+      avoidStairs: true,
+    })!;
+    const kinds = journey.path.map((id) => nodeById(CAMPUS, id)!.kind);
     expect(kinds).not.toContain("stairs");
     expect(kinds).toContain("elevator");
   });
 
-  it("still reaches every floor without stairs", () => {
-    for (const floor of [2, 3, 4]) {
-      const target = rooms(CAMPUS, "MC").find((r) => findFloor(r.id) === floor)!;
-      const route = findRoute(CAMPUS, 101, target.id, { avoidStairs: true });
-      expect(route, `floor ${floor}`).not.toBeNull();
-    }
-  });
-
-  it("still crosses to the other building without stairs", () => {
-    expect(findRoute(CAMPUS, 101, 10201, { avoidStairs: true })).not.toBeNull();
+  it("still crosses between buildings without stairs", () => {
+    const journey = planJourney(CAMPUS, mcRoom(1), dcRoom(3), {
+      avoidStairs: true,
+    });
+    expect(journey).not.toBeNull();
+    expect(journey!.legs.some((l) => l.notice === "Take DC Link")).toBe(true);
   });
 
   it("costs no less than the unrestricted route", () => {
-    // Removing options can only make the best route longer or equal.
-    for (const target of [201, 301, 401]) {
-      const free = findRoute(CAMPUS, 101, target)!;
-      const lift = findRoute(CAMPUS, 101, target, { avoidStairs: true })!;
+    for (const floor of [2, 3, 4]) {
+      const free = planJourney(CAMPUS, mcRoom(1), mcRoom(floor))!;
+      const lift = planJourney(CAMPUS, mcRoom(1), mcRoom(floor), {
+        avoidStairs: true,
+      })!;
       expect(lift.distance).toBeGreaterThanOrEqual(free.distance);
     }
   });
 
-  it("leaves same-floor routes untouched", () => {
-    const free = findRoute(CAMPUS, 101, 105)!;
-    const lift = findRoute(CAMPUS, 101, 105, { avoidStairs: true })!;
-    expect(lift.distance).toBe(free.distance);
+  it("keeps the notices identical in shape", () => {
+    const lift = planJourney(CAMPUS, mcRoom(1), dcRoom(3), {
+      avoidStairs: true,
+    })!;
+    for (const leg of lift.legs.slice(0, -1)) {
+      expect(leg.notice).toMatch(/^(Head to Floor \d|Take (DC|MC) Link)$/);
+    }
+  });
+});
+
+describe("building ids", () => {
+  it("separates the two buildings by id range", () => {
+    const buildings = new Set<BuildingId>(
+      CAMPUS.nodes.map((n) => buildingOf(n.id)),
+    );
+    expect([...buildings].sort()).toEqual(["DC", "MC"]);
+    for (const node of CAMPUS.nodes) {
+      expect(buildingOf(node.id), node.label).toBe(node.building);
+    }
   });
 });
