@@ -88,16 +88,30 @@ describe("routing inside one building", () => {
     expect(journey.legs[0].notice).toBe("");
   });
 
-  it("announces each floor change", () => {
+  /**
+   * The app compares only the start and end room digits:
+   *   if (end.first() != start.first()) toast = "Head to Floor ${end.first()}"
+   * Floor 1 to floor 3 says "Head to Floor 3" once, never "Head to Floor 2".
+   */
+  it("names the destination floor once, not every floor on the way", () => {
     const journey = planJourney(CAMPUS, mcRoom(1), mcRoom(3))!;
     expect(journey.legs.length).toBeGreaterThan(1);
-    // Every leg but the last tells you where to go next.
-    for (let i = 0; i < journey.legs.length - 1; i++) {
-      expect(journey.legs[i].notice).toBe(
-        `Head to Floor ${journey.legs[i + 1].floor}`,
-      );
-    }
-    expect(journey.legs.at(-1)!.notice).toBe("");
+
+    const notices = journey.legs.map((l) => l.notice).filter(Boolean);
+    expect(notices).toEqual(["Head to Floor 3"]);
+    // Nothing mentions the floor merely passed through.
+    expect(notices).not.toContain("Head to Floor 2");
+  });
+
+  it("says nothing when the destination is on the same floor", () => {
+    const journey = planJourney(CAMPUS, mcRoom(1), 105)!;
+    expect(journey.legs.every((l) => l.notice === "")).toBe(true);
+  });
+
+  it("names the destination even across three floors", () => {
+    const journey = planJourney(CAMPUS, mcRoom(1), mcRoom(4))!;
+    const notices = journey.legs.map((l) => l.notice).filter(Boolean);
+    expect(notices).toEqual(["Head to Floor 4"]);
   });
 
   it("returns a connected path", () => {
@@ -154,12 +168,15 @@ describe("routing between buildings", () => {
     expect(linkLeg.path).toContain(MC_BRIDGE);
   });
 
-  it("tells you to change floor before the bridge when you start elsewhere", () => {
+  it("gives one notice to reach the bridge floor, naming only that floor", () => {
     const journey = planJourney(CAMPUS, mcRoom(1), dcRoom(2))!;
-    // Starting on MC 1 with the bridge on MC 3, the first notice is a floor
-    // change, not the link.
-    expect(journey.legs[0].notice).toMatch(/^Head to Floor \d$/);
-    expect(journey.legs[0].notice).not.toBe("Take DC Link");
+    // Bridge is on MC 3; starting on MC 1 names 3 directly, never 2.
+    expect(journey.legs[0].notice).toBe("Go to Floor 3");
+    const mcNotices = journey.legs
+      .filter((l) => l.building === "MC")
+      .map((l) => l.notice)
+      .filter(Boolean);
+    expect(mcNotices).toEqual(["Go to Floor 3", "Take DC Link"]);
   });
 
   it("goes straight to the link when already on the bridge floor", () => {
@@ -178,14 +195,25 @@ describe("routing between buildings", () => {
     expect(arrival.path).toContain(DC_BRIDGE);
   });
 
-  it("routes on from the arrival floor when the room is higher up", () => {
+  it("gives one notice on the far side, naming the destination floor", () => {
     const journey = planJourney(CAMPUS, mcRoom(1), dcRoom(3))!;
-    const arrival = journey.legs.find(
-      (l) => l.building === "DC" && l.floor === 2,
-    )!;
-    expect(arrival.notice).toBe("Head to Floor 3");
+    const dcNotices = journey.legs
+      .filter((l) => l.building === "DC")
+      .map((l) => l.notice)
+      .filter(Boolean);
+    expect(dcNotices).toEqual(["Head to Floor 3"]);
     expect(journey.legs.at(-1)!.floor).toBe(3);
     expect(journey.legs.at(-1)!.notice).toBe("");
+  });
+
+  it("says nothing extra when the bridge lands on the destination floor", () => {
+    // DC bridge is on floor 2, so a DC floor 2 room needs no further notice.
+    const journey = planJourney(CAMPUS, mcRoom(3), dcRoom(2))!;
+    const dcNotices = journey.legs
+      .filter((l) => l.building === "DC")
+      .map((l) => l.notice)
+      .filter(Boolean);
+    expect(dcNotices).toEqual([]);
   });
 
   it("works in the other direction too", () => {
@@ -246,13 +274,22 @@ describe("avoiding stairs", () => {
     }
   });
 
-  it("keeps the notices identical in shape", () => {
+  it("keeps the notices identical in shape, and just as sparse", () => {
     const lift = planJourney(CAMPUS, mcRoom(1), dcRoom(3), {
       avoidStairs: true,
     })!;
-    for (const leg of lift.legs.slice(0, -1)) {
-      expect(leg.notice).toMatch(/^(Head to Floor \d|Take (DC|MC) Link)$/);
+    const notices = lift.legs.map((l) => l.notice).filter(Boolean);
+
+    for (const notice of notices) {
+      expect(notice).toMatch(/^((Head|Go) to Floor \d|Take (DC|MC) Link)$/);
     }
+    // Reaching the bridge, crossing it, and reaching the destination floor —
+    // never one per floor walked through.
+    expect(notices).toEqual([
+      "Go to Floor 3",
+      "Take DC Link",
+      "Head to Floor 3",
+    ]);
   });
 });
 

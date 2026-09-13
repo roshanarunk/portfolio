@@ -326,10 +326,11 @@ function toLegs(campus: Campus, path: number[]): Leg[] {
 /**
  * Plans a journey the way the app does.
  *
- * Within one building it is a single search, with a "Head to Floor N" notice
- * when the destination is on another floor. Across buildings it is two
- * searches joined at the bridge, with a notice telling you which floor the
- * bridge is on and then to take the link.
+ * Within one building it is a single search with at most ONE notice, naming
+ * the destination floor — the app compares the start and end room digits and
+ * says nothing about the floors in between. Across buildings it is two
+ * searches joined at the bridge: one notice to reach the bridge floor, the
+ * link notice on that floor, then one notice for the destination floor.
  */
 export function planJourney(
   campus: Campus,
@@ -345,9 +346,11 @@ export function planJourney(
     if (!found) return null;
     const legs = toLegs(campus, found.path);
 
-    // "Head to Floor N" when the journey leaves the floor you are on.
-    for (let i = 0; i < legs.length - 1; i++) {
-      legs[i].notice = `Head to Floor ${legs[i + 1].floor}`;
+    // One notice, naming the destination floor, exactly as the app does:
+    // it compares the first digit of the start and end rooms and says nothing
+    // about the floors passed through on the way.
+    if (legs.length > 1) {
+      legs[0].notice = `Head to Floor ${legs.at(-1)!.floor}`;
     }
     return { legs, distance: found.distance, path: found.path };
   }
@@ -362,15 +365,18 @@ export function planJourney(
   const firstLegs = toLegs(campus, first.path);
   const secondLegs = toLegs(campus, second.path);
 
-  // Inside the first building, each floor change is announced as usual.
-  for (let i = 0; i < firstLegs.length - 1; i++) {
-    firstLegs[i].notice = `Head to Floor ${firstLegs[i + 1].floor}`;
+  // One notice to reach the bridge floor, raised only when you are not
+  // already on it — the app checks getFloorOfNode(path[0]) against the bridge
+  // floor rather than announcing every floor on the way.
+  if (firstLegs.length > 1) {
+    firstLegs[0].notice = `Go to Floor ${from.bridgeFloor}`;
   }
-  // At the bridge floor, the app tells you to take the link.
+  // Then, on the bridge floor itself, take the link.
   firstLegs[firstLegs.length - 1].notice = `Take ${to.id} Link`;
 
-  for (let i = 0; i < secondLegs.length - 1; i++) {
-    secondLegs[i].notice = `Head to Floor ${secondLegs[i + 1].floor}`;
+  // Same rule on the far side: one notice naming the destination floor.
+  if (secondLegs.length > 1) {
+    secondLegs[0].notice = `Head to Floor ${secondLegs.at(-1)!.floor}`;
   }
 
   return {
