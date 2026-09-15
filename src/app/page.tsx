@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowRight, Mail } from "lucide-react";
-import { GithubIcon } from "@/components/ui/icons";
+import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { HeroSolver } from "@/components/home/HeroSolver";
+import { Experience } from "@/components/home/Experience";
 import { ProjectCarousel } from "@/components/home/ProjectCarousel";
 import { featuredProjects, hoojProjects, projects } from "@/content/projects";
 import { site } from "@/content/site";
@@ -50,6 +51,17 @@ export default function HomePage() {
               <GithubIcon className="size-4" />
               GitHub
             </a>
+            {site.linkedin && (
+              <a
+                href={site.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+              >
+                <LinkedinIcon className="size-4" />
+                LinkedIn
+              </a>
+            )}
           </div>
         </div>
 
@@ -102,6 +114,8 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
+
+      <Experience />
 
       {/*
         The four HOOJ repos are far stronger read as one product story than as
