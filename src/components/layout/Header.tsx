@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { nav, site } from "@/content/site";
 import { cn } from "@/lib/utils";
+import { Container } from "./Container";
 import { ThemeToggle } from "./ThemeToggle";
 
 export function Header() {
@@ -11,20 +12,15 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white/85 backdrop-blur dark:border-neutral-800 dark:bg-neutral-950/85">
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-3">
-        <Link
-          href="/"
-          className="font-medium text-neutral-900 dark:text-neutral-100"
-        >
+      <Container className="flex items-center justify-between gap-4 py-3">
+        <Link href="/" className="font-medium text-neutral-900 dark:text-neutral-100">
           {site.name}
         </Link>
 
         <nav aria-label="Main" className="flex items-center gap-1">
           {nav.map((item) => {
             const active =
-              item.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(item.href);
+              item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
             return (
               <Link
                 key={item.href}
@@ -43,7 +39,7 @@ export function Header() {
           })}
           <ThemeToggle />
         </nav>
-      </div>
+      </Container>
     </header>
   );
 }

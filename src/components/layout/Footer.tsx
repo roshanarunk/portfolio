@@ -1,11 +1,12 @@
 import { Mail } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { site } from "@/content/site";
+import { Container } from "./Container";
 
 export function Footer() {
   return (
     <footer className="mt-24 border-t border-neutral-200 dark:border-neutral-800">
-      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-8 text-sm text-neutral-600 dark:text-neutral-400">
+      <Container className="flex flex-wrap items-center justify-between gap-4 py-8 text-sm text-neutral-600 dark:text-neutral-400">
         <p>
           &copy; {new Date().getFullYear()} {site.name}
         </p>
@@ -38,7 +39,7 @@ export function Footer() {
             Email
           </a>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 }

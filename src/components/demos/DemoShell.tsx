@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState, type ReactNode } from "react";
+import { useCallback, useId, useState, type ReactNode } from "react";
 import { ExternalLink, RotateCcw } from "lucide-react";
 import { DemoErrorBoundary } from "./DemoErrorBoundary";
 import { cn } from "@/lib/utils";
@@ -33,6 +33,7 @@ export function DemoShell({
 }: DemoShellProps) {
   const [resetToken, setResetToken] = useState(0);
   const reset = useCallback(() => setResetToken((n) => n + 1), []);
+  const headingId = useId();
 
   return (
     <section
@@ -40,14 +41,23 @@ export function DemoShell({
         "overflow-hidden rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950",
         className,
       )}
-      aria-label={title}
+      aria-labelledby={headingId}
     >
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 px-4 py-3 dark:border-neutral-800">
+      {/*
+        An <h2>, not an <h3>: the demo sits directly under the project's <h1>,
+        so anything deeper skips a level and breaks the document outline for
+        screen readers. A plain <div> rather than a nested <header>, which would
+        otherwise add a second banner-ish landmark inside the page's <article>.
+      */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 px-4 py-3 dark:border-neutral-800">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="font-medium text-neutral-900 dark:text-neutral-100">
+            <h2
+              id={headingId}
+              className="font-medium text-neutral-900 dark:text-neutral-100"
+            >
               {title}
-            </h3>
+            </h2>
             {badge && (
               <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
                 {badge}
@@ -84,13 +94,9 @@ export function DemoShell({
             </a>
           )}
         </div>
-      </header>
+      </div>
 
-      <DemoErrorBoundary
-        resetToken={resetToken}
-        onRetry={reset}
-        sourceUrl={sourceUrl}
-      >
+      <DemoErrorBoundary resetToken={resetToken} onRetry={reset} sourceUrl={sourceUrl}>
         {typeof children === "function" ? children(resetToken) : children}
       </DemoErrorBoundary>
     </section>

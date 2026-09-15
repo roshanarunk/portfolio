@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Mail } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
+import { Container } from "@/components/layout/Container";
 import { HeroSolver } from "@/components/home/HeroSolver";
 import { Experience } from "@/components/home/Experience";
 import { ProjectCarousel } from "@/components/home/ProjectCarousel";
@@ -11,7 +12,7 @@ const playableCount = projects.filter((p) => p.demo.kind === "live").length;
 
 export default function HomePage() {
   return (
-    <div className="mx-auto max-w-7xl px-6 sm:px-8">
+    <Container>
       {/*
         Experience mode: the artifact leads. The board on the right is the real
         solver from the Sudoku project working the hardest known board, so the
@@ -121,19 +122,27 @@ export default function HomePage() {
         The four HOOJ repos are far stronger read as one product story than as
         four unrelated side projects, so this section gets its own surface.
       */}
-      <section aria-labelledby="hooj" className="py-16">
-        <div className="rounded-2xl bg-neutral-50 p-8 sm:p-10 dark:bg-neutral-900/60">
-          <h2
-            id="hooj"
-            className="text-2xl font-semibold tracking-tight text-balance text-neutral-900 dark:text-neutral-100"
-          >
-            Building the tooling for a coaching org
-          </h2>
-          <p className="mt-3 max-w-2xl text-neutral-600 dark:text-neutral-400">
-            I helped run a Valorant coaching organisation, and most of what it
-            needed did not exist. Over about a year I built the pieces one
-            problem at a time — a public league site, then the admin work behind
-            it, then the analysis tools coaches asked for.
+      <section
+        aria-labelledby="hooj"
+        className="border-t border-neutral-200 py-16 dark:border-neutral-800"
+      >
+        {/*
+          The heading sits outside the tinted panel so it starts on the same
+          left edge as every other section heading; the panel holds only the
+          supporting list, which is what the tint is actually for.
+        */}
+        <h2
+          id="hooj"
+          className="text-2xl font-semibold tracking-tight text-balance text-neutral-900 dark:text-neutral-100"
+        >
+          Building the tooling for a coaching org
+        </h2>
+        <div className="mt-6 rounded-2xl bg-neutral-50 p-8 sm:p-10 dark:bg-neutral-900/60">
+          <p className="max-w-xl text-neutral-600 dark:text-neutral-400">
+            I helped run a Valorant coaching organisation, and most of what it needed
+            did not exist. Over about a year I built the pieces one problem at a time —
+            a public league site, then the admin work behind it, then the analysis tools
+            coaches asked for.
           </p>
           <ol className="mt-8 space-y-4">
             {hoojProjects.map((project, index) => (
@@ -185,6 +194,6 @@ export default function HomePage() {
           {site.email}
         </a>
       </section>
-    </div>
+    </Container>
   );
 }

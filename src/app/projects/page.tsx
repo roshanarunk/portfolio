@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Container } from "@/components/layout/Container";
 import { ProjectCard } from "@/components/project/ProjectCard";
 import { projects } from "@/content/projects";
 
@@ -16,14 +17,14 @@ export default function ProjectsPage() {
   ];
 
   return (
-    <div className="mx-auto max-w-7xl px-6 sm:px-8 py-12">
+    <Container className="py-12">
       <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
         Projects
       </h1>
-      <p className="mt-3 max-w-2xl text-neutral-600 dark:text-neutral-400">
-        Where a project could be made to run in the browser, it does. Where it
-        genuinely could not — an iOS app, an Android AR headset app, a Windows
-        overlay — there is a video or a writeup instead.
+      <p className="mt-3 max-w-xl text-neutral-600 dark:text-neutral-400">
+        Where a project could be made to run in the browser, it does. Where it genuinely
+        could not — an iOS app, an Android AR headset app, a Windows overlay — there is
+        a video or a writeup instead.
       </p>
 
       {tiers.map(({ tier, label }) => {
@@ -43,6 +44,6 @@ export default function ProjectsPage() {
           </section>
         );
       })}
-    </div>
+    </Container>
   );
 }

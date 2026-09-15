@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink, Info } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
+import { Container } from "@/components/layout/Container";
 import { DemoRenderer } from "@/components/demos/DemoRenderer";
 import { getProject, projects } from "@/content/projects";
 
@@ -33,7 +34,7 @@ export default async function ProjectPage({ params }: Params) {
   if (!project) notFound();
 
   return (
-    <article className="mx-auto max-w-3xl px-6 py-12">
+    <Container as="article" className="py-12">
       <Link
         href="/projects"
         className="inline-flex items-center gap-1.5 text-sm text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
@@ -42,7 +43,12 @@ export default async function ProjectPage({ params }: Params) {
         All projects
       </Link>
 
-      <header className="mt-6">
+      {/*
+        Header, prose and the demo all sit on the same page edge. Only the
+        running text is held to a narrow measure; the demo stays full width,
+        because several of them need the room to be usable.
+      */}
+      <header className="mt-6 max-w-2xl">
         <div className="flex flex-wrap items-baseline gap-3">
           <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
             {project.title}
@@ -93,7 +99,7 @@ export default async function ProjectPage({ params }: Params) {
       </header>
 
       {project.disclosure && (
-        <p className="mt-8 flex gap-2.5 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950/50 dark:text-amber-200">
+        <p className="mt-8 flex max-w-2xl gap-2.5 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950/50 dark:text-amber-200">
           <Info aria-hidden className="mt-0.5 size-4 shrink-0" />
           {project.disclosure}
         </p>
@@ -103,7 +109,7 @@ export default async function ProjectPage({ params }: Params) {
         <DemoRenderer demo={project.demo} />
       </div>
 
-      <section className="mt-12 space-y-4">
+      <section className="mt-12 max-w-xl space-y-4">
         {project.longDescription.map((paragraph) => (
           <p
             key={paragraph.slice(0, 40)}
@@ -115,7 +121,7 @@ export default async function ProjectPage({ params }: Params) {
       </section>
 
       {project.highlights && project.highlights.length > 0 && (
-        <section className="mt-10">
+        <section className="mt-10 max-w-xl">
           <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
             What it does
           </h2>
@@ -125,7 +131,10 @@ export default async function ProjectPage({ params }: Params) {
                 key={item}
                 className="flex gap-3 text-neutral-700 dark:text-neutral-300"
               >
-                <span aria-hidden className="mt-2.5 size-1 shrink-0 rounded-full bg-neutral-400" />
+                <span
+                  aria-hidden
+                  className="mt-2.5 size-1 shrink-0 rounded-full bg-neutral-400"
+                />
                 {item}
               </li>
             ))}
@@ -134,7 +143,7 @@ export default async function ProjectPage({ params }: Params) {
       )}
 
       {project.challenges && project.challenges.length > 0 && (
-        <section className="mt-10">
+        <section className="mt-10 max-w-xl">
           <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
             Problems worth writing down
           </h2>
@@ -155,6 +164,6 @@ export default async function ProjectPage({ params }: Params) {
           </div>
         </section>
       )}
-    </article>
+    </Container>
   );
 }
