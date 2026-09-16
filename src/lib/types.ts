@@ -9,12 +9,7 @@
 
 export type Tier = 1 | 2 | 3;
 
-export type TechCategory =
-  | "language"
-  | "framework"
-  | "library"
-  | "tool"
-  | "platform";
+export type TechCategory = "language" | "framework" | "library" | "tool" | "platform";
 
 export interface TechTag {
   label: string;
@@ -34,7 +29,9 @@ export type LiveDemoId =
   | "league-ml"
   | "vrvision"
   | "cc3k"
-  | "wattravl";
+  | "wattravl"
+  | "atm"
+  | "whj-student-update";
 
 /**
  * How a project is demonstrated. Not every project can run in a browser, so the
@@ -107,12 +104,7 @@ export interface WriteupDemo extends DemoBase {
   excerpts?: CodeExcerpt[];
 }
 
-export type Demo =
-  | LiveDemo
-  | IframeDemo
-  | VideoDemo
-  | GalleryDemo
-  | WriteupDemo;
+export type Demo = LiveDemo | IframeDemo | VideoDemo | GalleryDemo | WriteupDemo;
 
 export interface Challenge {
   problem: string;

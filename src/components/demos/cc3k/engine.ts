@@ -91,13 +91,7 @@ export const RACES: RaceSpec[] = [
 ];
 
 export type EnemyRace =
-  | "human"
-  | "dwarf"
-  | "halfling"
-  | "elf"
-  | "orc"
-  | "merchant"
-  | "dragon";
+  "human" | "dwarf" | "halfling" | "elf" | "orc" | "merchant" | "dragon";
 
 interface EnemySpec {
   race: EnemyRace;
@@ -465,8 +459,7 @@ function drink(state: GameState, potion: PotionType) {
 /** One enemy's turn: strike if adjacent, else wander. */
 function actEnemy(state: GameState, enemy: Enemy, rng: Rng) {
   const p = state.player;
-  const adjacent =
-    Math.abs(enemy.x - p.x) <= 1 && Math.abs(enemy.y - p.y) <= 1;
+  const adjacent = Math.abs(enemy.x - p.x) <= 1 && Math.abs(enemy.y - p.y) <= 1;
 
   if (adjacent) {
     // Merchants stay peaceful until provoked, and stay hostile afterwards.
@@ -536,11 +529,7 @@ export interface MoveResult {
 }
 
 /** Moves the player, collecting gold and stepping onto stairs. */
-export function move(
-  state: GameState,
-  direction: Direction,
-  rng: Rng,
-): MoveResult {
+export function move(state: GameState, direction: Direction, rng: Rng): MoveResult {
   if (state.status !== "playing") return { descended: false };
 
   const { dx, dy } = DIRECTIONS[direction];
@@ -572,8 +561,7 @@ export function move(
   if (item?.kind === "gold") {
     // A dragon hoard cannot be taken while its dragon still lives.
     const guarded =
-      item.dragonId !== undefined &&
-      state.enemies.some((e) => e.id === item.dragonId);
+      item.dragonId !== undefined && state.enemies.some((e) => e.id === item.dragonId);
     if (!guarded) {
       const scale = state.player.race === "Shade" ? 1.5 : 1;
       const amount = Math.floor(GOLD_VALUE[item.gold!] * scale);

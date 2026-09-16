@@ -119,10 +119,7 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
   // A single quad covering clip space, with texture coordinates flipped
   // vertically: GL samples from the bottom left, images arrive top left.
   const vertices = new Float32Array([
-    -1, -1, 0, 1,
-    1, -1, 1, 1,
-    -1, 1, 0, 0,
-    1, 1, 1, 0,
+    -1, -1, 0, 1, 1, -1, 1, 1, -1, 1, 0, 0, 1, 1, 1, 0,
   ]);
 
   const buffer = gl.createBuffer();
@@ -148,14 +145,7 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
       gl.useProgram(program);
 
       gl.bindTexture(gl.TEXTURE_2D, texture);
-      gl.texImage2D(
-        gl.TEXTURE_2D,
-        0,
-        gl.RGBA,
-        gl.RGBA,
-        gl.UNSIGNED_BYTE,
-        source,
-      );
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
 
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
       const stride = 4 * Float32Array.BYTES_PER_ELEMENT;
@@ -176,10 +166,7 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
       );
 
       gl.uniform1i(gl.getUniformLocation(program, "s_texture"), 0);
-      gl.uniform1f(
-        gl.getUniformLocation(program, "brightness"),
-        values.brightness,
-      );
+      gl.uniform1f(gl.getUniformLocation(program, "brightness"), values.brightness);
 
       if (mode === "magnifier") {
         const { dif_x, dif_y } = toDif(values);

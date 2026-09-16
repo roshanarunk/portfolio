@@ -139,17 +139,13 @@ export function MapCanvas({ match, slug, kills, reducedMotion }: Props) {
 
       {hovered !== null && plotted[hovered] && (
         <div
-          className={`pointer-events-none absolute left-2 top-2 rounded-md bg-neutral-900/90 px-2.5 py-1.5 text-xs text-white ${
+          className={`pointer-events-none absolute top-2 left-2 rounded-md bg-neutral-900/90 px-2.5 py-1.5 text-xs text-white ${
             reducedMotion ? "" : "transition-opacity"
           }`}
         >
-          <span className="font-medium">
-            {nameOf(plotted[hovered].kill.killer)}
-          </span>{" "}
+          <span className="font-medium">{nameOf(plotted[hovered].kill.killer)}</span>{" "}
           killed{" "}
-          <span className="font-medium">
-            {nameOf(plotted[hovered].kill.victim)}
-          </span>
+          <span className="font-medium">{nameOf(plotted[hovered].kill.victim)}</span>
           <span className="ml-2 text-neutral-400">
             round {plotted[hovered].kill.round}
           </span>

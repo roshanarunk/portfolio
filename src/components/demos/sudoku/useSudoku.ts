@@ -112,8 +112,7 @@ function reducer(state: SudokuState, action: Action): SudokuState {
     case "toggleNote": {
       if (!state.selected || state.mode === "solving") return state;
       const [row, col] = state.selected;
-      if (state.initial[row][col] !== 0 || state.board[row][col] !== 0)
-        return state;
+      if (state.initial[row][col] !== 0 || state.board[row][col] !== 0) return state;
 
       const notes = state.notes.map((r) => r.map((c) => [...c]));
       const cell = notes[row][col];
@@ -138,8 +137,7 @@ function reducer(state: SudokuState, action: Action): SudokuState {
       return { ...initState(action.puzzle), stepsPerSecond: state.stepsPerSecond };
 
     case "reset": {
-      const puzzle =
-        puzzles.find((p) => p.id === state.puzzleId) ?? defaultPuzzle;
+      const puzzle = puzzles.find((p) => p.id === state.puzzleId) ?? defaultPuzzle;
       return { ...initState(puzzle), stepsPerSecond: state.stepsPerSecond };
     }
 

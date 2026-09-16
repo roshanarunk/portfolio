@@ -20,21 +20,17 @@ export interface DemoComponentProps {
  * projects/*) must reference demos by id only and never import this module,
  * or the landing page would pull in every demo.
  */
-export const demoRegistry: Record<
-  LiveDemoId,
-  ComponentType<DemoComponentProps>
-> = {
-  sudoku: dynamic(
-    () => import("./sudoku/SudokuDemo").then((m) => m.SudokuDemo),
-    { ssr: false, loading: () => <DemoSkeleton label="Loading solver…" /> },
-  ),
+export const demoRegistry: Record<LiveDemoId, ComponentType<DemoComponentProps>> = {
+  sudoku: dynamic(() => import("./sudoku/SudokuDemo").then((m) => m.SudokuDemo), {
+    ssr: false,
+    loading: () => <DemoSkeleton label="Loading solver…" />,
+  }),
   valheatmap: dynamic(
     () => import("./valheatmap/HeatMapDemo").then((m) => m.HeatMapDemo),
     { ssr: false, loading: () => <DemoSkeleton label="Loading match data…" /> },
   ),
   "league-ml": dynamic(
-    () =>
-      import("./leagueml/WinProbabilityDemo").then((m) => m.WinProbabilityDemo),
+    () => import("./leagueml/WinProbabilityDemo").then((m) => m.WinProbabilityDemo),
     { ssr: false, loading: () => <DemoSkeleton label="Loading model…" /> },
   ),
   vrvision: dynamic(
@@ -48,5 +44,13 @@ export const demoRegistry: Record<
   wattravl: dynamic(
     () => import("./wattravl/WatTravlDemo").then((m) => m.WatTravlDemo),
     { ssr: false, loading: () => <DemoSkeleton label="Loading the building…" /> },
+  ),
+  atm: dynamic(() => import("./atm/ATMDemo").then((m) => m.ATMDemo), {
+    ssr: false,
+    loading: () => <DemoSkeleton label="Opening the account…" />,
+  }),
+  "whj-student-update": dynamic(
+    () => import("./whj/TrackerDemo").then((m) => m.TrackerDemo),
+    { ssr: false, loading: () => <DemoSkeleton label="Building the report…" /> },
   ),
 };

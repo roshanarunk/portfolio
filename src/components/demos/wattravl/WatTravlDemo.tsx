@@ -138,7 +138,7 @@ export function WatTravlDemo() {
                 type="button"
                 onClick={() => goToLeg(0)}
                 aria-label="Back to the first leg"
-                className="rounded p-1.5 text-neutral-900 tx hover:bg-black/10"
+                className="tx rounded p-1.5 text-neutral-900 hover:bg-black/10"
               >
                 <svg viewBox="0 0 24 24" className="size-5" aria-hidden>
                   <path
@@ -195,7 +195,7 @@ export function WatTravlDemo() {
               <button
                 type="button"
                 onClick={() => goToLeg(0)}
-                className="rounded border border-neutral-400 bg-white px-4 py-1 text-xs font-medium text-neutral-800 tx hover:bg-neutral-50"
+                className="tx rounded border border-neutral-400 bg-white px-4 py-1 text-xs font-medium text-neutral-800 hover:bg-neutral-50"
               >
                 Refresh
               </button>
@@ -285,12 +285,7 @@ export function WatTravlDemo() {
                 />
               )}
               {showEnd && endNode && (
-                <circle
-                  cx={endNode.x * W}
-                  cy={endNode.y * H}
-                  r={6}
-                  fill="#06b6d4"
-                />
+                <circle cx={endNode.x * W} cy={endNode.y * H} r={6} fill="#06b6d4" />
               )}
             </svg>
           </div>
@@ -302,9 +297,8 @@ export function WatTravlDemo() {
           )}
 
           <p className="mt-3 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
-            A reconstruction of the app&apos;s map screen. The real build drew
-            this over the University&apos;s own floor plans, which are not
-            reproduced here.
+            A reconstruction of the app&apos;s map screen. The real build drew this over
+            the University&apos;s own floor plans, which are not reproduced here.
           </p>
         </div>
 
@@ -383,7 +377,7 @@ export function WatTravlDemo() {
                     <button
                       type="button"
                       onClick={() => goToLeg(i)}
-                      className={`w-full rounded px-2 py-1.5 text-left text-xs tx ${
+                      className={`tx w-full rounded px-2 py-1.5 text-left text-xs ${
                         i === currentLegIndex
                           ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
                           : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
@@ -393,15 +387,13 @@ export function WatTravlDemo() {
                         {l.building} Floor {l.floor}
                       </span>
                       {l.notice && (
-                        <span className="mt-0.5 block opacity-80">
-                          → {l.notice}
-                        </span>
+                        <span className="mt-0.5 block opacity-80">→ {l.notice}</span>
                       )}
                     </button>
                   </li>
                 ))}
               </ol>
-              <p className="mt-3 font-mono text-xs tabular-nums text-neutral-500 dark:text-neutral-400">
+              <p className="mt-3 font-mono text-xs text-neutral-500 tabular-nums dark:text-neutral-400">
                 {journey.distance} m · {journey.legs.length} legs
               </p>
             </div>
@@ -426,9 +418,7 @@ export function WatTravlDemo() {
                   className="size-2.5 shrink-0 rounded-full"
                   style={{ backgroundColor: colour }}
                 />
-                <dd className="text-neutral-600 dark:text-neutral-400">
-                  {meaning}
-                </dd>
+                <dd className="text-neutral-600 dark:text-neutral-400">{meaning}</dd>
               </div>
             ))}
           </dl>

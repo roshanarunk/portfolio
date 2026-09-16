@@ -414,7 +414,5 @@ export function legFor(
   building: BuildingId,
   floor: number,
 ): Leg | undefined {
-  return journey?.legs.find(
-    (l) => l.building === building && l.floor === floor,
-  );
+  return journey?.legs.find((l) => l.building === building && l.floor === floor);
 }

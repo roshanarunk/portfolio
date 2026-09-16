@@ -51,7 +51,7 @@ export function VideoDemoView({ demo }: { demo: VideoDemo }) {
             <button
               type="button"
               onClick={() => setPlaying(true)}
-              className="absolute inset-0 flex items-center justify-center bg-neutral-950/40 tx hover:bg-neutral-950/25"
+              className="tx absolute inset-0 flex items-center justify-center bg-neutral-950/40 hover:bg-neutral-950/25"
               aria-label={`Play video: ${demo.title}`}
             >
               <span className="flex size-16 items-center justify-center rounded-full bg-white/95 shadow-lg">

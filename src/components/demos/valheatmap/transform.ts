@@ -127,11 +127,7 @@ export function fitBounds(points: Point[], padding = 0.08): Bounds {
 }
 
 /** Maps a plotted point into an SVG viewBox of the given size. */
-export function toViewBox(
-  point: Point,
-  bounds: Bounds,
-  size: number,
-): Point {
+export function toViewBox(point: Point, bounds: Bounds, size: number): Point {
   const width = bounds.maxX - bounds.minX;
   const height = bounds.maxY - bounds.minY;
   return {

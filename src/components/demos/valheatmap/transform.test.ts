@@ -12,9 +12,7 @@ import {
 const DATA_DIR = join(process.cwd(), "public/data/valheatmap");
 
 function loadMatch(slug: string) {
-  return JSON.parse(
-    readFileSync(join(DATA_DIR, `${slug}.json`), "utf8"),
-  ) as {
+  return JSON.parse(readFileSync(join(DATA_DIR, `${slug}.json`), "utf8")) as {
     map: string;
     mapId: string;
     rounds: number;

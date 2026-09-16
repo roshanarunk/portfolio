@@ -22,24 +22,11 @@ export const atm: Project = {
   disclosure:
     "An introductory coursework project. Included for the modelling, not the scope.",
   demo: {
-    kind: "writeup",
-    title: "Domain model",
-    excerpts: [
-      {
-        file: "BankAccount.java",
-        language: "java",
-        code: `public class BankAccount {
-    private double balance;
-
-    public boolean withdraw(double amount) {
-        if (amount <= 0 || amount > balance) return false;
-        balance -= amount;
-        return true;
-    }
-}`,
-        note: "The account enforces its own invariants, so no caller can push it into an invalid state.",
-      },
-    ],
-    sourceUrl: "https://github.com/roshanarunk/ATM",
+    kind: "live",
+    componentId: "atm",
+    title: "The account, running",
+    instructions: "Sign in with 1234, then try withdrawing exactly your balance.",
+    badge: "Ported from Java",
+    sourceUrl: "https://github.com/roshanarunk/ATM/blob/main/ATM2/src/BankAccount.java",
   },
 };

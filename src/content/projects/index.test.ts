@@ -131,6 +131,8 @@ describe("live demos", () => {
     "vrvision",
     "cc3k",
     "wattravl",
+    "atm",
+    "whj-student-update",
   ]);
 
   it("points every live demo at a registered component", () => {

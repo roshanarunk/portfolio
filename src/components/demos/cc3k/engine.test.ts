@@ -32,7 +32,10 @@ beforeAll(() => {
 });
 
 /** A freshly generated floor with a deterministic seed. */
-function newGame(seed = 42, race: "Shade" | "Drow" | "Vampire" | "Troll" | "Goblin" = "Shade") {
+function newGame(
+  seed = 42,
+  race: "Shade" | "Drow" | "Vampire" | "Troll" | "Goblin" = "Shade",
+) {
   const rng = makeRng(seed);
   const player = makePlayer(race);
   const state = generateFloor(floors[0], player, 1, rng);
@@ -147,7 +150,16 @@ describe("movement", () => {
   function openDirection(state: GameState): Direction {
     const order: Direction[] = ["ea", "we", "no", "so", "ne", "nw", "se", "sw"];
     for (const d of order) {
-      const { dx, dy } = { ea: { dx: 1, dy: 0 }, we: { dx: -1, dy: 0 }, no: { dx: 0, dy: -1 }, so: { dx: 0, dy: 1 }, ne: { dx: 1, dy: -1 }, nw: { dx: -1, dy: -1 }, se: { dx: 1, dy: 1 }, sw: { dx: -1, dy: 1 } }[d];
+      const { dx, dy } = {
+        ea: { dx: 1, dy: 0 },
+        we: { dx: -1, dy: 0 },
+        no: { dx: 0, dy: -1 },
+        so: { dx: 0, dy: 1 },
+        ne: { dx: 1, dy: -1 },
+        nw: { dx: -1, dy: -1 },
+        se: { dx: 1, dy: 1 },
+        sw: { dx: -1, dy: 1 },
+      }[d];
       const nx = state.player.x + dx;
       const ny = state.player.y + dy;
       if (state.map[ny]?.[nx] !== ".") continue;
@@ -203,9 +215,7 @@ describe("movement", () => {
   it("collects gold it steps on", () => {
     const { state, rng } = newGame(9);
     state.enemies = [];
-    const gold = state.items.find(
-      (i) => i.kind === "gold" && i.gold === "small",
-    )!;
+    const gold = state.items.find((i) => i.kind === "gold" && i.gold === "small")!;
     state.player.x = gold.x - 1;
     state.player.y = gold.y;
     state.map[gold.y][gold.x - 1] = ".";
@@ -242,7 +252,16 @@ describe("combat", () => {
     const y = state.player.y;
     state.map[y][x] = ".";
     state.enemies = [
-      { id: 99, race: spec.race, hp: spec.maxHP, maxHP: spec.maxHP, atk: spec.atk, def: spec.def, x, y },
+      {
+        id: 99,
+        race: spec.race,
+        hp: spec.maxHP,
+        maxHP: spec.maxHP,
+        atk: spec.atk,
+        def: spec.def,
+        x,
+        y,
+      },
     ];
     return state.enemies[0];
   }

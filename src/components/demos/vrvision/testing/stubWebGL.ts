@@ -89,8 +89,7 @@ export function stubWebGL(): GLCalls {
       if (deleted.has(program)) calls.queriedAfterDelete = true;
       return !deleted.has(program);
     },
-    getProgramInfoLog: (program: object) =>
-      deleted.has(program) ? null : "",
+    getProgramInfoLog: (program: object) => (deleted.has(program) ? null : ""),
     deleteProgram: (program: object) => {
       deleted.add(program);
     },
@@ -137,10 +136,9 @@ export function stubWebGL(): GLCalls {
         : null,
   };
 
-  vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockImplementation(
-    ((type: string) =>
-      type === "webgl" ? context : null) as HTMLCanvasElement["getContext"],
-  );
+  vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockImplementation(((
+    type: string,
+  ) => (type === "webgl" ? context : null)) as HTMLCanvasElement["getContext"]);
 
   return calls;
 }

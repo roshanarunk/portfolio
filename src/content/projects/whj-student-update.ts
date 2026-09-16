@@ -27,19 +27,12 @@ export const whjStudentUpdate: Project = {
     "Splits confident results from stale data instead of silently mixing them",
   ],
   demo: {
-    kind: "writeup",
-    title: "How it reads the roster",
-    excerpts: [
-      {
-        file: "hooj.py",
-        language: "python",
-        code: `# Tracker links are pasted by hand, so the Riot ID has to be
-# recovered from the URL rather than assumed to be a clean field.
-match = re.search(r"riot/([^/]+)", unquote(tracker_url))
-name, tag = match.group(1).split("#")`,
-        note: "The roster is human-maintained, so every input is treated as untrusted and parsed defensively.",
-      },
-    ],
-    sourceUrl: "https://github.com/roshanarunk/WHJStudentUpdate",
+    kind: "live",
+    componentId: "whj-student-update",
+    title: "The report, running",
+    instructions:
+      "Every verdict is computed by the ported comparison, not written into the data.",
+    badge: "Ported from Python",
+    sourceUrl: "https://github.com/roshanarunk/WHJStudentUpdate/blob/main/hooj.py",
   },
 };

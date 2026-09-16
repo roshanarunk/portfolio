@@ -10,10 +10,7 @@ import {
 } from "./inference";
 
 const model = JSON.parse(
-  readFileSync(
-    join(process.cwd(), "public/data/leagueml/model.json"),
-    "utf8",
-  ),
+  readFileSync(join(process.cwd(), "public/data/leagueml/model.json"), "utf8"),
 ) as ModelPayload;
 
 describe("model payload", () => {
@@ -92,7 +89,10 @@ describe("predict", () => {
   });
 
   it("returns a probability for the default position", () => {
-    const p = predict(model, model.features.map((f) => f.default));
+    const p = predict(
+      model,
+      model.features.map((f) => f.default),
+    );
     expect(p).toBeGreaterThan(0);
     expect(p).toBeLessThan(1);
   });

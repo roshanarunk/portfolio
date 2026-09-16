@@ -285,19 +285,13 @@ describe("avoiding stairs", () => {
     }
     // Reaching the bridge, crossing it, and reaching the destination floor —
     // never one per floor walked through.
-    expect(notices).toEqual([
-      "Go to Floor 3",
-      "Take DC Link",
-      "Head to Floor 3",
-    ]);
+    expect(notices).toEqual(["Go to Floor 3", "Take DC Link", "Head to Floor 3"]);
   });
 });
 
 describe("building ids", () => {
   it("separates the two buildings by id range", () => {
-    const buildings = new Set<BuildingId>(
-      CAMPUS.nodes.map((n) => buildingOf(n.id)),
-    );
+    const buildings = new Set<BuildingId>(CAMPUS.nodes.map((n) => buildingOf(n.id)));
     expect([...buildings].sort()).toEqual(["DC", "MC"]);
     for (const node of CAMPUS.nodes) {
       expect(buildingOf(node.id), node.label).toBe(node.building);

@@ -76,12 +76,14 @@ export function VRVisionDemo({ reducedMotion }: DemoComponentProps) {
 
     let frame = 0;
     const tick = () => {
-      const { mode: currentMode, values: currentValues, source: currentSource } =
-        stateRef.current;
+      const {
+        mode: currentMode,
+        values: currentValues,
+        source: currentSource,
+      } = stateRef.current;
       const video = videoRef.current;
 
-      const usingCamera =
-        currentSource === "camera" && video && video.readyState >= 2;
+      const usingCamera = currentSource === "camera" && video && video.readyState >= 2;
       const texture = usingCamera ? video : sampleRef.current;
 
       if (texture) {
@@ -234,13 +236,7 @@ export function VRVisionDemo({ reducedMotion }: DemoComponentProps) {
             }
           />
           {/* Source only; the canvas shows the processed result. */}
-          <video
-            ref={videoRef}
-            playsInline
-            muted
-            className="sr-only"
-            aria-hidden
-          />
+          <video ref={videoRef} playsInline muted className="sr-only" aria-hidden />
           <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
             {source === "camera"
               ? "Live camera, processed in your browser — no video leaves your device."
@@ -290,9 +286,9 @@ export function VRVisionDemo({ reducedMotion }: DemoComponentProps) {
           </button>
 
           <p className="border-t border-neutral-200 pt-3 text-xs leading-relaxed text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
-            These are the app&apos;s own fragment shaders from MyShaders.java,
-            running in WebGL. On the phone the same GLSL reads the camera through
-            a samplerExternalOES and renders to both eyes of a Cardboard headset.
+            These are the app&apos;s own fragment shaders from MyShaders.java, running
+            in WebGL. On the phone the same GLSL reads the camera through a
+            samplerExternalOES and renders to both eyes of a Cardboard headset.
           </p>
           {reducedMotion && (
             <p className="text-xs text-neutral-500 dark:text-neutral-400">

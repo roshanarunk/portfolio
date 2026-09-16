@@ -73,7 +73,13 @@ describe("shader source", () => {
 describe("toDif", () => {
   /** MainActivity computes dif = off - pos; the sign matters. */
   it("derives the offset difference the way MainActivity does", () => {
-    const values = { ...defaultUniforms(), pos_x: 0.3, pos_y: 0.4, off_x: 0.1, off_y: 0.9 };
+    const values = {
+      ...defaultUniforms(),
+      pos_x: 0.3,
+      pos_y: 0.4,
+      off_x: 0.1,
+      off_y: 0.9,
+    };
     expect(toDif(values)).toEqual({
       dif_x: 0.1 - 0.3,
       dif_y: 0.9 - 0.4,
@@ -81,7 +87,13 @@ describe("toDif", () => {
   });
 
   it("is zero when the source region matches the magnifier position", () => {
-    const values = { ...defaultUniforms(), pos_x: 0.5, pos_y: 0.5, off_x: 0.5, off_y: 0.5 };
+    const values = {
+      ...defaultUniforms(),
+      pos_x: 0.5,
+      pos_y: 0.5,
+      off_x: 0.5,
+      off_y: 0.5,
+    };
     const { dif_x, dif_y } = toDif(values);
     expect(dif_x).toBeCloseTo(0, 10);
     expect(dif_y).toBeCloseTo(0, 10);

@@ -52,9 +52,7 @@ export function contributions(model: ModelPayload, x: number[]): number[] {
 /** Win probability for a feature vector, ordered as in `model.features`. */
 export function predict(model: ModelPayload, x: number[]): number {
   if (x.length !== model.coef.length) {
-    throw new Error(
-      `Expected ${model.coef.length} features, received ${x.length}`,
-    );
+    throw new Error(`Expected ${model.coef.length} features, received ${x.length}`);
   }
   const logOdds = contributions(model, x).reduce(
     (sum, value) => sum + value,
