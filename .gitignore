@@ -58,3 +58,8 @@ next-env.d.ts
 # ignores) and critique/ snapshots are tracked deliberately.
 .impeccable/config.local.json
 .impeccable/hook.cache.json
+
+# Impeccable working artifacts: screenshots and world boards captured during
+# design review. Regenerated on demand, and several MB of binaries otherwise.
+.impeccable/review/
+.impeccable/questions/

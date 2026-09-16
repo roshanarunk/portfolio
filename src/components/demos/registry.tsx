@@ -53,8 +53,4 @@ export const demoRegistry: Record<LiveDemoId, ComponentType<DemoComponentProps>>
     () => import("./whj/TrackerDemo").then((m) => m.TrackerDemo),
     { ssr: false, loading: () => <DemoSkeleton label="Building the report…" /> },
   ),
-  sf6assist: dynamic(() => import("./sf6/SF6Demo").then((m) => m.SF6Demo), {
-    ssr: false,
-    loading: () => <DemoSkeleton label="Loading frame data…" />,
-  }),
 };

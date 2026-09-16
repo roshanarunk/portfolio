@@ -45,13 +45,18 @@ export const sf6assist: Project = {
         "It would not have helped, so it was not built. The error is phase noise between two unsynchronised 60 Hz samplers — the game's frame clock and the input poll — not a constant offset. A fixed adjustment cannot correct a varying one, and the README explains why rather than shipping a setting that appears to work.",
     },
   ],
+  liveUrl: "https://sf6app.roshanarun.com/",
   demo: {
-    kind: "live",
-    componentId: "sf6assist",
-    title: "The validator, running",
+    kind: "iframe",
+    src: "https://sf6app.roshanarun.com/",
+    aspectRatio: "16/9",
+    posterSrc: "/images/posters/sf6assist.png",
+    posterAlt:
+      "The SF6 combo trainer: a searchable movelist with frame data on the left, a combo stage in the middle, and live input history on the right.",
+    title: "The trainer itself",
     instructions:
-      "Pick two moves and check the link. This is the project's own core/cancel.mjs on its real frame data.",
-    badge: "Runs the real code",
-    sourceUrl: "https://github.com/roshanarunk/SF6Assist/blob/master/core/cancel.mjs",
+      "The real app, embedded. Click moves to build a combo; connect a pad or use the keyboard to drill the timing.",
+    badge: "Live app",
+    sourceUrl: "https://github.com/roshanarunk/SF6Assist",
   },
 };

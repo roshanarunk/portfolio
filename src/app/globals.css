@@ -105,8 +105,8 @@ body {
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
   --dur-fast: 120ms;
-  --dur-base: 220ms;
-  --dur-slow: 420ms;
+  --dur-base: 260ms;
+  --dur-slow: 520ms;
 }
 
 /* The default transition for interactive chrome: colour and border only. */
@@ -124,15 +124,26 @@ body {
   transition-timing-function: var(--ease-out-expo);
 }
 
-/*
- * Page entrance. Content is visible by default and animates from a small
- * offset, so a failed or skipped animation leaves a readable page rather than
- * an empty one.
+/* ---- Page entrance ------------------------------------------------------
+ *
+ * Content arrives top to bottom rather than all at once: each section starts
+ * slightly low and faded, and begins a beat after the one above it. The result
+ * reads as the page settling into place instead of appearing fully formed.
+ *
+ * The offset is large enough to actually see (18px) and the stagger long
+ * enough to read as a sequence (90ms per step). Both were too subtle before.
+ *
+ * `both` fill mode matters: it holds the from-state during the delay, so a
+ * section that has not started yet is not briefly visible then re-hidden.
  */
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -140,15 +151,31 @@ body {
   animation: rise var(--dur-slow) var(--ease-out-expo) both;
 }
 
-/* Staggered children, for lists and grids that enter together. */
+/*
+ * Stagger steps. Applied to successive sections so the page resolves downward.
+ */
 .rise-1 {
-  animation-delay: 60ms;
+  animation-delay: 90ms;
 }
 .rise-2 {
-  animation-delay: 120ms;
+  animation-delay: 180ms;
 }
 .rise-3 {
-  animation-delay: 180ms;
+  animation-delay: 270ms;
+}
+.rise-4 {
+  animation-delay: 360ms;
+}
+.rise-5 {
+  animation-delay: 450ms;
+}
+
+/*
+ * Route change. The wrapper is keyed on the pathname, so this replays on every
+ * navigation and its children re-run their own stagger with it.
+ */
+.route-enter {
+  animation: rise var(--dur-base) var(--ease-out-expo) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -160,41 +187,9 @@ body {
   .rise,
   .rise-1,
   .rise-2,
-  .rise-3 {
-    animation: none;
-  }
-}
-
-/* ---- Route transitions --------------------------------------------------
- *
- * Clicking a link used to swap pages instantly, which reads as a hard cut.
- * React's <ViewTransition> (wrapping <main> in the layout) drives these: the
- * App Router navigates client-side, so the plain CSS @view-transition rule
- * would never fire — it only applies to full document navigations.
- *
- * Browsers without support navigate exactly as before rather than breaking.
- */
-
-.route-enter {
-  animation: vt-in var(--dur-base) var(--ease-out-expo) both;
-}
-
-@keyframes vt-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-}
-
-/*
- * A page title carries its own transition name, so the heading is treated as
- * the same element across a navigation rather than as two unrelated ones.
- */
-.vt-title {
-  view-transition-name: page-title;
-}
-
-@media (prefers-reduced-motion: reduce) {
+  .rise-3,
+  .rise-4,
+  .rise-5,
   .route-enter {
     animation: none;
   }

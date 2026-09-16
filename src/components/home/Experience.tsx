@@ -9,13 +9,16 @@ import { experience } from "@/content/site";
  * 32px, so every mark is rendered inside a fixed box on a neutral tile rather
  * than at its native size, which keeps the column even when the sources differ.
  */
-export function Experience() {
+export function Experience({ className }: { className?: string }) {
   if (experience.length === 0) return null;
 
   return (
     <section
       aria-labelledby="experience"
-      className="section-gap border-t border-neutral-200 dark:border-neutral-800"
+      className={[
+        "section-gap border-t border-neutral-200 dark:border-neutral-800",
+        className ?? "",
+      ].join(" ")}
     >
       <h2 id="experience" className="h-section text-neutral-900 dark:text-neutral-100">
         Experience

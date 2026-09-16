@@ -92,7 +92,7 @@ export default function HomePage() {
           </dl>
         </div>
 
-        <div className="rise rise-2 w-full max-w-md justify-self-center lg:max-w-none lg:justify-self-end">
+        <div className="rise rise-1 w-full max-w-md justify-self-center lg:max-w-none lg:justify-self-end">
           <HeroSolver />
           <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
             My Python solver, ported and running live —{" "}
@@ -109,7 +109,7 @@ export default function HomePage() {
 
       <section
         aria-labelledby="featured"
-        className="section-gap border-t border-neutral-200 dark:border-neutral-800"
+        className="rise rise-2 section-gap border-t border-neutral-200 dark:border-neutral-800"
       >
         <div className="mb-8 flex items-baseline justify-between gap-4">
           <h2
@@ -136,7 +136,7 @@ export default function HomePage() {
               key={project.slug}
               // Each card enters a beat after the last, so the row resolves
               // left to right rather than appearing all at once.
-              className={`rise ${["", "rise-1", "rise-2"][i] ?? "rise-3"}`}
+              className={`rise ${["rise-2", "rise-3", "rise-4"][i] ?? "rise-5"}`}
             >
               <ProjectCard project={project} />
             </div>
@@ -144,7 +144,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <Experience />
+      <Experience className="rise rise-3" />
 
       {/*
         The four HOOJ repos are far stronger read as one product story than as
@@ -152,7 +152,7 @@ export default function HomePage() {
       */}
       <section
         aria-labelledby="hooj"
-        className="section-gap border-t border-neutral-200 dark:border-neutral-800"
+        className="rise rise-4 section-gap border-t border-neutral-200 dark:border-neutral-800"
       >
         {/*
           The heading sits outside the tinted panel so it starts on the same
