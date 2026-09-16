@@ -6,8 +6,7 @@ import userEvent from "@testing-library/user-event";
 import { HeatMapDemo } from "./HeatMapDemo";
 
 const DATA_DIR = join(process.cwd(), "public/data/valheatmap");
-const read = (name: string) =>
-  JSON.parse(readFileSync(join(DATA_DIR, name), "utf8"));
+const read = (name: string) => JSON.parse(readFileSync(join(DATA_DIR, name), "utf8"));
 
 const index = read("index.json");
 const bind = read("bind.json");
@@ -17,12 +16,7 @@ const ascent = read("ascent.json");
 function routedFetch() {
   return vi.fn((url: string) => {
     const file = url.split("/").pop()!;
-    const body =
-      file === "index.json"
-        ? index
-        : file === "ascent.json"
-          ? ascent
-          : bind;
+    const body = file === "index.json" ? index : file === "ascent.json" ? ascent : bind;
     return Promise.resolve({ ok: true, json: async () => body } as Response);
   });
 }
@@ -54,9 +48,7 @@ describe("HeatMapDemo", () => {
     await waitFor(() => expect(plot()).toBeInTheDocument());
 
     for (const summary of index) {
-      expect(
-        screen.getByRole("button", { name: summary.map }),
-      ).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: summary.map })).toBeInTheDocument();
     }
   });
 
@@ -127,9 +119,7 @@ describe("HeatMapDemo", () => {
 
     const table = await screen.findByRole("table");
     // One row per kill, plus the header row.
-    expect(within(table).getAllByRole("row")).toHaveLength(
-      bind.kills.length + 1,
-    );
+    expect(within(table).getAllByRole("row")).toHaveLength(bind.kills.length + 1);
   });
 
   it("describes each kill for assistive technology", async () => {

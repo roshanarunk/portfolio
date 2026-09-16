@@ -67,9 +67,7 @@ export function CC3KGame() {
   useEffect(() => {
     let cancelled = false;
     fetch("/data/cc3k/default.txt")
-      .then((r) =>
-        r.ok ? r.text() : Promise.reject(new Error(`HTTP ${r.status}`)),
-      )
+      .then((r) => (r.ok ? r.text() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((text) => {
         if (!cancelled) setFloorMaps(parseFloors(text));
       })
@@ -220,9 +218,7 @@ export function CC3KGame() {
       if (!cell) continue;
       cell.glyph = item.kind === "potion" ? "!" : "$";
       cell.title =
-        item.kind === "potion"
-          ? POTION_NAMES[item.potion!]
-          : `${item.gold} gold`;
+        item.kind === "potion" ? POTION_NAMES[item.potion!] : `${item.gold} gold`;
     }
 
     for (const enemy of game.enemies) {
@@ -317,12 +313,7 @@ export function CC3KGame() {
           ).map(([label, value, tone]) => (
             <div key={label} className="flex gap-1.5">
               <dt className="text-neutral-500">{label}</dt>
-              <dd
-                className={cn(
-                  "text-neutral-900 dark:text-neutral-100",
-                  tone,
-                )}
-              >
+              <dd className={cn("text-neutral-900 dark:text-neutral-100", tone)}>
                 {value}
               </dd>
             </div>
@@ -473,9 +464,7 @@ export function CC3KGame() {
           <div className="grid grid-cols-2 gap-1">
             <button
               type="button"
-              onClick={() =>
-                setMode((m) => (m === "attack" ? "move" : "attack"))
-              }
+              onClick={() => setMode((m) => (m === "attack" ? "move" : "attack"))}
               aria-pressed={mode === "attack"}
               className={cn(
                 "rounded border px-2 py-1.5 text-xs font-medium",
@@ -513,17 +502,14 @@ export function CC3KGame() {
             ).map(([glyph, meaning, tone]) => (
               <div key={meaning} className="flex gap-2">
                 <dt className={tone}>{glyph}</dt>
-                <dd className="text-neutral-600 dark:text-neutral-400">
-                  {meaning}
-                </dd>
+                <dd className="text-neutral-600 dark:text-neutral-400">{meaning}</dd>
               </div>
             ))}
           </dl>
 
           <p className="text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
-            Arrows or 1–9 move, <kbd>a</kbd> then a direction attacks,{" "}
-            <kbd>p</kbd> drinks a potion beside you. Merchants leave you alone
-            until you hit one.
+            Arrows or 1–9 move, <kbd>a</kbd> then a direction attacks, <kbd>p</kbd>{" "}
+            drinks a potion beside you. Merchants leave you alone until you hit one.
           </p>
         </div>
       </div>

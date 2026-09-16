@@ -18,10 +18,8 @@ export default function ProjectsPage() {
 
   return (
     <Container className="py-12">
-      <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
-        Projects
-      </h1>
-      <p className="mt-3 max-w-xl text-neutral-600 dark:text-neutral-400">
+      <h1 className="marquee text-[2.6rem] text-[var(--ink)] sm:text-6xl">Projects</h1>
+      <p className="mt-5 max-w-xl text-[var(--ink-dim)]">
         Where a project could be made to run in the browser, it does. Where it genuinely
         could not — an iOS app, an Android AR headset app, a Windows overlay — there is
         a video or a writeup instead.
@@ -33,9 +31,7 @@ export default function ProjectsPage() {
 
         return (
           <section key={tier} className="mt-12">
-            <h2 className="mb-5 text-sm font-medium tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
-              {label}
-            </h2>
+            <h2 className="screened mb-5 text-[0.7rem] text-[var(--score)]">{label}</h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {group.map((project) => (
                 <ProjectCard key={project.slug} project={project} />

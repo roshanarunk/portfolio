@@ -285,12 +285,7 @@ export function WatTravlDemo() {
                 />
               )}
               {showEnd && endNode && (
-                <circle
-                  cx={endNode.x * W}
-                  cy={endNode.y * H}
-                  r={6}
-                  fill="#06b6d4"
-                />
+                <circle cx={endNode.x * W} cy={endNode.y * H} r={6} fill="#06b6d4" />
               )}
             </svg>
           </div>
@@ -302,9 +297,8 @@ export function WatTravlDemo() {
           )}
 
           <p className="mt-3 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
-            A reconstruction of the app&apos;s map screen. The real build drew
-            this over the University&apos;s own floor plans, which are not
-            reproduced here.
+            A reconstruction of the app&apos;s map screen. The real build drew this over
+            the University&apos;s own floor plans, which are not reproduced here.
           </p>
         </div>
 
@@ -393,15 +387,13 @@ export function WatTravlDemo() {
                         {l.building} Floor {l.floor}
                       </span>
                       {l.notice && (
-                        <span className="mt-0.5 block opacity-80">
-                          → {l.notice}
-                        </span>
+                        <span className="mt-0.5 block opacity-80">→ {l.notice}</span>
                       )}
                     </button>
                   </li>
                 ))}
               </ol>
-              <p className="mt-3 font-mono text-xs tabular-nums text-neutral-500 dark:text-neutral-400">
+              <p className="mt-3 font-mono text-xs text-neutral-500 tabular-nums dark:text-neutral-400">
                 {journey.distance} m · {journey.legs.length} legs
               </p>
             </div>
@@ -426,9 +418,7 @@ export function WatTravlDemo() {
                   className="size-2.5 shrink-0 rounded-full"
                   style={{ backgroundColor: colour }}
                 />
-                <dd className="text-neutral-600 dark:text-neutral-400">
-                  {meaning}
-                </dd>
+                <dd className="text-neutral-600 dark:text-neutral-400">{meaning}</dd>
               </div>
             ))}
           </dl>

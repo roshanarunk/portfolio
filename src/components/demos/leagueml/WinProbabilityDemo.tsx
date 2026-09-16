@@ -2,20 +2,22 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { DemoSkeleton } from "../DemoSkeleton";
-import {
-  contributions,
-  isModelPayload,
-  predict,
-  type ModelPayload,
-} from "./inference";
+import { contributions, isModelPayload, predict, type ModelPayload } from "./inference";
 import { cn } from "@/lib/utils";
 
 /** Named positions, so a visitor can see a realistic game without dragging 14 sliders. */
 const PRESETS: Record<string, Partial<Record<string, number>>> = {
   "Even game": {},
-  "Ahead": { Gold_diff: 4000, Kills: 14, Deaths: 7, Towers: 2, Dragons: 1 },
-  "Snowballed": { Gold_diff: 9000, Kills: 22, Deaths: 4, Towers: 4, Dragons: 2, Heralds: 1 },
-  "Behind": { Gold_diff: -5000, Kills: 5, Deaths: 15, Towers: 0, Dragons: 0 },
+  Ahead: { Gold_diff: 4000, Kills: 14, Deaths: 7, Towers: 2, Dragons: 1 },
+  Snowballed: {
+    Gold_diff: 9000,
+    Kills: 22,
+    Deaths: 4,
+    Towers: 4,
+    Dragons: 2,
+    Heralds: 1,
+  },
+  Behind: { Gold_diff: -5000, Kills: 5, Deaths: 15, Towers: 0, Dragons: 0 },
 };
 
 export function WinProbabilityDemo() {
@@ -36,9 +38,7 @@ export function WinProbabilityDemo() {
         if (cancelled) return;
         if (!isModelPayload(data)) throw new Error("Malformed model file");
         setModel(data);
-        setValues(
-          Object.fromEntries(data.features.map((f) => [f.key, f.default])),
-        );
+        setValues(Object.fromEntries(data.features.map((f) => [f.key, f.default])));
       })
       .catch((cause: Error) => {
         if (!cancelled) setError(cause.message);
@@ -99,7 +99,7 @@ export function WinProbabilityDemo() {
           </p>
           <p
             data-testid="win-probability"
-            className="font-mono text-4xl font-semibold tabular-nums text-neutral-900 dark:text-neutral-100"
+            className="font-mono text-4xl font-semibold text-neutral-900 tabular-nums dark:text-neutral-100"
             aria-live="polite"
           >
             {(probability * 100).toFixed(1)}%
@@ -210,7 +210,7 @@ export function WinProbabilityDemo() {
                     <span className="text-neutral-700 dark:text-neutral-300">
                       {driver.label}
                     </span>
-                    <span className="font-mono tabular-nums text-neutral-500">
+                    <span className="font-mono text-neutral-500 tabular-nums">
                       {driver.value >= 0 ? "+" : ""}
                       {driver.value.toFixed(2)}
                     </span>
@@ -251,23 +251,23 @@ export function WinProbabilityDemo() {
           >
             <div>
               <dt className="text-neutral-500">Accuracy</dt>
-              <dd className="font-mono tabular-nums text-neutral-900 dark:text-neutral-100">
+              <dd className="font-mono text-neutral-900 tabular-nums dark:text-neutral-100">
                 {(model.metrics.accuracy * 100).toFixed(1)}%
               </dd>
             </div>
             <div>
               <dt className="text-neutral-500">ROC-AUC</dt>
-              <dd className="font-mono tabular-nums text-neutral-900 dark:text-neutral-100">
+              <dd className="font-mono text-neutral-900 tabular-nums dark:text-neutral-100">
                 {model.metrics.auc.toFixed(3)}
               </dd>
             </div>
           </dl>
 
           <p className="text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
-            Logistic regression over {model.metrics.nGames.toLocaleString()}{" "}
-            Korean ranked games, held out by game so no match appears in both
-            training and test. It describes what tends to follow a given
-            position — not what causes it.
+            Logistic regression over {model.metrics.nGames.toLocaleString()} Korean
+            ranked games, held out by game so no match appears in both training and
+            test. It describes what tends to follow a given position — not what causes
+            it.
           </p>
         </aside>
       </div>

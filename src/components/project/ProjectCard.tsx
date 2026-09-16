@@ -15,6 +15,11 @@ const demoLabel: Record<Project["demo"]["kind"], string | null> = {
   writeup: null,
 };
 
+/**
+ * One cabinet in the row. A project that actually runs is lit — the live ink is
+ * reserved for that and nothing else, so the colour means "you can play this"
+ * rather than decorating every panel.
+ */
 export function ProjectCard({
   project,
   featured = false,
@@ -29,59 +34,46 @@ export function ProjectCard({
     <Link
       href={`/projects/${project.slug}`}
       className={cn(
-        "group relative flex flex-col rounded-xl border p-5 transition",
-        "border-neutral-200 hover:border-neutral-400 hover:shadow-sm",
-        "dark:border-neutral-800 dark:hover:border-neutral-600",
-        // A playable project earns the accent; the rest stay quiet, so the
-        // colour means something rather than decorating every card.
-        runsHere &&
-          "hover:border-emerald-500/60 dark:hover:border-emerald-400/50",
+        "group relative flex flex-col border-2 bg-[var(--ground-panel)] p-5 transition-colors",
+        runsHere
+          ? "border-[var(--live)]/45 hover:border-[var(--live)]"
+          : "border-[var(--rule)] hover:border-[var(--active)]",
         featured && "sm:col-span-2 sm:flex-row sm:items-start sm:gap-6",
       )}
     >
       <div className={cn("flex flex-col", featured && "sm:flex-1")}>
         <div className="flex items-start justify-between gap-3">
-          <h3
-            className={cn(
-              "font-medium text-neutral-900 dark:text-neutral-100",
-              featured && "text-lg",
-            )}
-          >
+          <h3 className={cn("font-semibold text-[var(--ink)]", featured && "text-lg")}>
             {project.title}
           </h3>
           <ArrowUpRight
             aria-hidden
-            className="size-4 shrink-0 text-neutral-400 transition group-hover:text-neutral-900 dark:group-hover:text-neutral-100"
+            className="size-4 shrink-0 text-[var(--ink-dim)] transition-colors group-hover:text-[var(--active)]"
           />
         </div>
 
         <p
           className={cn(
-            "mt-1 flex-1 text-sm text-neutral-600 dark:text-neutral-400",
+            "mt-1.5 flex-1 text-sm text-[var(--ink-dim)]",
             featured && "sm:text-base",
           )}
         >
           {project.tagline}
         </p>
 
-        <div className="mt-4 flex flex-wrap items-center gap-2">
+        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
           {label && (
             <span
               className={cn(
-                "rounded-full px-2 py-0.5 text-xs font-medium",
-                runsHere
-                  ? "bg-emerald-500/10 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300"
-                  : "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
+                "screened text-[0.6rem]",
+                runsHere ? "text-[var(--live)]" : "text-[var(--ink-dim)]",
               )}
             >
               {label}
             </span>
           )}
           {project.tech.slice(0, 3).map((tech) => (
-            <span
-              key={tech.label}
-              className="text-xs text-neutral-500 dark:text-neutral-400"
-            >
+            <span key={tech.label} className="text-xs text-[var(--ink-dim)]">
               {tech.label}
             </span>
           ))}

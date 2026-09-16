@@ -12,13 +12,13 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 
 /**
- * The landing page's artifact: the real backtracking solver from the Sudoku
- * project, running the hardest board on a loop.
+ * Attract mode.
  *
- * This is the same `solveSteps` generator the full demo uses — not a recording
- * and not a re-implementation — so the counters below are the genuine cost of
- * the search. It exists because a portfolio in Experience mode has to lead with
- * the work rather than a description of it.
+ * An arcade cabinet plays itself while nobody is watching, which is exactly what
+ * this is: the real backtracking solver from the Sudoku project, working the
+ * hardest known board on a loop. The same `solveSteps` generator the full demo
+ * uses — not a recording and not a re-implementation — so the counters are the
+ * genuine cost of the search.
  */
 
 const HARDEST = puzzles[2];
@@ -50,8 +50,7 @@ function reducer(state: RunState, action: Action): RunState {
     board: action.board,
     step: action.step,
     steps: state.steps + 1,
-    backtracks:
-      state.backtracks + (action.step.type === "backtrack" ? 1 : 0),
+    backtracks: state.backtracks + (action.step.type === "backtrack" ? 1 : 0),
     done: action.step.type === "solved",
   };
 }
@@ -118,9 +117,9 @@ export function HeroSolver() {
   const active = state.step && "pos" in state.step ? state.step.pos : null;
 
   return (
-    <figure className="m-0">
+    <div className="relative">
       <div
-        className="grid aspect-square w-full grid-cols-9 gap-px overflow-hidden rounded-xl border border-neutral-200 bg-neutral-200 p-px dark:border-neutral-800 dark:bg-neutral-800"
+        className="grid aspect-square w-full grid-cols-9 gap-px border-2 border-[var(--rule)] bg-[var(--rule-soft)] p-px"
         role="img"
         aria-label={`The Sudoku solver working through the hardest board: ${state.steps.toLocaleString()} decisions so far`}
       >
@@ -132,11 +131,11 @@ export function HeroSolver() {
               <span
                 key={`${r}-${c}`}
                 className={cn(
-                  "flex items-center justify-center bg-white text-[0.8rem] tabular-nums sm:text-sm dark:bg-neutral-950",
+                  "score flex items-center justify-center bg-[var(--ground-panel)] text-[0.8rem] sm:text-base",
                   given
-                    ? "font-semibold text-neutral-900 dark:text-neutral-100"
-                    : "text-emerald-700 dark:text-emerald-400",
-                  isActive && "bg-emerald-500/15 dark:bg-emerald-400/20",
+                    ? "font-bold text-[var(--ink)]"
+                    : "font-semibold text-[var(--score)]",
+                  isActive && "bg-[var(--live)] text-[var(--on-live)]",
                 )}
               >
                 {value !== 0 ? value : ""}
@@ -146,29 +145,30 @@ export function HeroSolver() {
         )}
       </div>
 
-      <figcaption className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 font-mono text-xs text-neutral-500 dark:text-neutral-400">
-        <span>
-          <span className="text-neutral-900 tabular-nums dark:text-neutral-100">
+      {/* Cabinet scores: the real cost of the search, counted as it runs. */}
+      <dl className="mt-4 flex flex-wrap items-baseline gap-x-8 gap-y-2">
+        <div>
+          <dt className="screened text-[0.65rem] text-[var(--ink-dim)]">Decisions</dt>
+          <dd className="score marquee mt-1 text-2xl text-[var(--score)]">
             {state.steps.toLocaleString()}
-          </span>{" "}
-          decisions
-        </span>
-        <span>
-          <span className="text-neutral-900 tabular-nums dark:text-neutral-100">
+          </dd>
+        </div>
+        <div>
+          <dt className="screened text-[0.65rem] text-[var(--ink-dim)]">Backtracks</dt>
+          <dd className="score marquee mt-1 text-2xl text-[var(--score)]">
             {state.backtracks.toLocaleString()}
-          </span>{" "}
-          backtracks
-        </span>
+          </dd>
+        </div>
         {!running && (
           <button
             type="button"
             onClick={() => setStartedByHand(true)}
-            className="text-emerald-700 underline underline-offset-4 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300"
+            className="screened ml-auto self-center bg-[var(--live)] px-4 py-2.5 text-[0.7rem] text-[var(--on-live)] transition-opacity hover:opacity-90"
           >
             Run it
           </button>
         )}
-      </figcaption>
-    </figure>
+      </dl>
+    </div>
   );
 }

@@ -6,7 +6,7 @@ import { experience } from "@/content/site";
  * work, and a recruiter scanning for company names finds them immediately.
  *
  * Logos are each company's own favicon. Two of them were only available at
- * 32px, so every mark is rendered inside a fixed box on a neutral tile rather
+ * 32px, so every mark is rendered inside a fixed box on a panel tile rather
  * than at its native size, which keeps the column even when the sources differ.
  */
 export function Experience() {
@@ -15,22 +15,19 @@ export function Experience() {
   return (
     <section
       aria-labelledby="experience"
-      className="border-t border-neutral-200 py-16 dark:border-neutral-800"
+      className="border-t-2 border-[var(--rule)] py-16"
     >
-      <h2
-        id="experience"
-        className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100"
-      >
+      <h2 id="experience" className="marquee text-3xl text-[var(--ink)] sm:text-4xl">
         Experience
       </h2>
 
-      <ul className="mt-8 space-y-1">
+      <ul className="mt-8">
         {experience.map((role) => (
           <li
             key={`${role.company}-${role.start}`}
-            className="flex items-center gap-4 rounded-lg px-3 py-3 transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-900/60"
+            className="group flex items-center gap-4 border-b border-[var(--rule-soft)] px-3 py-4 transition-colors hover:bg-[var(--ground-panel)]"
           >
-            <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-neutral-100 dark:bg-neutral-800">
+            <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden border border-[var(--rule)] bg-[var(--ground-panel)]">
               {role.logo ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img
@@ -42,22 +39,20 @@ export function Experience() {
                   className="size-7 object-contain"
                 />
               ) : (
-                <span className="text-sm font-semibold text-neutral-500 dark:text-neutral-400">
+                <span className="screened text-sm text-[var(--ink-dim)]">
                   {role.company.charAt(0)}
                 </span>
               )}
             </span>
 
             <span className="min-w-0 flex-1">
-              <span className="block font-medium text-neutral-900 dark:text-neutral-100">
+              <span className="block font-semibold text-[var(--ink)]">
                 {role.company}
               </span>
-              <span className="block text-sm text-neutral-600 dark:text-neutral-400">
-                {role.title}
-              </span>
+              <span className="block text-sm text-[var(--ink-dim)]">{role.title}</span>
             </span>
 
-            <span className="shrink-0 text-sm text-neutral-500 tabular-nums dark:text-neutral-400">
+            <span className="screened score shrink-0 text-[0.65rem] text-[var(--score)]">
               {role.period}
             </span>
           </li>

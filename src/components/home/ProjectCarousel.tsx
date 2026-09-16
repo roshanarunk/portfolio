@@ -74,7 +74,7 @@ export function ProjectCarousel({ projects }: { projects: Project[] }) {
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      <div className="overflow-hidden rounded-2xl border border-neutral-200 dark:border-neutral-800">
+      <div className="overflow-hidden border-2 border-[var(--rule)]">
         <div
           ref={trackRef}
           className="flex transition-transform duration-300 ease-out motion-reduce:transition-none"
@@ -93,7 +93,7 @@ export function ProjectCarousel({ projects }: { projects: Project[] }) {
                 className="w-full shrink-0"
               >
                 <div className="grid sm:grid-cols-[1.15fr_1fr]">
-                  <div className="relative aspect-[16/10] bg-neutral-100 sm:aspect-auto sm:min-h-72 dark:bg-neutral-900">
+                  <div className="relative aspect-[16/10] bg-[var(--ground-panel)] sm:aspect-auto sm:min-h-72">
                     {project.cardImage ? (
                       /* eslint-disable-next-line @next/next/no-img-element */
                       <img
@@ -106,48 +106,46 @@ export function ProjectCarousel({ projects }: { projects: Project[] }) {
                         className="absolute inset-0 size-full object-cover"
                       />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-sm text-neutral-500 dark:text-neutral-400">
+                      <div className="marquee absolute inset-0 flex items-center justify-center p-6 text-center text-2xl text-[var(--rule)]">
                         {project.title}
                       </div>
                     )}
                     {project.cardImage?.placeholder && (
-                      <span className="absolute left-3 top-3 rounded bg-neutral-950/75 px-2 py-1 text-[0.65rem] font-medium tracking-wide text-neutral-200 uppercase">
+                      <span className="screened absolute top-3 left-3 bg-[var(--color-cab-void)]/80 px-2 py-1 text-[0.6rem] text-[var(--color-cab-stock-dim)]">
                         Placeholder image
                       </span>
                     )}
                   </div>
 
-                  <div className="flex flex-col justify-center gap-3 p-6 sm:p-8">
-                    <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex flex-col justify-center gap-3 bg-[var(--ground-panel)] p-6 sm:p-8">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
                       {label && (
                         <span
                           className={cn(
-                            "rounded-full px-2 py-0.5 text-xs font-medium",
+                            "screened text-[0.6rem]",
                             project.demo.kind === "live"
-                              ? "bg-emerald-500/10 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300"
-                              : "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
+                              ? "text-[var(--live)]"
+                              : "text-[var(--ink-dim)]",
                           )}
                         >
                           {label}
                         </span>
                       )}
-                      <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                      <span className="screened score text-[0.6rem] text-[var(--score)]">
                         {project.year}
                       </span>
                     </div>
 
-                    <h3 className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
+                    <h3 className="marquee text-xl text-[var(--ink)] sm:text-2xl">
                       {project.title}
                     </h3>
-                    <p className="text-neutral-600 dark:text-neutral-400">
-                      {project.tagline}
-                    </p>
+                    <p className="text-[var(--ink-dim)]">{project.tagline}</p>
 
-                    <div className="mt-1 flex flex-wrap gap-2">
+                    <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
                       {project.tech.slice(0, 3).map((tech) => (
                         <span
                           key={tech.label}
-                          className="text-xs text-neutral-500 dark:text-neutral-400"
+                          className="text-xs text-[var(--ink-dim)]"
                         >
                           {tech.label}
                         </span>
@@ -158,7 +156,7 @@ export function ProjectCarousel({ projects }: { projects: Project[] }) {
                       href={`/projects/${project.slug}`}
                       // Only the visible slide is reachable by keyboard.
                       tabIndex={i === index ? 0 : -1}
-                      className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300"
+                      className="screened mt-3 inline-flex w-fit items-center gap-2 bg-[var(--live)] px-4 py-2.5 text-[0.7rem] text-[var(--on-live)] transition-opacity hover:opacity-90"
                     >
                       Open the project
                       <ArrowRight aria-hidden className="size-4" />
@@ -177,7 +175,7 @@ export function ProjectCarousel({ projects }: { projects: Project[] }) {
             type="button"
             onClick={() => go(index - 1)}
             aria-label="Previous project"
-            className="rounded-md border border-neutral-300 p-2 text-neutral-700 transition hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+            className="border-2 border-[var(--rule)] p-2.5 text-[var(--ink)] transition-colors hover:border-[var(--active)] hover:text-[var(--active)]"
           >
             <ChevronLeft aria-hidden className="size-4" />
           </button>
@@ -185,7 +183,7 @@ export function ProjectCarousel({ projects }: { projects: Project[] }) {
             type="button"
             onClick={() => go(index + 1)}
             aria-label="Next project"
-            className="rounded-md border border-neutral-300 p-2 text-neutral-700 transition hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+            className="border-2 border-[var(--rule)] p-2.5 text-[var(--ink)] transition-colors hover:border-[var(--active)] hover:text-[var(--active)]"
           >
             <ChevronRight aria-hidden className="size-4" />
           </button>
@@ -204,10 +202,10 @@ export function ProjectCarousel({ projects }: { projects: Project[] }) {
             >
               <span
                 className={cn(
-                  "block h-1.5 rounded-full transition-all",
+                  "block h-1.5 transition-all",
                   i === index
-                    ? "w-6 bg-neutral-900 dark:bg-neutral-100"
-                    : "w-1.5 bg-neutral-300 group-hover:bg-neutral-400 dark:bg-neutral-700 dark:group-hover:bg-neutral-600",
+                    ? "w-7 bg-[var(--live)]"
+                    : "w-1.5 bg-[var(--rule)] group-hover:bg-[var(--active)]",
                 )}
               />
             </button>

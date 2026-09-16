@@ -1,15 +1,86 @@
 @import "tailwindcss";
 
+/*
+ * The Cabinet.
+ *
+ * An arcade cabinet is a machine that runs itself in public until someone steps
+ * up and plays. Six of the projects on this site do exactly that, so the site is
+ * built as the cabinet rather than as a page describing one.
+ *
+ * Every colour below has one job. Live things are magenta-red, measurements and
+ * counters are amber, active state and focus are cyan, and display lettering is
+ * bone stock over an indigo ground. Nothing is decorative: if a colour appears,
+ * it is saying which of those four things is true.
+ */
+
 @theme inline {
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-archivo);
+  --font-display: var(--font-archivo-black);
   --font-mono: var(--font-geist-mono);
 }
 
-/*
- * Theme is driven by a `dark` class on <html>, set before paint by an inline
- * script in the layout so there is no flash of the wrong theme.
- */
+@theme {
+  /* Cabinet ground: deep indigo, the colour of a backlit panel in a dim room. */
+  --color-cab-void: #0b0a1f;
+  --color-cab-ground: #141133;
+  --color-cab-panel: #1d1947;
+  --color-cab-rule: #322c6b;
+  --color-cab-rule-soft: #262158;
+
+  /* Silkscreen inks. One job each. */
+  --color-cab-live: #ff3b6b; /* playable / running right now */
+  --color-cab-live-deep: #96082f; /* the same ink on a light ground */
+  --color-cab-score: #ffc93c; /* counters, measurements, numbers */
+  --color-cab-score-deep: #6b4a00; /* the same ink on a light ground */
+  --color-cab-active: #2de2e6; /* active state, focus, selection */
+  --color-cab-active-deep: #04646b; /* the same ink on a light ground */
+
+  /* Stock: the paper the ink sits on. */
+  --color-cab-stock: #f4f1ea;
+  --color-cab-stock-dim: #b8b2cc;
+  --color-cab-stock-faint: #8880a8;
+
+  /* Daylight variant: silkscreen on enamel rather than backlit acrylic. */
+  --color-cab-day: #f4f1ea;
+  --color-cab-day-panel: #e8e3d6;
+  --color-cab-day-rule: #cec7b6;
+  --color-cab-day-ink: #17142f;
+  --color-cab-day-ink-dim: #4a4470;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Light is the daylit cabinet: silkscreen on enamel, still the same inks.
+ * Dark is the cabinet as it actually lives — lit panel in a dim arcade.
+ */
+:root {
+  --on-live: var(--color-cab-day);
+  --ground: var(--color-cab-day);
+  --ground-panel: var(--color-cab-day-panel);
+  --rule: var(--color-cab-day-rule);
+  --rule-soft: var(--color-cab-day-rule);
+  --ink: var(--color-cab-day-ink);
+  --ink-dim: var(--color-cab-day-ink-dim);
+  --live: var(--color-cab-live-deep);
+  --score: var(--color-cab-score-deep);
+  --active: var(--color-cab-active-deep);
+  color-scheme: light;
+}
+
+.dark {
+  --on-live: var(--color-cab-void);
+  --ground: var(--color-cab-ground);
+  --ground-panel: var(--color-cab-panel);
+  --rule: var(--color-cab-rule);
+  --rule-soft: var(--color-cab-rule-soft);
+  --ink: var(--color-cab-stock);
+  --ink-dim: var(--color-cab-stock-dim);
+  --live: var(--color-cab-live);
+  --score: var(--color-cab-score);
+  --active: var(--color-cab-active);
+  color-scheme: dark;
+}
 
 html {
   scroll-behavior: smooth;
@@ -22,17 +93,97 @@ html {
 }
 
 body {
-  background: var(--color-white);
-  color: var(--color-neutral-900);
+  background: var(--ground);
+  color: var(--ink);
 }
 
+/*
+ * The grain is the cabinet's silkscreen texture: a fixed, very low-contrast
+ * noise so large flat fields read as printed rather than as a CSS fill. Fixed
+ * attachment keeps it still while the page scrolls, the way ink on a panel is
+ * still. Cheap: one repeating 180px tile, no blend mode, no filter.
+ */
 .dark body {
-  background: var(--color-neutral-950);
-  color: var(--color-neutral-100);
+  background-image:
+    radial-gradient(circle at 18% 12%, rgb(255 59 107 / 0.05), transparent 42%),
+    radial-gradient(circle at 82% 0%, rgb(45 226 230 / 0.05), transparent 38%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  background-attachment: fixed;
 }
 
-/* Visible focus for keyboard users, without a ring on every mouse click. */
+body:not(.dark body) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+  background-attachment: fixed;
+}
+
+/*
+ * Browser surfaces carry the design too. These ship with defaults belonging to
+ * no design system, so they get the cabinet's inks.
+ */
+::selection {
+  background: var(--active);
+  color: var(--color-cab-void);
+}
+
 :focus-visible {
-  outline: 2px solid var(--color-blue-500);
+  outline: 2px solid var(--active);
   outline-offset: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ground-panel);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--rule);
+  border: 3px solid var(--ground-panel);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--active);
+}
+
+* {
+  scrollbar-color: var(--rule) var(--ground-panel);
+}
+
+/*
+ * Marquee lettering: heavy, tight, and slightly condensed. The tracking floor
+ * is deliberate — display type this heavy needs negative tracking to read as
+ * one silkscreened word rather than a row of letters.
+ */
+.marquee {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 0.92;
+  text-transform: uppercase;
+  /*
+   * A heavy uppercase face makes words far wider than their lowercase
+   * equivalents, and a long one ("ACTUALLY", "TOOLING") will not wrap inside a
+   * phone's width. Hyphenation gives it a legal break point; the overflow-wrap
+   * is the backstop for anything hyphenation cannot split.
+   */
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+/* Screened labels: the small stencilled text on a cabinet's control panel. */
+.screened {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Counters and measurements, always tabular so digits do not jitter. */
+.score {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
 }

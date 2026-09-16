@@ -28,7 +28,7 @@ function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
       <dt className="text-xs text-neutral-500 dark:text-neutral-400">{label}</dt>
-      <dd className="font-mono text-lg tabular-nums text-neutral-900 dark:text-neutral-100">
+      <dd className="font-mono text-lg text-neutral-900 tabular-nums dark:text-neutral-100">
         {value}
       </dd>
     </div>
@@ -133,9 +133,7 @@ export function SudokuControls({
               max={100}
               value={(Math.log10(state.stepsPerSecond) / 4) * 100}
               onChange={(event) =>
-                onSpeed(
-                  Math.round(10 ** ((Number(event.target.value) / 100) * 4)),
-                )
+                onSpeed(Math.round(10 ** ((Number(event.target.value) / 100) * 4)))
               }
               className="w-full accent-neutral-900 dark:accent-neutral-100"
             />
