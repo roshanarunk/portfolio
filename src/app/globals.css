@@ -1,41 +1,15 @@
 @import "tailwindcss";
 
-/*
- * One-Bit Desktop.
- *
- * A portfolio of programs that actually run, presented by an operating system
- * rather than a marketing page. Black and white only: there are no greys here,
- * just ordered dither patterns standing in for tone, which is how a 1-bit
- * display faked shading. Every rule below draws something a 1984 screen could
- * have drawn, which is why none of it needs an illustration.
- */
-
 @theme inline {
   --font-sans: var(--font-geist-sans);
-  --font-pixel: var(--font-silkscreen);
   --font-mono: var(--font-geist-mono);
 }
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 /*
- * Light is paper, dark is a phosphor screen. The world is one bit either way,
- * so the two themes swap ink and ground rather than introducing new colours.
+ * Theme is driven by a `dark` class on <html>, set before paint by an inline
+ * script in the layout so there is no flash of the wrong theme.
  */
-:root {
-  --ink: #000000;
-  --paper: #ffffff;
-  /* The desktop ground: a 50% checker, the classic Finder pattern. */
-  --desktop: #808080;
-  color-scheme: light;
-}
-
-.dark {
-  --ink: #ffffff;
-  --paper: #000000;
-  --desktop: #808080;
-  color-scheme: dark;
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
 html {
   scroll-behavior: smooth;
@@ -48,162 +22,17 @@ html {
 }
 
 body {
-  background: var(--paper);
-  color: var(--ink);
-  /*
-   * The desktop pattern is a real ordered dither: a 2x2 checker at 2px, which
-   * reads as 50% grey at a glance and resolves into pixels up close. Drawn with
-   * a repeating gradient rather than an image so it stays crisp at any zoom.
-   */
-  background-image: repeating-conic-gradient(var(--ink) 0% 25%, transparent 0% 50%);
-  background-size: 4px 4px;
-  background-position: 0 0;
+  background: var(--color-white);
+  color: var(--color-neutral-900);
 }
 
 .dark body {
-  background-image: repeating-conic-gradient(var(--ink) 0% 25%, transparent 0% 50%);
-  background-size: 4px 4px;
+  background: var(--color-neutral-950);
+  color: var(--color-neutral-100);
 }
 
-/*
- * Browser surfaces carry the design too. A 1-bit world has no anti-aliased
- * accent colour, so selection inverts, exactly as it did on the original.
- */
-::selection {
-  background: var(--ink);
-  color: var(--paper);
-}
-
+/* Visible focus for keyboard users, without a ring on every mouse click. */
 :focus-visible {
-  outline: 2px dotted var(--ink);
+  outline: 2px solid var(--color-blue-500);
   outline-offset: 2px;
-}
-
-::-webkit-scrollbar {
-  width: 15px;
-  height: 15px;
-}
-
-::-webkit-scrollbar-track {
-  background-image: repeating-conic-gradient(var(--ink) 0% 25%, transparent 0% 50%);
-  background-size: 4px 4px;
-  border-left: 1px solid var(--ink);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--paper);
-  border: 1px solid var(--ink);
-}
-
-/* ---- One-bit primitives ------------------------------------------------ */
-
-/*
- * A window. 1px chrome and a hard offset shadow — no blur, ever. The blur is
- * what would make this look like a modern card wearing a costume; the hard
- * block is what the original actually drew.
- */
-.win {
-  background: var(--paper);
-  border: 1px solid var(--ink);
-  box-shadow: 3px 3px 0 0 var(--ink);
-}
-
-/*
- * A focused title bar. The flanking rules are how the original showed focus,
- * and they are drawn with repeating-linear-gradient rather than a border stack
- * so the line count stays right at any width.
- */
-.titlebar {
-  border-bottom: 1px solid var(--ink);
-  background-image: repeating-linear-gradient(
-    to bottom,
-    var(--ink) 0 1px,
-    transparent 1px 3px
-  );
-}
-
-/* The title sits on paper so the rules do not run through the lettering. */
-.titlebar-label {
-  background: var(--paper);
-}
-
-/* An unfocused window: bare bar, no rules. */
-.titlebar-idle {
-  border-bottom: 1px solid var(--ink);
-  background: var(--paper);
-}
-
-/*
- * A button. The doubled bottom-right edge is the 1-bit way of showing a raised
- * control; pressing inverts the whole thing rather than tinting it.
- */
-.btn1 {
-  background: var(--paper);
-  color: var(--ink);
-  border: 1px solid var(--ink);
-  box-shadow: 2px 2px 0 0 var(--ink);
-}
-
-.btn1:active {
-  background: var(--ink);
-  color: var(--paper);
-  box-shadow: none;
-  transform: translate(2px, 2px);
-}
-
-/* The default action wears a second frame, as the original's default button did. */
-.btn1-default {
-  outline: 1px solid var(--ink);
-  outline-offset: 2px;
-}
-
-/* Marching ants: a live selection. Honours reduced-motion by standing still. */
-.ants {
-  background-image: repeating-linear-gradient(
-    to right,
-    var(--ink) 0 4px,
-    transparent 4px 8px
-  );
-  background-size: 8px 1px;
-  background-repeat: repeat-x;
-  animation: march 0.6s linear infinite;
-}
-
-@keyframes march {
-  to {
-    background-position: 8px 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ants {
-    animation: none;
-  }
-}
-
-/* 50% dither, for disabled states and filled areas. */
-.dither {
-  background-image: repeating-conic-gradient(var(--ink) 0% 25%, transparent 0% 50%);
-  background-size: 4px 4px;
-}
-
-/* 25% dither, a lighter fill for secondary bands. */
-.dither-light {
-  background-image: repeating-conic-gradient(var(--ink) 0% 25%, transparent 0% 50%);
-  background-size: 6px 6px;
-}
-
-/* Pixel type: bitmap face, never anti-aliased into softness. */
-.pixel {
-  font-family: var(--font-pixel), ui-monospace, monospace;
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  -webkit-font-smoothing: none;
-  font-smooth: never;
-}
-
-/* Tabular figures for anything counted. */
-.score {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum";
 }
