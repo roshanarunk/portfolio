@@ -25,7 +25,6 @@ function getTheme(): Theme {
   return document.documentElement.classList.contains("dark") ? "dark" : "light";
 }
 
-/** A cabinet toggle: the lamp above the switch is lit when the machine is dim. */
 export function ThemeToggle() {
   const theme = useSyncExternalStore(subscribe, getTheme, () => "light" as const);
 
@@ -44,7 +43,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      className="p-2 text-[var(--ink-dim)] transition-colors hover:text-[var(--score)]"
+      className="rounded-md p-2 text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
     >
       {theme === "dark" ? (

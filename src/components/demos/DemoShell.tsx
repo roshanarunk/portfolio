@@ -38,7 +38,7 @@ export function DemoShell({
   return (
     <section
       className={cn(
-        "overflow-hidden border-2 border-[var(--rule)] bg-[var(--ground-panel)]",
+        "overflow-hidden rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950",
         className,
       )}
       aria-labelledby={headingId}
@@ -49,18 +49,25 @@ export function DemoShell({
         screen readers. A plain <div> rather than a nested <header>, which would
         otherwise add a second banner-ish landmark inside the page's <article>.
       */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-[var(--rule)] px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 px-4 py-3 dark:border-neutral-800">
         <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-3">
-            <h2 id={headingId} className="font-semibold text-[var(--ink)]">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2
+              id={headingId}
+              className="font-medium text-neutral-900 dark:text-neutral-100"
+            >
               {title}
             </h2>
             {badge && (
-              <span className="screened text-[0.6rem] text-[var(--live)]">{badge}</span>
+              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
+                {badge}
+              </span>
             )}
           </div>
           {instructions && (
-            <p className="mt-1 text-sm text-[var(--ink-dim)]">{instructions}</p>
+            <p className="mt-0.5 text-sm text-neutral-600 dark:text-neutral-400">
+              {instructions}
+            </p>
           )}
         </div>
 
@@ -69,7 +76,7 @@ export function DemoShell({
             <button
               type="button"
               onClick={reset}
-              className="screened inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[0.65rem] text-[var(--ink-dim)] transition-colors hover:text-[var(--active)]"
+              className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
             >
               <RotateCcw aria-hidden className="size-3.5" />
               Reset
@@ -80,7 +87,7 @@ export function DemoShell({
               href={sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="screened inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[0.65rem] text-[var(--ink-dim)] transition-colors hover:text-[var(--active)]"
+              className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
             >
               <ExternalLink aria-hidden className="size-3.5" />
               Source

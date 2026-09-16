@@ -107,7 +107,9 @@ export function SudokuBoard({
           const selected = selRow === row && selCol === col;
           const notes = state.notes[row][col];
           // One tab stop for the whole grid; arrows move within it.
-          const isTabStop = state.selected ? selected : row === 0 && col === 0;
+          const isTabStop = state.selected
+            ? selected
+            : row === 0 && col === 0;
 
           const label = `Row ${row + 1}, column ${col + 1}, ${
             value === 0 ? "empty" : value
@@ -133,8 +135,9 @@ export function SudokuBoard({
                   ? "text-neutral-900 dark:text-neutral-100"
                   : "text-blue-600 dark:text-blue-400",
                 stepClass(state, row, col),
-                selected && "ring-2 ring-neutral-900 ring-inset dark:ring-neutral-100",
-                "focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset",
+                selected &&
+                  "ring-2 ring-inset ring-neutral-900 dark:ring-neutral-100",
+                "focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500",
               )}
             >
               {value !== 0 ? (

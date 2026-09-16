@@ -11,9 +11,11 @@ export default function AboutPage() {
   return (
     <Container className="py-12">
       <Prose>
-        <h1 className="marquee text-[2.6rem] text-[var(--ink)] sm:text-6xl">About</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
+          About
+        </h1>
 
-        <div className="mt-8 space-y-4 leading-relaxed text-[var(--ink-dim)]">
+        <div className="mt-6 space-y-4 leading-relaxed text-neutral-700 dark:text-neutral-300">
           <p>
             I am a software engineer who tends to build things for people I know. Most
             of the work on this site started as somebody&apos;s actual problem: a
@@ -37,10 +39,10 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <h2 className="marquee mt-14 text-3xl text-[var(--ink)]">
+        <h2 className="mt-12 text-lg font-medium text-neutral-900 dark:text-neutral-100">
           How this site works
         </h2>
-        <div className="mt-5 space-y-4 leading-relaxed text-[var(--ink-dim)]">
+        <div className="mt-4 space-y-4 leading-relaxed text-neutral-700 dark:text-neutral-300">
           <p>
             Portfolios usually show screenshots. I wanted the projects to be usable, so
             where a project could be made to run in a browser, it was: the Sudoku solver
@@ -59,11 +61,11 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <p className="mt-10 text-[var(--ink-dim)]">
+        <p className="mt-10 text-neutral-700 dark:text-neutral-300">
           Reach me at{" "}
           <a
             href={`mailto:${site.email}`}
-            className="text-[var(--active)] underline underline-offset-4"
+            className="underline underline-offset-4 hover:text-neutral-900 dark:hover:text-neutral-100"
           >
             {site.email}
           </a>

@@ -16,7 +16,9 @@ export function HeatMapDemo({ reducedMotion }: DemoComponentProps) {
   const [slug, setSlug] = useState(DEFAULT_SLUG);
   // Keyed by slug so "is this map still loading" is derived from the data
   // rather than written as a separate state update inside the effect.
-  const [loaded, setLoaded] = useState<{ slug: string; match: Match } | null>(null);
+  const [loaded, setLoaded] = useState<{ slug: string; match: Match } | null>(
+    null,
+  );
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<"map" | "table">("map");
   const [filters, setFilters] = useState<Filters>({
@@ -66,7 +68,8 @@ export function HeatMapDemo({ reducedMotion }: DemoComponentProps) {
   const kills = useMemo(() => {
     if (!match) return [];
     return match.kills.filter((kill) => {
-      if (kill.round < filters.roundFrom || kill.round > filters.roundTo) return false;
+      if (kill.round < filters.roundFrom || kill.round > filters.roundTo)
+        return false;
       if (
         filters.player !== null &&
         kill.killer !== filters.player &&
@@ -160,18 +163,14 @@ export function HeatMapDemo({ reducedMotion }: DemoComponentProps) {
           ) : (
             <div className="max-h-[30rem] overflow-auto rounded-lg border border-neutral-200 dark:border-neutral-800">
               <table className="w-full text-left text-sm">
-                <caption className="sr-only">Kills in this match, filtered</caption>
+                <caption className="sr-only">
+                  Kills in this match, filtered
+                </caption>
                 <thead className="sticky top-0 bg-neutral-50 text-xs uppercase dark:bg-neutral-900">
                   <tr>
-                    <th scope="col" className="px-3 py-2">
-                      Round
-                    </th>
-                    <th scope="col" className="px-3 py-2">
-                      Killer
-                    </th>
-                    <th scope="col" className="px-3 py-2">
-                      Victim
-                    </th>
+                    <th scope="col" className="px-3 py-2">Round</th>
+                    <th scope="col" className="px-3 py-2">Killer</th>
+                    <th scope="col" className="px-3 py-2">Victim</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -313,8 +312,8 @@ export function HeatMapDemo({ reducedMotion }: DemoComponentProps) {
           </button>
 
           <p className="border-t border-neutral-200 pt-4 text-xs leading-relaxed text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
-            Real kill positions from a recorded match. The playable area is drawn from
-            the match data rather than Riot&apos;s map art.
+            Real kill positions from a recorded match. The playable area is drawn
+            from the match data rather than Riot&apos;s map art.
           </p>
         </div>
       </div>

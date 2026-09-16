@@ -37,7 +37,7 @@ export default async function ProjectPage({ params }: Params) {
     <Container as="article" className="py-12">
       <Link
         href="/projects"
-        className="screened inline-flex items-center gap-2 text-[0.65rem] text-[var(--ink-dim)] transition-colors hover:text-[var(--active)]"
+        className="inline-flex items-center gap-1.5 text-sm text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
       >
         <ArrowLeft aria-hidden className="size-4" />
         All projects
@@ -50,14 +50,16 @@ export default async function ProjectPage({ params }: Params) {
       */}
       <header className="mt-6 max-w-2xl">
         <div className="flex flex-wrap items-baseline gap-3">
-          <h1 className="marquee text-4xl text-[var(--ink)] sm:text-5xl">
+          <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
             {project.title}
           </h1>
-          <span className="screened score text-[0.65rem] text-[var(--score)]">
+          <span className="text-sm text-neutral-500 dark:text-neutral-400">
             {project.year}
           </span>
         </div>
-        <p className="mt-4 text-lg text-[var(--ink-dim)]">{project.summary}</p>
+        <p className="mt-3 text-lg text-neutral-600 dark:text-neutral-400">
+          {project.summary}
+        </p>
 
         <div className="mt-5 flex flex-wrap items-center gap-3">
           {project.repoUrl && (
@@ -65,7 +67,7 @@ export default async function ProjectPage({ params }: Params) {
               href={project.repoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="screened inline-flex items-center gap-2 border-2 border-[var(--rule)] px-4 py-2.5 text-[0.68rem] text-[var(--ink)] transition-colors hover:border-[var(--active)] hover:text-[var(--active)]"
+              className="inline-flex items-center gap-1.5 rounded-md border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
             >
               <GithubIcon className="size-3.5" />
               Source
@@ -76,7 +78,7 @@ export default async function ProjectPage({ params }: Params) {
               href={project.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="screened inline-flex items-center gap-2 border-2 border-[var(--rule)] px-4 py-2.5 text-[0.68rem] text-[var(--ink)] transition-colors hover:border-[var(--active)] hover:text-[var(--active)]"
+              className="inline-flex items-center gap-1.5 rounded-md border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
             >
               <ExternalLink aria-hidden className="size-3.5" />
               Live site
@@ -88,7 +90,7 @@ export default async function ProjectPage({ params }: Params) {
           {project.tech.map((tech) => (
             <li
               key={tech.label}
-              className="border border-[var(--rule)] px-2.5 py-1 text-xs text-[var(--ink-dim)]"
+              className="rounded-full bg-neutral-100 px-2.5 py-1 text-xs text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
             >
               {tech.label}
             </li>
@@ -97,7 +99,7 @@ export default async function ProjectPage({ params }: Params) {
       </header>
 
       {project.disclosure && (
-        <p className="mt-8 flex max-w-2xl gap-3 border-2 border-[var(--score)]/50 bg-[var(--ground-panel)] p-4 text-sm text-[var(--ink-dim)]">
+        <p className="mt-8 flex max-w-2xl gap-2.5 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950/50 dark:text-amber-200">
           <Info aria-hidden className="mt-0.5 size-4 shrink-0" />
           {project.disclosure}
         </p>
@@ -111,7 +113,7 @@ export default async function ProjectPage({ params }: Params) {
         {project.longDescription.map((paragraph) => (
           <p
             key={paragraph.slice(0, 40)}
-            className="leading-relaxed text-[var(--ink-dim)]"
+            className="leading-relaxed text-neutral-700 dark:text-neutral-300"
           >
             {paragraph}
           </p>
@@ -120,13 +122,18 @@ export default async function ProjectPage({ params }: Params) {
 
       {project.highlights && project.highlights.length > 0 && (
         <section className="mt-10 max-w-xl">
-          <h2 className="marquee text-2xl text-[var(--ink)]">What it does</h2>
+          <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
+            What it does
+          </h2>
           <ul className="mt-4 space-y-2">
             {project.highlights.map((item) => (
-              <li key={item} className="flex gap-3 text-[var(--ink-dim)]">
+              <li
+                key={item}
+                className="flex gap-3 text-neutral-700 dark:text-neutral-300"
+              >
                 <span
                   aria-hidden
-                  className="mt-2.5 size-1.5 shrink-0 bg-[var(--live)]"
+                  className="mt-2.5 size-1 shrink-0 rounded-full bg-neutral-400"
                 />
                 {item}
               </li>
@@ -137,17 +144,21 @@ export default async function ProjectPage({ params }: Params) {
 
       {project.challenges && project.challenges.length > 0 && (
         <section className="mt-10 max-w-xl">
-          <h2 className="marquee text-2xl text-[var(--ink)]">
+          <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
             Problems worth writing down
           </h2>
           <div className="mt-4 space-y-6">
             {project.challenges.map((challenge) => (
               <div
                 key={challenge.problem.slice(0, 40)}
-                className="border-l-2 border-[var(--rule)] pl-4"
+                className="border-l-2 border-neutral-200 pl-4 dark:border-neutral-800"
               >
-                <p className="text-[var(--ink)]">{challenge.problem}</p>
-                <p className="mt-2 text-[var(--ink-dim)]">{challenge.solution}</p>
+                <p className="text-neutral-700 dark:text-neutral-300">
+                  {challenge.problem}
+                </p>
+                <p className="mt-2 text-neutral-600 dark:text-neutral-400">
+                  {challenge.solution}
+                </p>
               </div>
             ))}
           </div>

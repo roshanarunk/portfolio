@@ -45,7 +45,9 @@ describe("VRVisionDemo", () => {
   it("offers both of the app's shaders", () => {
     renderDemo();
     expect(screen.getByRole("tab", { name: "Magnifier" })).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: "Invert colours" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("tab", { name: "Invert colours" }),
+    ).toBeInTheDocument();
   });
 
   it("starts on the magnifier with all six of its controls", () => {
@@ -122,7 +124,9 @@ describe("VRVisionDemo", () => {
     await user.click(screen.getByRole("button", { name: /use my camera/i }));
 
     expect(getUserMedia).toHaveBeenCalledOnce();
-    expect(await screen.findByRole("button", { name: /stop camera/i })).toBeVisible();
+    expect(
+      await screen.findByRole("button", { name: /stop camera/i }),
+    ).toBeVisible();
   });
 
   /** The important path: a declined camera must not break the demo. */
@@ -136,7 +140,9 @@ describe("VRVisionDemo", () => {
     renderDemo();
     await user.click(screen.getByRole("button", { name: /use my camera/i }));
 
-    expect(await screen.findByText(/permission was declined/i)).toBeVisible();
+    expect(
+      await screen.findByText(/permission was declined/i),
+    ).toBeVisible();
     // Still offering the camera, and still usable without it.
     expect(screen.getByRole("button", { name: /use my camera/i })).toBeVisible();
     expect(screen.getByLabelText(/Magnifier size/)).toBeInTheDocument();
