@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, act } from "@testing-library/react";
-import { HeroSolver } from "./HeroSolver";
+import { Cabinet } from "./Cabinet";
 
 /**
- * Attract mode is the landing page's whole thesis: the machine is running
+ * Attract mode is the first viewport's whole thesis: the machine is running
  * before the visitor touches anything. A screenshot cannot prove a
- * requestAnimationFrame loop advanced — headless capture reports zero frames —
- * so the frames are driven by hand here instead.
+ * requestAnimationFrame loop advanced — headless capture fires no frames at
+ * all — so the frames are driven by hand here instead.
  */
 
 /** jsdom ships no matchMedia, and the component asks it about reduced motion. */
@@ -51,10 +51,10 @@ function readCount(label: string): number {
 beforeEach(() => stubMatchMedia(false));
 afterEach(() => vi.restoreAllMocks());
 
-describe("HeroSolver", () => {
+describe("the cabinet in attract mode", () => {
   it("advances the real solver across animation frames", async () => {
     const frames = captureFrames();
-    render(<HeroSolver />);
+    render(<Cabinet playableCount={6} />);
 
     expect(readCount("Decisions")).toBe(0);
     await pump(frames, 5);
@@ -65,7 +65,7 @@ describe("HeroSolver", () => {
 
   it("counts backtracks, which is what makes this board expensive", async () => {
     const frames = captureFrames();
-    render(<HeroSolver />);
+    render(<Cabinet playableCount={6} />);
     await pump(frames, 40);
 
     expect(readCount("Backtracks")).toBeGreaterThan(0);
@@ -74,7 +74,7 @@ describe("HeroSolver", () => {
   it("holds still until asked when the visitor prefers reduced motion", async () => {
     stubMatchMedia(true);
     const frames = captureFrames();
-    render(<HeroSolver />);
+    render(<Cabinet playableCount={6} />);
 
     // No loop is scheduled at all, so there is nothing to pump.
     expect(frames).toHaveLength(0);
@@ -85,14 +85,20 @@ describe("HeroSolver", () => {
   it("starts when that visitor opts in", async () => {
     stubMatchMedia(true);
     const frames = captureFrames();
-    const { rerender } = render(<HeroSolver />);
+    render(<Cabinet playableCount={6} />);
 
     await act(async () => {
       screen.getByRole("button", { name: /run it/i }).click();
     });
-    rerender(<HeroSolver />);
     await pump(frames, 5);
 
     expect(readCount("Decisions")).toBeGreaterThan(0);
+  });
+
+  it("states how many projects actually run", () => {
+    captureFrames();
+    render(<Cabinet playableCount={6} />);
+
+    expect(screen.getByText(/6 of them run right here/i)).toBeInTheDocument();
   });
 });

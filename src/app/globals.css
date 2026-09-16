@@ -165,12 +165,10 @@ body:not(.dark body) {
   line-height: 0.92;
   text-transform: uppercase;
   /*
-   * A heavy uppercase face makes words far wider than their lowercase
-   * equivalents, and a long one ("ACTUALLY", "TOOLING") will not wrap inside a
-   * phone's width. Hyphenation gives it a legal break point; the overflow-wrap
-   * is the backstop for anything hyphenation cannot split.
+   * No hyphenation: a display face this heavy looks broken when a word splits
+   * across lines, and at desktop width there is no need to split at all. Long
+   * words are handled by sizing the type to the viewport instead.
    */
-  hyphens: auto;
   overflow-wrap: break-word;
 }
 
