@@ -15,6 +15,11 @@ const eslintConfig = defineConfig([
     // Vendored Impeccable tooling: not our source, and gitignored.
     ".claude/**",
     ".github/skills/**",
+    // Static assets served as-is. public/sf6 is SF6Assist's own source,
+    // vendored verbatim so the demo runs the real code — linting it would
+    // report on another project's style choices and invite editing a copy
+    // that must stay in step with upstream.
+    "public/**",
   ]),
 ]);
 

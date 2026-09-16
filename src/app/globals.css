@@ -164,3 +164,38 @@ body {
     animation: none;
   }
 }
+
+/* ---- Route transitions --------------------------------------------------
+ *
+ * Clicking a link used to swap pages instantly, which reads as a hard cut.
+ * React's <ViewTransition> (wrapping <main> in the layout) drives these: the
+ * App Router navigates client-side, so the plain CSS @view-transition rule
+ * would never fire — it only applies to full document navigations.
+ *
+ * Browsers without support navigate exactly as before rather than breaking.
+ */
+
+.route-enter {
+  animation: vt-in var(--dur-base) var(--ease-out-expo) both;
+}
+
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/*
+ * A page title carries its own transition name, so the heading is treated as
+ * the same element across a navigation rather than as two unrelated ones.
+ */
+.vt-title {
+  view-transition-name: page-title;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-enter {
+    animation: none;
+  }
+}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { RouteTransition } from "@/components/layout/RouteTransition";
 import { site } from "@/content/site";
 import "./globals.css";
 
@@ -61,7 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <Header />
         <main id="main" className="flex-1">
-          {children}
+          <RouteTransition>{children}</RouteTransition>
         </main>
         <Footer />
       </body>

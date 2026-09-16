@@ -46,38 +46,12 @@ export const sf6assist: Project = {
     },
   ],
   demo: {
-    kind: "writeup",
-    title: "Never claiming more certainty than the data supports",
-    instructions: "How an unverifiable transition is reported.",
-    excerpts: [
-      {
-        file: "core/cancel.mjs",
-        language: "javascript",
-        code: `/*
- * The guiding rule: never claim more certainty than the data supports.
- * Absence of data is not evidence of illegality, so a missing field yields
- * \`unverifiable\`, never \`illegal\`.
- */
-
-if (adv === null || startupB === null) {
-  return {
-    kind: "unverifiable",
-    reason:
-      adv === null
-        ? \`Cannot read frame advantage for \${a.name}.\`
-        : \`Cannot read startup for \${b.name}.\`,
-    timing: linkWindow(a, b),
-    confidence: "low",
-    caveats,
-  };
-}
-
-// Frame advantage +N means B may start on the frame after A's recovery,
-// giving an N+1 frame window. Keep this convention consistent everywhere.
-if (adv >= 0 && startupB <= adv + 1) {`,
-        note: "The validator has three verdicts rather than two. A missing field means the dataset cannot express the situation — juggle state, counterhit, spacing — so it says so and attaches the reason, instead of resolving the gap into a confident answer.",
-      },
-    ],
-    sourceUrl: "https://github.com/roshanarunk/SF6Assist/blob/main/core/cancel.mjs",
+    kind: "live",
+    componentId: "sf6assist",
+    title: "The validator, running",
+    instructions:
+      "Pick two moves and check the link. This is the project's own core/cancel.mjs on its real frame data.",
+    badge: "Runs the real code",
+    sourceUrl: "https://github.com/roshanarunk/SF6Assist/blob/master/core/cancel.mjs",
   },
 };

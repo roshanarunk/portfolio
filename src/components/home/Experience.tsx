@@ -25,7 +25,7 @@ export function Experience() {
         {experience.map((role) => (
           <li
             key={`${role.company}-${role.start}`}
-            className="flex items-center gap-4 border-b border-neutral-200 px-3 py-4 tx first:border-t hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-900/60"
+            className="tx flex items-center gap-4 border-b border-neutral-200 px-3 py-4 first:border-t hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-900/60"
           >
             <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-neutral-100 dark:bg-neutral-800">
               {role.logo ? (

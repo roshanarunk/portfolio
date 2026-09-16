@@ -133,6 +133,7 @@ describe("live demos", () => {
     "wattravl",
     "atm",
     "whj-student-update",
+    "sf6assist",
   ]);
 
   it("points every live demo at a registered component", () => {

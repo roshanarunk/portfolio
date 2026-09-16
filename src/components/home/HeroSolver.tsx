@@ -50,8 +50,7 @@ function reducer(state: RunState, action: Action): RunState {
     board: action.board,
     step: action.step,
     steps: state.steps + 1,
-    backtracks:
-      state.backtracks + (action.step.type === "backtrack" ? 1 : 0),
+    backtracks: state.backtracks + (action.step.type === "backtrack" ? 1 : 0),
     done: action.step.type === "solved",
   };
 }

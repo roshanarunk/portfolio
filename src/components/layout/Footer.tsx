@@ -3,7 +3,6 @@ import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { site } from "@/content/site";
 import { Container } from "./Container";
 
-
 export function Footer() {
   return (
     <footer className="mt-24 border-t border-neutral-200 dark:border-neutral-800">

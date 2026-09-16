@@ -29,13 +29,12 @@ export function ProjectCard({
     <Link
       href={`/projects/${project.slug}`}
       className={cn(
-        "group relative flex flex-col rounded-xl border p-5 tx-move",
+        "group tx-move relative flex flex-col rounded-xl border p-5",
         "border-neutral-200 hover:border-neutral-400 hover:shadow-sm",
         "dark:border-neutral-800 dark:hover:border-neutral-600",
         // A playable project earns the accent; the rest stay quiet, so the
         // colour means something rather than decorating every card.
-        runsHere &&
-          "hover:border-emerald-500/60 dark:hover:border-emerald-400/50",
+        runsHere && "hover:border-emerald-500/60 dark:hover:border-emerald-400/50",
         featured && "sm:col-span-2 sm:flex-row sm:items-start sm:gap-6",
       )}
     >
@@ -51,7 +50,7 @@ export function ProjectCard({
           </h3>
           <ArrowUpRight
             aria-hidden
-            className="size-4 shrink-0 text-neutral-400 tx group-hover:text-neutral-900 dark:group-hover:text-neutral-100"
+            className="tx size-4 shrink-0 text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-100"
           />
         </div>
 
