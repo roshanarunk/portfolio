@@ -138,7 +138,7 @@ export function WatTravlDemo() {
                 type="button"
                 onClick={() => goToLeg(0)}
                 aria-label="Back to the first leg"
-                className="rounded p-1.5 text-neutral-900 transition hover:bg-black/10"
+                className="rounded p-1.5 text-neutral-900 tx hover:bg-black/10"
               >
                 <svg viewBox="0 0 24 24" className="size-5" aria-hidden>
                   <path
@@ -195,7 +195,7 @@ export function WatTravlDemo() {
               <button
                 type="button"
                 onClick={() => goToLeg(0)}
-                className="rounded border border-neutral-400 bg-white px-4 py-1 text-xs font-medium text-neutral-800 transition hover:bg-neutral-50"
+                className="rounded border border-neutral-400 bg-white px-4 py-1 text-xs font-medium text-neutral-800 tx hover:bg-neutral-50"
               >
                 Refresh
               </button>
@@ -383,7 +383,7 @@ export function WatTravlDemo() {
                     <button
                       type="button"
                       onClick={() => goToLeg(i)}
-                      className={`w-full rounded px-2 py-1.5 text-left text-xs transition ${
+                      className={`w-full rounded px-2 py-1.5 text-left text-xs tx ${
                         i === currentLegIndex
                           ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
                           : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"

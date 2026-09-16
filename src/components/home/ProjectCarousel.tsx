@@ -158,7 +158,7 @@ export function ProjectCarousel({ projects }: { projects: Project[] }) {
                       href={`/projects/${project.slug}`}
                       // Only the visible slide is reachable by keyboard.
                       tabIndex={i === index ? 0 : -1}
-                      className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300"
+                      className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white tx hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300"
                     >
                       Open the project
                       <ArrowRight aria-hidden className="size-4" />
@@ -177,7 +177,7 @@ export function ProjectCarousel({ projects }: { projects: Project[] }) {
             type="button"
             onClick={() => go(index - 1)}
             aria-label="Previous project"
-            className="rounded-md border border-neutral-300 p-2 text-neutral-700 transition hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+            className="rounded-md border border-neutral-300 p-2 text-neutral-700 tx hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
           >
             <ChevronLeft aria-hidden className="size-4" />
           </button>
@@ -185,7 +185,7 @@ export function ProjectCarousel({ projects }: { projects: Project[] }) {
             type="button"
             onClick={() => go(index + 1)}
             aria-label="Next project"
-            className="rounded-md border border-neutral-300 p-2 text-neutral-700 transition hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+            className="rounded-md border border-neutral-300 p-2 text-neutral-700 tx hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
           >
             <ChevronRight aria-hidden className="size-4" />
           </button>

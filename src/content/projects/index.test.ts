@@ -136,9 +136,7 @@ describe("live demos", () => {
   it("points every live demo at a registered component", () => {
     for (const project of projects) {
       if (project.demo.kind !== "live") continue;
-      expect(registeredIds.has(project.demo.componentId), project.slug).toBe(
-        true,
-      );
+      expect(registeredIds.has(project.demo.componentId), project.slug).toBe(true);
     }
   });
 

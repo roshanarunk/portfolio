@@ -89,3 +89,78 @@ body {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
 }
+
+/* ---- Motion -------------------------------------------------------------
+ *
+ * The site had 16 bare `transition` classes running on browser defaults, so
+ * every hover and state change fired at the same flat 150ms ease. These give
+ * motion a deliberate shape: quick on the way in, softer on the way out, and
+ * an exponential ease-out that settles rather than stopping dead.
+ *
+ * Every rule here is inert under prefers-reduced-motion, handled once at the
+ * bottom rather than per-component.
+ */
+
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-fast: 120ms;
+  --dur-base: 220ms;
+  --dur-slow: 420ms;
+}
+
+/* The default transition for interactive chrome: colour and border only. */
+.tx {
+  transition-property: color, background-color, border-color, opacity;
+  transition-duration: var(--dur-fast);
+  transition-timing-function: var(--ease-out-soft);
+}
+
+/* For elements that also move or scale on interaction. */
+.tx-move {
+  transition-property:
+    color, background-color, border-color, opacity, transform, box-shadow;
+  transition-duration: var(--dur-base);
+  transition-timing-function: var(--ease-out-expo);
+}
+
+/*
+ * Page entrance. Content is visible by default and animates from a small
+ * offset, so a failed or skipped animation leaves a readable page rather than
+ * an empty one.
+ */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.rise {
+  animation: rise var(--dur-slow) var(--ease-out-expo) both;
+}
+
+/* Staggered children, for lists and grids that enter together. */
+.rise-1 {
+  animation-delay: 60ms;
+}
+.rise-2 {
+  animation-delay: 120ms;
+}
+.rise-3 {
+  animation-delay: 180ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tx,
+  .tx-move {
+    transition-duration: 1ms;
+  }
+
+  .rise,
+  .rise-1,
+  .rise-2,
+  .rise-3 {
+    animation: none;
+  }
+}

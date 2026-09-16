@@ -19,7 +19,7 @@ export default function HomePage() {
         first thing a visitor meets is the work rather than a claim about it.
       */}
       <section className="grid items-start gap-10 py-10 sm:py-14 lg:grid-cols-[1fr_minmax(0,24rem)] lg:gap-16">
-        <div>
+        <div className="rise">
           <h1 className="text-4xl font-semibold tracking-tight text-balance text-neutral-900 sm:text-5xl dark:text-neutral-100">
             {site.tagline}
           </h1>
@@ -32,7 +32,7 @@ export default function HomePage() {
           <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
             <Link
               href="/projects/cc3k"
-              className="inline-flex items-center gap-1.5 rounded-md bg-emerald-700 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-800 dark:bg-emerald-400 dark:text-neutral-950 dark:hover:bg-emerald-300"
+              className="tx inline-flex items-center gap-1.5 rounded-md bg-emerald-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-emerald-800 dark:bg-emerald-400 dark:text-neutral-950 dark:hover:bg-emerald-300"
             >
               Play the roguelike
               <ArrowRight aria-hidden className="size-4" />
@@ -92,7 +92,7 @@ export default function HomePage() {
           </dl>
         </div>
 
-        <div className="w-full max-w-md justify-self-center lg:max-w-none lg:justify-self-end">
+        <div className="rise rise-2 w-full max-w-md justify-self-center lg:max-w-none lg:justify-self-end">
           <HeroSolver />
           <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
             My Python solver, ported and running live —{" "}
@@ -131,8 +131,15 @@ export default function HomePage() {
           scanning for a familiar stack finds it without clicking.
         */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {featuredProjects.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
+          {featuredProjects.map((project, i) => (
+            <div
+              key={project.slug}
+              // Each card enters a beat after the last, so the row resolves
+              // left to right rather than appearing all at once.
+              className={`rise ${["", "rise-1", "rise-2"][i] ?? "rise-3"}`}
+            >
+              <ProjectCard project={project} />
+            </div>
           ))}
         </div>
       </section>

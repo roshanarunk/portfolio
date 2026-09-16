@@ -127,7 +127,7 @@ export function SudokuBoard({
               onClick={() => onSelect([row, col])}
               className={cn(
                 "relative flex items-center justify-center bg-white text-lg font-medium tabular-nums outline-none dark:bg-neutral-950",
-                !reducedMotion && "transition-colors duration-150",
+                !reducedMotion && "tx duration-150",
                 // Thicker rules on 3x3 box seams.
                 col % 3 === 0 && col !== 0 && "ml-0.5",
                 row % 3 === 0 && row !== 0 && "mt-0.5",

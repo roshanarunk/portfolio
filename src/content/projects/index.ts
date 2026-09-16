@@ -13,6 +13,7 @@ import { bankWebsite } from "./bank-website";
 import { wattravl } from "./wattravl";
 import { cc3k } from "./cc3k";
 import { subspleasio } from "./subspleasio";
+import { sf6assist } from "./sf6assist";
 
 /**
  * Ordered by tier, then by how much each project shows. This is the order the
@@ -26,6 +27,7 @@ export const projects: Project[] = [
   vrvision,
   wattravl,
   cc3k,
+  sf6assist,
   subspleasio,
   valoLineup,
   mangareader,
@@ -49,9 +51,7 @@ const FEATURED_ORDER = ["cc3k", "league-ml", "underpeel"];
 
 export const featuredProjects = projects
   .filter((p) => p.featured)
-  .sort(
-    (a, b) => FEATURED_ORDER.indexOf(a.slug) - FEATURED_ORDER.indexOf(b.slug),
-  );
+  .sort((a, b) => FEATURED_ORDER.indexOf(a.slug) - FEATURED_ORDER.indexOf(b.slug));
 
 export function getProject(slug: string): Project | undefined {
   return projects.find((project) => project.slug === slug);

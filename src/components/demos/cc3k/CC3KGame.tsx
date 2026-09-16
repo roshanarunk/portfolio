@@ -272,7 +272,7 @@ export function CC3KGame() {
               key={spec.name}
               type="button"
               onClick={() => startGame(spec.name)}
-              className="rounded-lg border border-neutral-300 p-3 text-left transition hover:border-neutral-900 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:border-neutral-100 dark:hover:bg-neutral-900"
+              className="rounded-lg border border-neutral-300 p-3 text-left tx hover:border-neutral-900 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:border-neutral-100 dark:hover:bg-neutral-900"
             >
               <span className="font-medium text-neutral-900 dark:text-neutral-100">
                 {spec.name}

@@ -29,7 +29,7 @@ export function ProjectCard({
     <Link
       href={`/projects/${project.slug}`}
       className={cn(
-        "group relative flex flex-col rounded-xl border p-5 transition",
+        "group relative flex flex-col rounded-xl border p-5 tx-move",
         "border-neutral-200 hover:border-neutral-400 hover:shadow-sm",
         "dark:border-neutral-800 dark:hover:border-neutral-600",
         // A playable project earns the accent; the rest stay quiet, so the
@@ -51,7 +51,7 @@ export function ProjectCard({
           </h3>
           <ArrowUpRight
             aria-hidden
-            className="size-4 shrink-0 text-neutral-400 transition group-hover:text-neutral-900 dark:group-hover:text-neutral-100"
+            className="size-4 shrink-0 text-neutral-400 tx group-hover:text-neutral-900 dark:group-hover:text-neutral-100"
           />
         </div>
 
