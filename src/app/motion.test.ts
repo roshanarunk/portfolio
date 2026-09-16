@@ -58,11 +58,28 @@ describe("the page entrance animation", () => {
     expect(css).toMatch(/\.route-enter\s*\{[^}]*animation:\s*rise/);
   });
 
-  it("disables every animation under prefers-reduced-motion", () => {
-    const reduced = css.slice(css.lastIndexOf("prefers-reduced-motion"));
-    for (const cls of ["rise", "rise-1", "rise-5", "route-enter"]) {
-      expect(reduced, cls).toContain(`.${cls}`);
-    }
-    expect(reduced).toMatch(/animation:\s*none/);
+  /**
+   * Reduced motion is about vestibular discomfort from movement, not about
+   * animation as such. Removing every animation was over-correction: it left
+   * those visitors with a page that snapped into place while every other site
+   * they visit still fades. The contract is that the translate goes and the
+   * fade stays.
+   */
+  it("drops movement but keeps a fade under prefers-reduced-motion", () => {
+    const reduced = css.slice(css.lastIndexOf("@media (prefers-reduced-motion"));
+
+    // The override redefines the keyframe without a transform.
+    expect(reduced).toMatch(/@keyframes rise\s*\{/);
+    expect(reduced).not.toMatch(/translateY/);
+
+    // And it still animates opacity rather than switching animation off.
+    expect(reduced).toMatch(/opacity:\s*0/);
+    expect(reduced).toMatch(/opacity:\s*1/);
+    expect(reduced).not.toMatch(/animation:\s*none/);
+  });
+
+  it("still animates the entrance and route change when motion is reduced", () => {
+    const reduced = css.slice(css.lastIndexOf("@media (prefers-reduced-motion"));
+    expect(reduced).toMatch(/\.rise,\s*\.route-enter\s*\{[^}]*animation-duration/);
   });
 });

@@ -178,19 +178,32 @@ body {
   animation: rise var(--dur-base) var(--ease-out-expo) both;
 }
 
+/*
+ * Reduced motion removes movement, not animation.
+ *
+ * The guidance is about vestibular discomfort from things travelling across
+ * the screen, so the 18px translate goes and a plain fade stays. Killing the
+ * animation outright was over-correction: a visitor with the setting on still
+ * gets a page that resolves rather than one that snaps into place, and the
+ * stagger still reads as top-to-bottom.
+ */
 @media (prefers-reduced-motion: reduce) {
   .tx,
   .tx-move {
-    transition-duration: 1ms;
+    transition-duration: var(--dur-fast);
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   .rise,
-  .rise-1,
-  .rise-2,
-  .rise-3,
-  .rise-4,
-  .rise-5,
   .route-enter {
-    animation: none;
+    animation-duration: var(--dur-base);
   }
 }
