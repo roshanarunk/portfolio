@@ -11,13 +11,26 @@ import { join } from "node:path";
 
 const css = readFileSync(join(process.cwd(), "src/app/globals.css"), "utf8");
 
-/** The reduced-motion block that overrides a given animation name. */
+/**
+ * The reduced-motion block that redefines a given keyframe.
+ *
+ * Brace-matched rather than sliced to a fixed length: these blocks now contain
+ * nested @keyframes, and a fixed slice overran into neighbouring rules and
+ * reported their transforms as if they were inside the override.
+ */
 function reducedBlockFor(animation: string): string {
-  const blocks = [...css.matchAll(/@media \(prefers-reduced-motion[^{]*\{/g)];
-  for (const m of blocks) {
-    // Take a generous slice; these blocks are short.
-    const slice = css.slice(m.index!, m.index! + 900);
-    if (slice.includes(`@keyframes ${animation}`)) return slice;
+  for (const m of css.matchAll(/@media \(prefers-reduced-motion[^{]*\{/g)) {
+    let depth = 0;
+    let i = m.index! + m[0].length - 1;
+    const start = m.index!;
+    do {
+      if (css[i] === "{") depth++;
+      else if (css[i] === "}") depth--;
+      i++;
+    } while (depth > 0 && i < css.length);
+
+    const block = css.slice(start, i);
+    if (block.includes(`@keyframes ${animation}`)) return block;
   }
   return "";
 }
@@ -112,6 +125,31 @@ describe("the filter swap animation", () => {
     }
   });
 
+  it("slides the outgoing card left as it fades", () => {
+    expect(css).toMatch(/@keyframes swap-out\s*\{/);
+    const block = css.slice(
+      css.indexOf("@keyframes swap-out"),
+      css.indexOf("@keyframes swap-out") + 300,
+    );
+    expect(block).toMatch(/translateX\(-\d+px\)/);
+    expect(block).toMatch(/opacity:\s*0/);
+  });
+
+  /**
+   * The outgoing card is taken out of flow and stacked beneath the incoming
+   * one, so the grid does not reflow mid-animation and the new card genuinely
+   * emerges from behind the old.
+   */
+  it("stacks the outgoing card under the incoming one", () => {
+    const out = css.slice(css.indexOf(".swap-out"), css.indexOf(".swap-out") + 320);
+    expect(out).toMatch(/position:\s*absolute/);
+    expect(out).toMatch(/z-index:\s*0/);
+    expect(out).toMatch(/pointer-events:\s*none/);
+
+    expect(css).toMatch(/\.swap-slot\s*\{[^}]*position:\s*relative/);
+    expect(css).toMatch(/\.swap-slot\s*>\s*\.swap-in\s*\{[^}]*z-index:\s*1/);
+  });
+
   /** A card scaling toward the viewer is exactly what the preference is about. */
   it("drops the scale under reduced motion but keeps the fade", () => {
     const reduced = reducedBlockFor("swap-in");
@@ -120,5 +158,11 @@ describe("the filter swap animation", () => {
     expect(reduced).not.toMatch(/scale\(/);
     expect(reduced).toMatch(/opacity:\s*0/);
     expect(reduced).not.toMatch(/animation:\s*none/);
+  });
+
+  it("drops the slide under reduced motion too", () => {
+    const reduced = reducedBlockFor("swap-out");
+    expect(reduced).toMatch(/@keyframes swap-out\s*\{/);
+    expect(reduced).not.toMatch(/translateX/);
   });
 });

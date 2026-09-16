@@ -49,6 +49,10 @@ export const demoRegistry: Record<LiveDemoId, ComponentType<DemoComponentProps>>
     ssr: false,
     loading: () => <DemoSkeleton label="Opening the account…" />,
   }),
+  gp2040: dynamic(() => import("./gp2040/GP2040Demo").then((m) => m.GP2040Demo), {
+    ssr: false,
+    loading: () => <DemoSkeleton label="Loading the switch…" />,
+  }),
   "whj-student-update": dynamic(
     () => import("./whj/TrackerDemo").then((m) => m.TrackerDemo),
     { ssr: false, loading: () => <DemoSkeleton label="Building the report…" /> },

@@ -210,14 +210,10 @@ body {
 
 /* ---- Filter swap --------------------------------------------------------
  *
- * When a filter changes which project occupies a slot, the incoming card
- * should read as arriving from behind the one it replaces rather than the text
- * simply changing. Keying the wrapper on the project slug makes React mount a
- * new element, so this animation runs on arrival.
- *
- * The card starts smaller and pushed back, then scales up into place — the
- * visual language of something coming forward from depth. The slight upward
- * drift keeps it from reading as a plain zoom.
+ * When a filter changes which project occupies a slot, the outgoing card slides
+ * left and fades while the incoming one arrives from behind it. Both play at
+ * once in the same grid cell, so the new card is genuinely emerging from under
+ * the old rather than following it.
  */
 @keyframes swap-in {
   from {
@@ -230,10 +226,43 @@ body {
   }
 }
 
+@keyframes swap-out {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-28px) scale(0.96);
+  }
+}
+
 .swap-in {
   animation: swap-in 420ms var(--ease-out-expo) both;
   /* Keeps the scale from resampling text mid-flight. */
   will-change: transform, opacity;
+}
+
+/*
+ * The outgoing card is taken out of flow and stacked under the incoming one, so
+ * the grid does not reflow mid-animation and the arrival reads as from behind.
+ */
+.swap-out {
+  animation: swap-out 300ms var(--ease-out-soft) both;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.swap-slot {
+  position: relative;
+}
+
+.swap-slot > .swap-in {
+  position: relative;
+  z-index: 1;
 }
 
 /* Cards resolve left to right, so the row reads as one movement. */
@@ -247,8 +276,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   /*
    * Same rule as the page entrance: drop the movement, keep the fade. A card
-   * scaling toward the viewer is exactly the kind of motion the preference is
-   * about, so only opacity survives here.
+   * scaling toward the viewer or sliding off is exactly the kind of motion the
+   * preference is about, so only opacity survives here.
    */
   @keyframes swap-in {
     from {
@@ -259,7 +288,17 @@ body {
     }
   }
 
-  .swap-in {
+  @keyframes swap-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  .swap-in,
+  .swap-out {
     animation-duration: var(--dur-base);
     will-change: auto;
   }

@@ -5,7 +5,7 @@ import { Container } from "@/components/layout/Container";
 import { HeroSolver } from "@/components/home/HeroSolver";
 import { Experience } from "@/components/home/Experience";
 import { FilteredWork } from "@/components/home/FilteredWork";
-import { featuredProjects, hoojProjects, projects } from "@/content/projects";
+import { hoojProjects, projects } from "@/content/projects";
 import { site } from "@/content/site";
 
 const playableCount = projects.filter((p) => p.demo.kind === "live").length;
@@ -116,7 +116,7 @@ export default function HomePage() {
             id="featured"
             className="h-section text-neutral-900 dark:text-neutral-100"
           >
-            Selected work
+            A sample of the work
           </h2>
           <Link
             href="/projects"
@@ -130,10 +130,7 @@ export default function HomePage() {
           faster than one at a time behind arrows. The filters let a recruiter
           scanning for a familiar stack surface it without leaving the page.
         */}
-        <FilteredWork
-          projects={projects}
-          featuredOrder={featuredProjects.map((p) => p.slug)}
-        />
+        <FilteredWork projects={projects} />
       </section>
 
       <Experience className="rise rise-3" />

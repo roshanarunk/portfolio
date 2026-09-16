@@ -31,7 +31,8 @@ export type LiveDemoId =
   | "cc3k"
   | "wattravl"
   | "atm"
-  | "whj-student-update";
+  | "whj-student-update"
+  | "gp2040";
 
 /**
  * How a project is demonstrated. Not every project can run in a browser, so the
