@@ -166,3 +166,19 @@ describe("the filter swap animation", () => {
     expect(reduced).not.toMatch(/translateX/);
   });
 });
+
+describe("the swap slot layout", () => {
+  /**
+   * The slot is the grid item, so the grid stretches it to the tallest in the
+   * row. The animation wrappers sit between the slot and the card, so they have
+   * to pass that height through — without this the card sizes to its own
+   * content and the row goes ragged.
+   */
+  it("passes the stretched grid height down to the card", () => {
+    const slot = css.slice(css.indexOf(".swap-slot"), css.indexOf(".swap-slot") + 420);
+    expect(slot).toMatch(/\.swap-slot\s*\{[^}]*display:\s*flex/);
+    expect(css).toMatch(/\.swap-slot\s*>\s*\.swap-in\s*\{[^}]*display:\s*flex/);
+    expect(css).toMatch(/\.swap-slot\s*>\s*\.swap-in\s*\{[^}]*width:\s*100%/);
+    expect(css).toMatch(/\.swap-slot\s*>\s*\.swap-in\s*>\s*\*\s*\{[^}]*width:\s*100%/);
+  });
+});

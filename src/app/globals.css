@@ -256,13 +256,26 @@ body {
   will-change: transform, opacity;
 }
 
+/*
+ * The slot is the grid item, so the grid stretches it to the tallest row. The
+ * wrappers inside have to pass that height through, or the card sizes to its
+ * own content and the row goes ragged — which is what happened when the swap
+ * animation introduced this extra nesting.
+ */
 .swap-slot {
   position: relative;
+  display: flex;
 }
 
 .swap-slot > .swap-in {
   position: relative;
   z-index: 1;
+  display: flex;
+  width: 100%;
+}
+
+.swap-slot > .swap-in > * {
+  width: 100%;
 }
 
 /* Cards resolve left to right, so the row reads as one movement. */

@@ -29,7 +29,7 @@ export function ProjectCard({
     <Link
       href={`/projects/${project.slug}`}
       className={cn(
-        "group tx-move relative flex flex-col rounded-xl border p-5",
+        "group tx-move relative flex h-full flex-col rounded-xl border p-5",
         "border-neutral-200 hover:border-neutral-400 hover:shadow-sm",
         "dark:border-neutral-800 dark:hover:border-neutral-600",
         // A playable project earns the accent; the rest stay quiet, so the
