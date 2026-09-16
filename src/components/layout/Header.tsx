@@ -17,7 +17,13 @@ export function Header() {
           {site.name}
         </Link>
 
-        <nav aria-label="Main" className="flex items-center gap-1">
+        {/*
+          The trailing control carries its own padding, so its box ends 8px
+          past the last visible pixel. Pulling it out by that much lands the
+          optical edge on the same line as the content below, which is the
+          edge a reader actually sees.
+        */}
+        <nav aria-label="Main" className="-mr-2 flex items-center gap-1">
           {nav.map((item) => {
             const active =
               item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
