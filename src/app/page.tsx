@@ -4,7 +4,7 @@ import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { Container } from "@/components/layout/Container";
 import { HeroSolver } from "@/components/home/HeroSolver";
 import { Experience } from "@/components/home/Experience";
-import { ProjectCard } from "@/components/project/ProjectCard";
+import { FilteredWork } from "@/components/home/FilteredWork";
 import { featuredProjects, hoojProjects, projects } from "@/content/projects";
 import { site } from "@/content/site";
 
@@ -126,22 +126,14 @@ export default function HomePage() {
           </Link>
         </div>
         {/*
-          A grid rather than a carousel: three featured projects visible at once
-          reads faster than one at a time behind arrows, and a recruiter
-          scanning for a familiar stack finds it without clicking.
+          A grid rather than a carousel: three projects visible at once reads
+          faster than one at a time behind arrows. The filters let a recruiter
+          scanning for a familiar stack surface it without leaving the page.
         */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {featuredProjects.map((project, i) => (
-            <div
-              key={project.slug}
-              // Each card enters a beat after the last, so the row resolves
-              // left to right rather than appearing all at once.
-              className={`rise ${["rise-2", "rise-3", "rise-4"][i] ?? "rise-5"}`}
-            >
-              <ProjectCard project={project} />
-            </div>
-          ))}
-        </div>
+        <FilteredWork
+          projects={projects}
+          featuredOrder={featuredProjects.map((p) => p.slug)}
+        />
       </section>
 
       <Experience className="rise rise-3" />

@@ -11,6 +11,15 @@
         ],
         "createdAt": "2026-09-11T03:27:36.116Z",
         "reason": "false positive: the flagged CTA is text-white on bg-emerald-600, and dark:text-neutral-950 on bg-emerald-500 — white/near-white on colour, which is what the rule prescribes"
+      },
+      {
+        "rule": "gray-on-color",
+        "value": "*",
+        "files": [
+          "src/components/home/FilteredWork.tsx"
+        ],
+        "createdAt": "2026-09-16T07:38:51.904Z",
+        "reason": "false positive: the active filter chip is text-white on bg-emerald-600 and dark:text-neutral-950 on bg-emerald-400 — white/near-white on colour, which is what the rule prescribes"
       }
     ]
   }

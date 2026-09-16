@@ -207,3 +207,60 @@ body {
     animation-duration: var(--dur-base);
   }
 }
+
+/* ---- Filter swap --------------------------------------------------------
+ *
+ * When a filter changes which project occupies a slot, the incoming card
+ * should read as arriving from behind the one it replaces rather than the text
+ * simply changing. Keying the wrapper on the project slug makes React mount a
+ * new element, so this animation runs on arrival.
+ *
+ * The card starts smaller and pushed back, then scales up into place — the
+ * visual language of something coming forward from depth. The slight upward
+ * drift keeps it from reading as a plain zoom.
+ */
+@keyframes swap-in {
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.swap-in {
+  animation: swap-in 420ms var(--ease-out-expo) both;
+  /* Keeps the scale from resampling text mid-flight. */
+  will-change: transform, opacity;
+}
+
+/* Cards resolve left to right, so the row reads as one movement. */
+.swap-1 {
+  animation-delay: 70ms;
+}
+.swap-2 {
+  animation-delay: 140ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /*
+   * Same rule as the page entrance: drop the movement, keep the fade. A card
+   * scaling toward the viewer is exactly the kind of motion the preference is
+   * about, so only opacity survives here.
+   */
+  @keyframes swap-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .swap-in {
+    animation-duration: var(--dur-base);
+    will-change: auto;
+  }
+}
