@@ -36,3 +36,56 @@ body {
   outline: 2px solid var(--color-blue-500);
   outline-offset: 2px;
 }
+
+/* ---- Craft layer --------------------------------------------------------
+ *
+ * The site had no real hierarchy: 134 uses of text-sm/text-xs against a single
+ * text-5xl, so everything sat at one level and section headings were barely
+ * louder than body copy. These utilities define the steps the page actually
+ * needs, so a heading is a decision rather than a one-off size.
+ */
+
+/* Section heading: clearly above body text, below the page title. */
+.h-section {
+  font-size: 1.75rem;
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 640px) {
+  .h-section {
+    font-size: 2rem;
+  }
+}
+
+/* A small, spaced label for metadata and eyebrow-free section context. */
+.h-meta {
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/*
+ * Section rhythm. The page had ~120px voids between sections while content
+ * inside them was cramped — the spacing was inverted. One step separates
+ * sections, a smaller one separates a heading from its content, and there is
+ * always more space above a heading than below it.
+ */
+.section-gap {
+  padding-block: 3rem;
+}
+
+@media (min-width: 640px) {
+  .section-gap {
+    padding-block: 3.75rem;
+  }
+}
+
+/* Tabular figures for anything counted, so digits never jitter. */
+.fig {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}

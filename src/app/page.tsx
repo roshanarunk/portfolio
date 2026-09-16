@@ -4,7 +4,7 @@ import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { Container } from "@/components/layout/Container";
 import { HeroSolver } from "@/components/home/HeroSolver";
 import { Experience } from "@/components/home/Experience";
-import { ProjectCarousel } from "@/components/home/ProjectCarousel";
+import { ProjectCard } from "@/components/project/ProjectCard";
 import { featuredProjects, hoojProjects, projects } from "@/content/projects";
 import { site } from "@/content/site";
 
@@ -18,7 +18,7 @@ export default function HomePage() {
         solver from the Sudoku project working the hardest known board, so the
         first thing a visitor meets is the work rather than a claim about it.
       */}
-      <section className="grid items-center gap-10 py-10 sm:py-14 lg:grid-cols-[1fr_minmax(0,26rem)] lg:gap-16">
+      <section className="grid items-start gap-10 py-10 sm:py-14 lg:grid-cols-[1fr_minmax(0,24rem)] lg:gap-16">
         <div>
           <h1 className="text-4xl font-semibold tracking-tight text-balance text-neutral-900 sm:text-5xl dark:text-neutral-100">
             {site.tagline}
@@ -64,6 +64,32 @@ export default function HomePage() {
               </a>
             )}
           </div>
+
+          {/*
+            The board on the right is taller than this column, and an empty
+            gap under the buttons reads as a mistake. These three facts are
+            what actually separates this portfolio from a list of repos, so
+            they earn the space rather than filling it.
+          */}
+          <dl className="mt-10 grid max-w-xl gap-px border-t border-neutral-200 sm:grid-cols-3 dark:border-neutral-800">
+            {[
+              { k: "Ported, not rebuilt", v: "The demos run the original algorithms" },
+              { k: "Real data", v: "667 kills, 3,831 games, no mock fixtures" },
+              {
+                k: "Written up honestly",
+                v: "Including the bugs and what they taught",
+              },
+            ].map((item) => (
+              <div key={item.k} className="pt-4">
+                <dt className="h-meta text-neutral-900 dark:text-neutral-100">
+                  {item.k}
+                </dt>
+                <dd className="mt-1.5 text-sm text-neutral-600 dark:text-neutral-400">
+                  {item.v}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
 
         <div className="w-full max-w-md justify-self-center lg:max-w-none lg:justify-self-end">
@@ -83,12 +109,12 @@ export default function HomePage() {
 
       <section
         aria-labelledby="featured"
-        className="border-t border-neutral-200 py-16 dark:border-neutral-800"
+        className="section-gap border-t border-neutral-200 dark:border-neutral-800"
       >
         <div className="mb-8 flex items-baseline justify-between gap-4">
           <h2
             id="featured"
-            className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100"
+            className="h-section text-neutral-900 dark:text-neutral-100"
           >
             Selected work
           </h2>
@@ -100,19 +126,14 @@ export default function HomePage() {
           </Link>
         </div>
         {/*
-          One project at a time, driven only by the visitor. Nothing advances on
-          its own, so a card cannot slide away while it is being read.
+          A grid rather than a carousel: three featured projects visible at once
+          reads faster than one at a time behind arrows, and a recruiter
+          scanning for a familiar stack finds it without clicking.
         */}
-        <ProjectCarousel projects={featuredProjects} />
-
-        <div className="mt-8 flex justify-center">
-          <Link
-            href="/projects"
-            className="inline-flex items-center gap-1.5 rounded-md border border-neutral-300 px-4 py-2.5 text-sm font-medium text-neutral-900 transition hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-100 dark:hover:bg-neutral-800"
-          >
-            See all {projects.length} projects
-            <ArrowRight aria-hidden className="size-4" />
-          </Link>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {featuredProjects.map((project) => (
+            <ProjectCard key={project.slug} project={project} />
+          ))}
         </div>
       </section>
 
@@ -124,7 +145,7 @@ export default function HomePage() {
       */}
       <section
         aria-labelledby="hooj"
-        className="border-t border-neutral-200 py-16 dark:border-neutral-800"
+        className="section-gap border-t border-neutral-200 dark:border-neutral-800"
       >
         {/*
           The heading sits outside the tinted panel so it starts on the same
@@ -133,18 +154,18 @@ export default function HomePage() {
         */}
         <h2
           id="hooj"
-          className="text-2xl font-semibold tracking-tight text-balance text-neutral-900 dark:text-neutral-100"
+          className="h-section text-balance text-neutral-900 dark:text-neutral-100"
         >
           Building the tooling for a coaching org
         </h2>
-        <div className="mt-6 rounded-2xl bg-neutral-50 p-8 sm:p-10 dark:bg-neutral-900/60">
-          <p className="max-w-xl text-neutral-600 dark:text-neutral-400">
+        <div className="mt-6 grid gap-8 rounded-2xl bg-neutral-50 p-8 sm:p-10 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-14 dark:bg-neutral-900/60">
+          <p className="text-neutral-600 dark:text-neutral-400">
             I helped run a Valorant coaching organisation, and most of what it needed
             did not exist. Over about a year I built the pieces one problem at a time —
             a public league site, then the admin work behind it, then the analysis tools
             coaches asked for.
           </p>
-          <ol className="mt-8 space-y-4">
+          <ol className="space-y-5">
             {hoojProjects.map((project, index) => (
               <li key={project.slug} className="flex gap-4">
                 <span
@@ -173,13 +194,10 @@ export default function HomePage() {
       {/* A closing band rather than a full section: this is a utility, not a peer. */}
       <section
         aria-labelledby="contact"
-        className="flex flex-wrap items-center justify-between gap-x-8 gap-y-4 border-t border-neutral-200 py-12 dark:border-neutral-800"
+        className="section-gap flex flex-wrap items-center justify-between gap-x-8 gap-y-4 border-t border-neutral-200 dark:border-neutral-800"
       >
         <div>
-          <h2
-            id="contact"
-            className="text-lg font-medium text-neutral-900 dark:text-neutral-100"
-          >
+          <h2 id="contact" className="h-section text-neutral-900 dark:text-neutral-100">
             Get in touch
           </h2>
           <p className="mt-1 text-neutral-600 dark:text-neutral-400">

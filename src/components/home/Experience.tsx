@@ -15,20 +15,17 @@ export function Experience() {
   return (
     <section
       aria-labelledby="experience"
-      className="border-t border-neutral-200 py-16 dark:border-neutral-800"
+      className="section-gap border-t border-neutral-200 dark:border-neutral-800"
     >
-      <h2
-        id="experience"
-        className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100"
-      >
+      <h2 id="experience" className="h-section text-neutral-900 dark:text-neutral-100">
         Experience
       </h2>
 
-      <ul className="mt-8 space-y-1">
+      <ul className="mt-8">
         {experience.map((role) => (
           <li
             key={`${role.company}-${role.start}`}
-            className="flex items-center gap-4 rounded-lg px-3 py-3 transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-900/60"
+            className="flex items-center gap-4 border-b border-neutral-200 px-3 py-4 transition-colors first:border-t hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-900/60"
           >
             <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-neutral-100 dark:bg-neutral-800">
               {role.logo ? (
@@ -57,7 +54,7 @@ export function Experience() {
               </span>
             </span>
 
-            <span className="shrink-0 text-sm text-neutral-500 tabular-nums dark:text-neutral-400">
+            <span className="fig shrink-0 text-sm text-neutral-500 dark:text-neutral-400">
               {role.period}
             </span>
           </li>

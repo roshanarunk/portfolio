@@ -13,8 +13,17 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white/85 backdrop-blur dark:border-neutral-800 dark:bg-neutral-950/85">
       <Container className="flex items-center justify-between gap-4 py-3">
-        <Link href="/" className="font-medium text-neutral-900 dark:text-neutral-100">
-          {site.name}
+        {/*
+          The full name wraps to two lines on a phone and cramps the nav, so the
+          short form carries the narrow breakpoint and the full name appears
+          once there is room for it.
+        */}
+        <Link
+          href="/"
+          className="font-medium whitespace-nowrap text-neutral-900 dark:text-neutral-100"
+        >
+          <span className="sm:hidden">{site.shortName}</span>
+          <span className="hidden sm:inline">{site.name}</span>
         </Link>
 
         {/*
