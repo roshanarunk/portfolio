@@ -12,7 +12,7 @@ export const underpeel: Project = {
   tech: [
     { label: "React", category: "framework" },
     { label: "Vite", category: "tool" },
-    { label: "Tailwind CSS", category: "framework" },
+    { label: "Tailwind CSS", category: "library" },
     { label: "Firebase", category: "platform" },
   ],
   repoUrl: "https://github.com/roshanarunk/underpeelsite",

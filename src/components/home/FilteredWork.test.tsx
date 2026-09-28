@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { FilteredWork } from "./FilteredWork";
+import { FilteredWork, deriveFilters } from "./FilteredWork";
 import { projects } from "@/content/projects";
 
 function setup() {
@@ -126,17 +126,11 @@ describe("the work filter", () => {
     const user = userEvent.setup();
     setup();
 
-    const labels = ["Python", "React", "C++", "Java", "TypeScript", "Android"];
-    for (const label of labels) {
-      const matches = projects.filter((p) => p.tech.some((t) => t.label === label));
-      expect(matches.length, label).toBeGreaterThan(0);
+    for (const { label } of deriveFilters(projects)) {
+      await user.click(screen.getByRole("button", { name: label }));
+      expect(shownTitles().length, label).toBeGreaterThan(0);
+      await user.click(screen.getByRole("button", { name: label }));
     }
-    // And the control exists for each.
-    for (const label of labels) {
-      expect(screen.getByRole("button", { name: label })).toBeInTheDocument();
-    }
-    await user.click(screen.getByRole("button", { name: "TypeScript" }));
-    expect(shownTitles().length).toBeGreaterThan(0);
   });
 });
 
@@ -171,5 +165,67 @@ describe("the swap animation", () => {
     for (const el of container.querySelectorAll(".swap-out")) {
       expect(el).toHaveAttribute("aria-hidden", "true");
     }
+  });
+});
+
+describe("deriving the filters", () => {
+  const filters = deriveFilters(projects);
+  const labels = filters.map((f) => f.label);
+
+  /** The list used to be hand-kept, and went stale when C# work landed. */
+  it("offers every language or framework used by two or more projects", () => {
+    const counts = new Map<string, number>();
+    for (const p of projects) {
+      for (const label of new Set(
+        p.tech
+          .filter((t) => t.category === "language" || t.category === "framework")
+          .map((t) => t.label),
+      )) {
+        counts.set(label, (counts.get(label) ?? 0) + 1);
+      }
+    }
+    const expected = [...counts].filter(([, n]) => n >= 2).map(([l]) => l);
+    expect([...labels].sort()).toEqual(expected.sort());
+  });
+
+  it("includes C#, now that two projects use it", () => {
+    expect(labels).toContain("C#");
+  });
+
+  it("does not offer a styling library as a stack filter", () => {
+    expect(labels).not.toContain("Tailwind CSS");
+  });
+
+  it("orders filters by how many projects use them", () => {
+    for (let i = 1; i < filters.length; i++) {
+      expect(filters[i].count).toBeLessThanOrEqual(filters[i - 1].count);
+    }
+  });
+
+  it("reports counts that match the projects", () => {
+    for (const { label, count } of filters) {
+      const n = projects.filter((p) => p.tech.some((t) => t.label === label)).length;
+      expect(count, label).toBe(n);
+    }
+  });
+});
+
+describe("the card label", () => {
+  /**
+   * "Playable here" used to be implied for every live demo, so an input tester
+   * and a firmware state machine both claimed to be playable. It is now set
+   * only where a visitor can actually play something.
+   */
+  it("only calls a project playable where it is set explicitly", () => {
+    const playable = projects
+      .filter((p) => p.demo.cardLabel === "Playable here")
+      .map((p) => p.slug)
+      .sort();
+    expect(playable).toEqual(["cc3k", "sudoku", "wavu"]);
+  });
+
+  it("does not call Fundies playable", () => {
+    const fundies = projects.find((p) => p.slug === "fundies")!;
+    expect(fundies.demo.cardLabel).toBeUndefined();
   });
 });

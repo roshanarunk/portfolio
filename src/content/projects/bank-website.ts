@@ -11,7 +11,7 @@ export const bankWebsite: Project = {
   tech: [
     { label: "React", category: "framework" },
     { label: "Vite", category: "tool" },
-    { label: "Tailwind CSS", category: "framework" },
+    { label: "Tailwind CSS", category: "library" },
   ],
   repoUrl: "https://github.com/roshanarunk/BankWebsite",
   summary:

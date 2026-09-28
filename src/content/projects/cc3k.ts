@@ -50,6 +50,7 @@ export const cc3k: Project = {
   },
   demo: {
     kind: "live",
+    cardLabel: "Playable here",
     componentId: "cc3k",
     title: "Play it",
     instructions:

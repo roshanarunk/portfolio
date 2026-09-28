@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
  * what the visitor actually gets to do.
  */
 const demoLabel: Record<Project["demo"]["kind"], string | null> = {
-  live: "Playable here",
+  live: "Try it here",
   iframe: "Live site",
   video: "Video",
   gallery: null,
@@ -22,8 +22,10 @@ export function ProjectCard({
   project: Project;
   featured?: boolean;
 }) {
-  const label = demoLabel[project.demo.kind];
-  const runsHere = project.demo.kind === "live";
+  const label = project.demo.cardLabel ?? demoLabel[project.demo.kind];
+  // Anything a visitor can use on the page earns the accent, including an
+  // embedded game — not only demos ported to run as live components.
+  const runsHere = project.demo.kind === "live" || project.demo.cardLabel !== undefined;
 
   return (
     <Link

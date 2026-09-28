@@ -43,6 +43,7 @@ export const sudoku: Project = {
   ],
   demo: {
     kind: "live",
+    cardLabel: "Playable here",
     componentId: "sudoku",
     title: "Sudoku, solved live",
     instructions:

@@ -49,6 +49,7 @@ export const wavu: Project = {
   ],
   demo: {
     kind: "iframe",
+    cardLabel: "Playable here",
     src: "https://wavu.roshanarun.com/",
     aspectRatio: "16/9",
     posterSrc: "/images/posters/wavu.png",

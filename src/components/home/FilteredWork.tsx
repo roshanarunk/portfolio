@@ -18,8 +18,28 @@ import { cn } from "@/lib/utils";
  * three projects by stack would usually return nothing.
  */
 
-/** The stacks worth offering, in the order a visitor is likely to scan them. */
-const FILTERS = ["Python", "React", "C++", "Java", "TypeScript", "Android"] as const;
+/**
+ * The filters are derived from the projects rather than listed by hand: every
+ * language or framework used by at least two projects, most-used first. A
+ * hand-kept list went stale the moment new work landed in a new language, and a
+ * stack only one project uses is a link, not a filter.
+ */
+export function deriveFilters(projects: Project[]): { label: string; count: number }[] {
+  const counts = new Map<string, number>();
+  for (const project of projects) {
+    const seen = new Set<string>();
+    for (const tech of project.tech) {
+      if (tech.category !== "language" && tech.category !== "framework") continue;
+      if (seen.has(tech.label)) continue;
+      seen.add(tech.label);
+      counts.set(tech.label, (counts.get(tech.label) ?? 0) + 1);
+    }
+  }
+  return [...counts]
+    .filter(([, count]) => count >= 2)
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([label, count]) => ({ label, count }));
+}
 
 const SHOWN = 3;
 
@@ -35,6 +55,7 @@ function shuffled<T>(items: T[]): T[] {
 
 export function FilteredWork({ projects }: { projects: Project[] }) {
   const [active, setActive] = useState<string[]>([]);
+  const filters = useMemo(() => deriveFilters(projects), [projects]);
 
   /*
    * The random pick must not happen during render: the server cannot produce
@@ -115,7 +136,7 @@ export function FilteredWork({ projects }: { projects: Project[] }) {
           Filter
         </span>
 
-        {FILTERS.map((label) => {
+        {filters.map(({ label, count }) => {
           const on = active.includes(label);
           return (
             <button
@@ -131,6 +152,12 @@ export function FilteredWork({ projects }: { projects: Project[] }) {
               )}
             >
               {label}
+              <span
+                aria-hidden
+                className={cn("fig ml-1.5", on ? "opacity-80" : "opacity-60")}
+              >
+                {count}
+              </span>
             </button>
           );
         })}

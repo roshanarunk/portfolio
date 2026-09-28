@@ -44,6 +44,12 @@ export type DemoKind = "live" | "iframe" | "video" | "gallery" | "writeup";
 
 interface DemoBase {
   kind: DemoKind;
+  /**
+   * Overrides the card label for this demo kind. "Playable here" is set
+   * explicitly on the demos that are actually games, rather than implied for
+   * every live demo — an input tester or a state machine is not playable.
+   */
+  cardLabel?: string;
   /** Heading shown in the DemoShell chrome. */
   title: string;
   /** One line telling the visitor what to try. */
