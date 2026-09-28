@@ -9,6 +9,107 @@ tooling.
 
 ---
 
+## Wavu
+**C# · Unity** — private · [wavu.roshanarun.com](https://wavu.roshanarun.com/) (playable)
+
+A 3D Tekken-style fighter built around the Mishima Wind God Step, with rollback
+netcode. Unity renders it but does not run the fight: the match is a separate
+simulation package with no `UnityEngine` dependency, so it can be rewound and
+re-simulated.
+
+- **Deterministic simulation** — all maths is Q47.16 fixed point (the only
+  non-trivial function is an integer square root). `Battle.Tick(p1, p2)` is the
+  only way state advances; `Battle.Clone()` snapshots it and `Checksum()` catches
+  desyncs. Six bits of controller state per frame is all that goes over the wire.
+- **GGPO-style rollback** — every frame resends unacknowledged inputs, remote
+  inputs are predicted up to 8 frames, and confirmed-state checksums are
+  exchanged. Tested over a simulated network with jitter and 15% packet loss.
+- **Rollback-aware animation** — Unity's Animator never runs on its own clock;
+  each pose is sampled as "clip X at frame N" from sim state, and moves are
+  authored to stay near their starting pose for 2–3 frames so a late correction
+  reads as a quicker start, not a teleport.
+- **Browser online play** — the WebGL build pairs players by lobby code through
+  a Cloudflare Worker (one Durable Object per lobby), which passes the WebRTC
+  handshake; packets then go browser-to-browser over an unreliable data channel,
+  with a relay fallback. Desktop builds can join the same lobbies. Steam lobbies
+  and direct IP are also supported on desktop.
+
+*Tech: C#, Unity 6, fixed-point maths, NUnit, WebGL, WebRTC, Cloudflare Workers
++ Durable Objects, Steamworks, GitHub Actions*
+
+---
+
+## Fundies
+**C# · Godot** — private
+
+A Footsies-like 2D fighter — spacing, hit confirms, whiff punishes, committed
+specials — with fireballs, jumping and peer-to-peer rollback netplay. Ships as
+Windows, macOS, Android and iOS builds from CI.
+
+- **Engine-free simulation** — `Simulation.Step(ref state, p0, p1, events)` is a
+  pure function over a flat `GameState` struct (16.16 fixed point, no
+  references), so snapshotting a frame is a plain assignment. Godot only renders
+  and polls input; its skeleton, `AnimationPlayer`, physics and timers are
+  deliberately unused because none of them can be rewound.
+- **Motion input** — Capcom-style exhaustive matching from an SF6 input
+  reference: 11-frame quarter-circle segments, lenient 7-frame DP (`623`, `626`,
+  `323`, `636`), a 5-frame action buffer, and half-circle correction so a walking
+  fireball is not read as a DP.
+- **Rollback-safe art** — every pose is a pure function of state and state
+  frame, held in chunky steps so a 2–5 frame correction usually lands inside one;
+  cosmetics are fire-and-forget events suppressed during resimulation.
+- **356 tests** covering determinism, gameplay, rollback and two-peer desync.
+- **fundies-signaling** — a small Cloudflare Worker (deployed at
+  `fundies-signal.roshanarun.com`) that issues 4-character room codes, pairs
+  host and joiner, and does public-IP discovery for the P2P connection.
+
+*Tech: C#, .NET 8, Godot 4 (.NET), fixed-point maths, UDP, Cloudflare Workers,
+GitHub Actions*
+
+---
+
+## UMVC3 Timestone — annotated reverse engineering
+**C** — private
+
+A study of **Timestone**, a community mod that adds GGPO-style rollback to
+*Ultimate Marvel vs Capcom 3*, done by annotating a Ghidra decompilation of the
+shipped `Timestone.asi`. Of ~4,950 functions in the dump, ~3,190 were
+third-party library internals (libstdc++, ImGui, ENet, MinHook, the CRT) and were
+triaged out with the reasoning recorded; the remaining ~1,760 mod- and
+engine-specific functions were given real names, inferred struct-field comments
+at every raw offset, and per-function and per-subsystem explanations.
+
+Organised by subsystem: the rollback core (16-slot save/restore ring,
+resimulation, desync detection), frame scheduling (input delay and prediction),
+the ENet transport and Steam relay fallback, the 94 engine detours, the mod's own
+hooking framework, and its UI. No logic was changed — only naming and
+commentary. Done to understand how rollback is retrofitted onto an engine that
+was never built for it.
+
+*Tech: Ghidra, C, x86 reverse engineering, Win32/PE*
+
+---
+
+## GP2040-CE — Hall effect triggers
+**C++ · TypeScript** — [branch](https://github.com/roshanarunk/GP2040-CE/tree/feature/he-trigger-overhaul) · [upstream PR #1734](https://github.com/OpenStickCommunity/GP2040-CE/pull/1734) (open)
+
+A hall effect trigger overhaul for GP2040-CE, the open-source gamepad firmware
+for RP2040 boards: ~30 commits and ~4,200 lines across the C++ firmware and its
+React web config, now open upstream for review.
+
+- **Rapid trigger v2** — presses are measured from wherever the finger last
+  reversed, not a fixed depth. The disarm point sits one noise width below
+  actuation so a resting finger does not flicker, and the opposite extremum is
+  clamped rather than reset so a slow, noisy press still fires.
+- **Guided calibration wizard**, per-profile actuation and sensitivity
+  overrides, a live switch monitor, and profiles copyable between slots or as
+  codes. Hand-editing of calibration values and typed-in actuation points were
+  restored during review.
+
+*Tech: C++, Raspberry Pi Pico (RP2040), Protobuf (nanopb), React, TypeScript*
+
+---
+
 ## SF6Assist
 **JavaScript · Python · C++ · HTML** — [github.com/roshanarunk/SF6Assist](https://github.com/roshanarunk/SF6Assist)
 
@@ -44,9 +145,11 @@ node:test · Python (tkinter, pygame) · C++17 (XInput, Win32, Direct2D/DirectWr
 **TypeScript · React · Next.js** — [github.com/roshanarunk/portfolio](https://github.com/roshanarunk/portfolio) · [roshanarun.com](https://roshanarun.com)
 
 This site. A static Next.js export where the projects are playable rather than
-screenshotted: six demos run entirely in the browser, including a full port of
-a C++ roguelike, a Sudoku solver visualising its own backtracking, and a
-machine-learning model running its real fitted coefficients client-side.
+screenshotted: nine demos run entirely in the browser — including a full port of
+a C++ roguelike, a Sudoku solver visualising its own backtracking, a
+machine-learning model running its real fitted coefficients, and ports of a
+firmware state machine and a fighting-game input engine — and two more embed
+the live apps.
 
 Built around a demo plugin system — each project declares a demo *kind* (live,
 iframe, video, gallery, writeup) and a discriminated union makes the renderer
@@ -71,7 +174,15 @@ Credentials travel in the URL path rather than being stored, so the server keeps
 no user tokens between requests; adding a second source later meant adding a
 second path segment while leaving the original route working.
 
-*Tech: Node.js, Express, Stremio Addon SDK, Real-Debrid API, systray2, xml2js*
+Since extended with Premiumize alongside Real-Debrid, movies, per-episode SeaDex
+file matching (including multi-season packs named like "Show S2 - 01"), and an
+Angular install page. Hosting moved from Cloudflare Workers to Vercel after
+measuring that AniList (403) and Nyaa (429) both block Cloudflare's shared
+egress IPs; it runs on Vercel's Node runtime, since the Edge runtime executes on
+Cloudflare's network and would reintroduce the blocks.
+
+*Tech: Node.js, Express, Stremio Addon SDK, Real-Debrid and Premiumize APIs,
+Angular, Vercel, systray2, xml2js*
 
 ---
 
@@ -161,17 +272,33 @@ pynput, Win32 API via ctypes*
 
 ---
 
-## Valorant Kill Map
-**Python** — [github.com/roshanarunk/ValHeatMap](https://github.com/roshanarunk/ValHeatMap)
+## ValHeatMap
+**Python · TypeScript** — [github.com/roshanarunk/ValHeatMap](https://github.com/roshanarunk/ValHeatMap) · [valostats.roshanarun.com](https://valostats.roshanarun.com/)
 
-A Flask service that turns a Valorant match into a picture. It pulls the full
-kill feed for a match ID and plots every engagement onto the minimap — killer,
-victim, and the line between them — using per-map coordinate transforms, since
-Valorant reports world-space positions with a different origin and scale for
-each map. Filtering by player, side or round range makes a team's patterns
-obvious in a way VOD review does not.
+Began in 2023 as a Flask tool that plotted one match's kill feed onto the
+minimap for a coaching team, using per-map coordinate transforms. It is now a
+hosted spatial-analytics site over roughly **245,000 matches and 36 million
+kills**, built for the stats trackers don't show — where a player dies untraded,
+and which plant spot actually wins the round.
 
-*Tech: Python, Flask, matplotlib, requests, Riot API, gunicorn, Heroku*
+- **Kill heatmaps** filterable by agent, side, role, weapon and round window,
+  with a round-time scrubber. Density accumulates in a float grid, not canvas
+  pixels, because canvas alpha clamps at 1.0 and ~20k points would saturate into
+  a white blob before normalisation; the colour scale uses a high percentile.
+- **Trade detection** with adjustable time and distance windows; **utility
+  damage** resolved to real ability names from Riot's slot IDs; **plant-spot
+  win rates** from clustered plants, with thin samples greyed out; opening-duel,
+  trade-economy, engagement-range and rotation/scouting views; personal stats and
+  match review for tracked players.
+- **Operations** — a crawler with I/O-latency-aware backoff and a quiet-hours
+  throttle, positions stored as scaled integers to fit the dataset, raw-match
+  archiving, and deployments written up for Fly.io, Oracle Cloud and Hetzner.
+  An incident write-up traces a run of 503s to three separate causes: an
+  unindexed 139-second facet rebuild, API handlers blocking each other, and a
+  genuine disk-I/O ceiling on a shared vCPU that could only be mitigated.
+
+*Tech: Python, FastAPI, uvicorn, SQLite, React, TypeScript, Vite, Henrik API,
+Docker, Caddy, Fly.io; originally Flask and matplotlib*
 
 ---
 
@@ -320,8 +447,10 @@ lives.
 
 ## Also in the account
 
-- **GP2040-CE** — a fork of the multi-platform gamepad firmware for RP2040
-  boards (C++). Not my project.
+- **CS349**, **CS480** — University of Waterloo coursework, organised as
+  assignment folders. Kept private.
+- **neetcode-submissions** — solutions auto-synced from NeetCode.io, with a
+  README written by their sync tool.
 - **AgentComp** — an untouched Create React App scaffold; no application code
   was ever written.
 - **gitbot** — a single 37-byte JSON file; never started.

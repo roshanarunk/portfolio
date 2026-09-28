@@ -15,6 +15,8 @@ import { cc3k } from "./cc3k";
 import { subspleasio } from "./subspleasio";
 import { sf6assist } from "./sf6assist";
 import { gp2040 } from "./gp2040";
+import { wavu } from "./wavu";
+import { fundies } from "./fundies";
 
 /**
  * Ordered by tier, then by how much each project shows. This is the order the
@@ -29,6 +31,8 @@ export const projects: Project[] = [
   wattravl,
   cc3k,
   sf6assist,
+  wavu,
+  fundies,
   gp2040,
   subspleasio,
   valoLineup,

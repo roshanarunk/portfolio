@@ -49,6 +49,10 @@ export const demoRegistry: Record<LiveDemoId, ComponentType<DemoComponentProps>>
     ssr: false,
     loading: () => <DemoSkeleton label="Opening the account…" />,
   }),
+  fundies: dynamic(() => import("./fundies/MotionDemo").then((m) => m.MotionDemo), {
+    ssr: false,
+    loading: () => <DemoSkeleton label="Loading the input engine…" />,
+  }),
   gp2040: dynamic(() => import("./gp2040/GP2040Demo").then((m) => m.GP2040Demo), {
     ssr: false,
     loading: () => <DemoSkeleton label="Loading the switch…" />,

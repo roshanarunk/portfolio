@@ -74,7 +74,7 @@ export default function HomePage() {
           <dl className="mt-10 grid max-w-xl gap-px border-t border-neutral-200 sm:grid-cols-3 dark:border-neutral-800">
             {[
               { k: "Ported, not rebuilt", v: "The demos run the original algorithms" },
-              { k: "Real data", v: "667 kills, 3,831 games, no mock fixtures" },
+              { k: "Real data", v: "36 million kills, 3,831 games, no mock fixtures" },
               {
                 k: "Written up honestly",
                 v: "Including the bugs and what they taught",

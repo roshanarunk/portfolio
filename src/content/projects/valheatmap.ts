@@ -2,33 +2,44 @@ import type { Project } from "@/lib/types";
 
 export const valheatmap: Project = {
   slug: "valheatmap",
-  title: "Valorant Kill Map",
-  tagline: "Where rounds are actually won, plotted from match data.",
-  year: "2023",
+  title: "ValHeatMap",
+  tagline: "Spatial Valorant analytics over 245,000 matches and 36 million kills.",
+  year: "2023–2026",
   tier: 1,
   featured: false,
   collection: "hooj",
   tech: [
     { label: "Python", category: "language" },
-    { label: "Flask", category: "framework" },
-    { label: "matplotlib", category: "library" },
+    { label: "FastAPI", category: "framework" },
+    { label: "React", category: "framework" },
+    { label: "TypeScript", category: "language" },
+    { label: "SQLite", category: "tool" },
     { label: "Riot API", category: "platform" },
   ],
   repoUrl: "https://github.com/roshanarunk/ValHeatMap",
+  liveUrl: "https://valostats.roshanarun.com/",
   summary:
-    "A Flask service that pulls a Valorant match and plots every kill onto the map — killer, victim and the line between them — so a team can see its own patterns.",
+    "Started as a Flask tool that plotted one match's kills for a coaching team; now a hosted analytics site over roughly 245,000 matches and 36 million kills, showing the stats trackers don't — where a player dies untraded, and which plant spot actually wins the round.",
   longDescription: [
-    "Coaching conversations kept stalling on memory: nobody could agree on where a round had been lost. This turns a match into a picture. It takes a match ID, pulls the full kill feed, and maps each engagement onto the minimap using per-map coordinate transforms.",
-    "The unglamorous part was the coordinate work. Valorant reports positions in world space with a different origin and orientation per map, so each needs its own multiplier and offset to line up with the minimap image — Split, for instance, is scaled to a fifth of the others.",
-    "Filters were what made it useful in practice: narrow to one player, one side, or a round range and the pattern of a team's defaults becomes obvious in a way a VOD review never quite delivers.",
+    "Coaching conversations kept stalling on memory: nobody could agree on where a round had been lost. The first version turned a single match into a picture — a match ID in, every kill plotted onto the minimap out, using per-map coordinate transforms because Valorant reports world positions with a different origin and scale for every map.",
+    "It has since grown into a hosted analytics site. A crawler has collected roughly 245,000 matches and 36 million kills into SQLite, served by a FastAPI backend to a React and TypeScript frontend. The point is the stats tracker sites don't show: sites like tracker.gg give a player's K/D, not where on Ascent they keep dying untraded, or which plant position actually wins the round.",
+    "The analysis is built to stay honest at that scale. Heatmap density accumulates into a float grid rather than canvas pixels, because canvas alpha clamps at 1.0 and twenty thousand points would saturate every busy area into a white blob before it could be normalised. Plant win rates are computed per clustered spot, and any spot below the sample threshold is drawn dashed and greyed rather than presented as fact.",
+    "The demo below is the original tool's core, running offline on six recorded matches, so it loads instantly and never depends on the server. The full site is linked above.",
   ],
   highlights: [
-    "Per-map coordinate transforms mapping world space onto minimap images",
-    "Filtering by player, team and round to isolate a single pattern",
-    "Sample matches committed to the repo, so the tool runs without an API key",
-    "667 real kills across six matches, plotted client-side with no backend",
+    "~245,000 matches and 36 million kills, crawled and served live",
+    "Trade detection with adjustable time and distance windows",
+    "Plant-spot win rates, with thin samples greyed out rather than shown as fact",
+    "Utility damage resolved to real ability names from Riot's slot IDs",
+    "Density accumulated in a float grid, so hotspots survive normalisation",
   ],
   challenges: [
+    {
+      problem:
+        "The live site began returning 503s, worst on the personal-stats page. Three separate causes produced the same symptom, which made the first fix look like it had not worked.",
+      solution:
+        "Traced each one. A facet cache rebuild scanned millions of kill rows with no supporting index — measured at 139 seconds — and starved the API on a shared vCPU; an index and an owned query thread pool fixed that and a request-handler blocking bug. The third was a genuine hardware ceiling, disk I/O contention between the crawler and the API, so the crawler now backs off on measured query latency and throttles during quiet hours. The write-up says plainly which parts were fixed and which were only mitigated.",
+    },
     {
       problem:
         "The raw match files are about 3.7MB, almost all of it damage, economy and ability records the map never draws. Shipping them as-is would make the demo slower to load than the analysis is worth.",

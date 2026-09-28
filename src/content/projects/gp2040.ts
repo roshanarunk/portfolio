@@ -17,19 +17,19 @@ export const gp2040: Project = {
   ],
   repoUrl: "https://github.com/roshanarunk/GP2040-CE/tree/feature/he-trigger-overhaul",
   summary:
-    "A hall effect trigger overhaul for the GP2040-CE gamepad firmware: rapid trigger v2, a guided calibration wizard, per-profile actuation, and a live switch monitor — about 4,000 lines across the C++ firmware and its React config UI.",
+    "A hall effect trigger overhaul for the GP2040-CE gamepad firmware: rapid trigger v2, a guided calibration wizard, per-profile actuation, and a live switch monitor — about 4,200 lines across the C++ firmware and its React config UI, now open upstream for review.",
   longDescription: [
     "GP2040-CE is open-source gamepad firmware for RP2040 boards. A hall effect switch reports analogue travel rather than a simple pressed or not-pressed, so the firmware has to decide what counts as a keypress — and that decision is the whole feel of the controller.",
     "This branch reworks how that decision is made. Rapid trigger measures a press from wherever the finger last reversed rather than from a fixed depth, so a partial release followed by a partial press re-fires without returning to rest. That is the behaviour competitive players want, and getting it right means handling the cases where naive implementations break.",
     "Around the state machine sits the configuration work it needs to be usable: a guided calibration wizard that sweeps each switch through its travel, per-profile actuation and sensitivity overrides, a live monitor showing what every switch reads in real time, and profiles that can be copied between slots or exported as codes. The UI is React inside the firmware's existing web config.",
-    "It is a fork rather than a merged contribution, on the `feature/he-trigger-overhaul` branch: nineteen commits, eighteen files, roughly 4,000 lines added across the firmware and the config UI.",
+    "The work is open upstream as pull request #1734 against GP2040-CE, from the `feature/he-trigger-overhaul` branch: thirty commits and roughly 4,200 lines added across the firmware and the config UI. Preparing it for review meant keeping pace with upstream — merging main as other contributors landed their own hall effect changes — and reverting an optimisation that halved per-profile storage but did not build on ARM.",
   ],
   highlights: [
     "Rapid trigger v2: presses measured from the last reversal, not a fixed depth",
     "Guided calibration wizard that sweeps each switch through its travel",
     "Per-profile actuation and sensitivity, overridable per channel",
     "Live switch monitor, and profiles copyable between slots or as codes",
-    "~4,000 lines across C++ firmware and the React web config",
+    "Open upstream as PR #1734: ~4,200 lines across C++ firmware and React",
   ],
   challenges: [
     {

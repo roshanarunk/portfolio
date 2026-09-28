@@ -13,8 +13,11 @@ export const subspleasio: Project = {
     { label: "Express", category: "framework" },
     { label: "Stremio SDK", category: "library" },
     { label: "Real-Debrid API", category: "platform" },
+    { label: "Angular", category: "framework" },
+    { label: "Vercel", category: "platform" },
   ],
-  repoUrl: "https://github.com/roshanarunk/Subspleasio",
+  disclosure:
+    "The repository is private, and the addon needs a user's own debrid account to run, so there is no public demo.",
   summary:
     "A Stremio addon that resolves an anime episode across three sources, checks a debrid service for what is already cached, and hands back a direct stream.",
   longDescription: [
@@ -24,11 +27,18 @@ export const subspleasio: Project = {
   ],
   highlights: [
     "Merges three sources, preferring the release SeaDex records as best",
+    "Real-Debrid and Premiumize, with movies and multi-season packs resolved per episode",
     "Filters on Real-Debrid cache state, so every listed stream plays instantly",
     "Credentials travel in the URL path, so the server stores no user secrets",
     "Backward-compatible routes: the older single-token URL still works",
   ],
   challenges: [
+    {
+      problem:
+        'Deployed to Cloudflare Workers, older episodes stopped resolving. AniList returned 403 "manually blocked" and Nyaa returned 429 — both reject Cloudflare\'s shared egress IPs.',
+      solution:
+        "Measured the same requests from both hosts side by side, then moved to Vercel's Node runtime, whose egress reaches both. Not its Edge runtime: that executes on Cloudflare's network and would bring the blocks straight back. AniList lookups now come from a static mapping too, so resolution no longer depends on that API at all.",
+    },
     {
       problem:
         "An addon needs each user's Real-Debrid token, and storing other people's API tokens on a server I run is a liability I did not want.",
@@ -63,6 +73,5 @@ app.get('/:rdToken/:nekobtKey/stream/:type/:id.json', async (req, res) => {
         note: "Stremio replays whatever URL it was installed with, so the token arrives per request and is never persisted. The single-segment route below it keeps older installs working.",
       },
     ],
-    sourceUrl: "https://github.com/roshanarunk/Subspleasio/blob/main/index.js",
   },
 };

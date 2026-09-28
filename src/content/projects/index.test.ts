@@ -134,6 +134,7 @@ describe("live demos", () => {
     "atm",
     "whj-student-update",
     "gp2040",
+    "fundies",
   ]);
 
   it("points every live demo at a registered component", () => {
