@@ -6,7 +6,6 @@ export const whjStudentUpdate: Project = {
   tagline: "Automating the coaching report nobody wanted to write.",
   year: "2023",
   tier: 3,
-  featured: false,
   collection: "hooj",
   tech: [
     { label: "Python", category: "language" },

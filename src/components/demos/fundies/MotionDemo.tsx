@@ -209,9 +209,11 @@ export function MotionDemo() {
           keys.current = { left: false, right: false, up: false, down: false };
         }}
         className={cn(
-          "tx rounded-lg border p-4 outline-none",
+          // The region shows the site's standard focus ring (globals.css);
+          // a border-colour change alone measured 2.46:1, under the 3:1 minimum.
+          "tx rounded-lg border p-4",
           focused
-            ? "border-emerald-500 dark:border-emerald-400"
+            ? "border-emerald-700 dark:border-emerald-400"
             : "border-neutral-300 dark:border-neutral-700",
         )}
       >

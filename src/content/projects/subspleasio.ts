@@ -6,7 +6,6 @@ export const subspleasio: Project = {
   tagline: "A streaming addon that finds the good release, not just any release.",
   year: "2026",
   tier: 2,
-  featured: false,
   collection: "personal",
   tech: [
     { label: "Node.js", category: "platform" },

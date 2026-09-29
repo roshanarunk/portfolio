@@ -1,4 +1,4 @@
-import { Mail } from "lucide-react";
+import { FileText, Mail } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { site } from "@/content/site";
 import { Container } from "./Container";
@@ -37,6 +37,15 @@ export function Footer() {
           >
             <Mail aria-hidden className="size-4" />
             Email
+          </a>
+          <a
+            href={site.resume}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 hover:text-neutral-900 dark:hover:text-neutral-100"
+          >
+            <FileText aria-hidden className="size-4" />
+            Resume
           </a>
         </div>
       </Container>

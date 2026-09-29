@@ -6,7 +6,6 @@ export const springbootCrud: Project = {
   tagline: "A full-stack CRUD app, containerised for AWS.",
   year: "2022",
   tier: 3,
-  featured: false,
   collection: "personal",
   tech: [
     { label: "Java", category: "language" },

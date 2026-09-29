@@ -44,33 +44,30 @@ export const projects: Project[] = [
 ];
 
 /**
- * Three, not six. Six equally-weighted cards is the classic paralysis count and
- * gives a visitor no first choice; the rest live on /projects. Order is
- * deliberate: the lead card is the one that proves the site's claim fastest.
+ * The landing page's "Run one now" row: a fixed, curated set rather than a
+ * random draw. A random sample could land on three projects with nothing to
+ * run, which left the page's central claim unproven for that visitor. Sudoku is
+ * absent because the hero already runs it.
+ *
+ * `action` names what the visitor does; `input` says what it needs, so a phone
+ * visitor can pick one that works without a keyboard.
  */
-/**
- * Three, not six: six equally-weighted cards gives a visitor no first choice.
- * The `featured` flag decides membership; this order decides which leads, and
- * the lead is whichever project proves the site's claim fastest.
- */
-const FEATURED_ORDER = ["cc3k", "league-ml", "underpeel"];
+export interface RunNowItem {
+  slug: string;
+  action: string;
+  input: string;
+}
 
-export const featuredProjects = projects
-  .filter((p) => p.featured)
-  .sort((a, b) => FEATURED_ORDER.indexOf(a.slug) - FEATURED_ORDER.indexOf(b.slug));
+export const RUN_NOW: RunNowItem[] = [
+  { slug: "cc3k", action: "Play the roguelike", input: "Keyboard or touch" },
+  { slug: "league-ml", action: "Predict a game at 14 minutes", input: "Sliders" },
+  { slug: "valheatmap", action: "Filter 667 real kills", input: "Tap or click" },
+  { slug: "vrvision", action: "Run the app's shaders", input: "Webcam optional" },
+];
 
 export function getProject(slug: string): Project | undefined {
   return projects.find((project) => project.slug === slug);
 }
 
-/** Projects belonging to the HOOJ coaching org, told as one story. */
+/** The Underpeel community's tooling, told as one story on the landing page. */
 export const hoojProjects = projects.filter((p) => p.collection === "hooj");
-
-/** Every distinct tech label, for the projects page filter. */
-export function allTechLabels(): string[] {
-  const labels = new Set<string>();
-  for (const project of projects) {
-    for (const tech of project.tech) labels.add(tech.label);
-  }
-  return [...labels].sort();
-}

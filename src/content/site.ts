@@ -1,23 +1,27 @@
-/**
- * Single source of truth for identity and contact details.
- * TODO(roshan): drop resume.pdf into public/ to enable the resume link.
- */
+/** Single source of truth for identity and contact details. */
 export const site = {
   name: "Roshan Arun Kumar",
   shortName: "Roshan",
   role: "Software Engineer",
   tagline: "I build tools people actually use.",
+  /**
+   * The three facts a recruiter screens on, stated once and reused. They lead
+   * the hero because a visitor gives the page well under a minute.
+   */
+  education: "Computer Science, University of Waterloo, 2026",
+  availability: "Looking for new grad software roles.",
   intro:
     "Software engineer working across full-stack web, machine learning and mobile. " +
-    "Most of what I have built started as a problem someone I knew actually had.",
+    "Most of what I have built started as a problem someone I knew had.",
   // Canonical origin: feeds metadataBase, sitemap.xml and robots.txt.
   url: "https://roshanarun.com",
   email: "roshan.arun.k@gmail.com",
   github: "https://github.com/roshanarunk",
   githubUser: "roshanarunk",
   linkedin: "https://www.linkedin.com/in/roshan-arun-kumar/",
-  // TODO(roshan): drop resume.pdf into public/ to enable this link.
   resume: "/resume.pdf",
+  /** The Valorant league whose tooling makes up the `hooj` collection. */
+  community: "Underpeel",
 } as const;
 
 export interface Role {

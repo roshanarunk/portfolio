@@ -6,7 +6,6 @@ export const atm: Project = {
   tagline: "Where the object modelling clicked.",
   year: "2021",
   tier: 3,
-  featured: false,
   collection: "coursework",
   tech: [
     { label: "Java", category: "language" },

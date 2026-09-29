@@ -6,7 +6,6 @@ export const underpeel: Project = {
   tagline: "A tournament site for a Valorant league, still live today.",
   year: "2023",
   tier: 1,
-  featured: true,
   role: "Designer and developer",
   collection: "hooj",
   tech: [
@@ -29,13 +28,6 @@ export const underpeel: Project = {
     "Rank and roster data structured so a season could be updated without code changes",
     "Design-first workflow: Figma mockups drove the second and third revisions",
   ],
-  cardImage: {
-    src: "/images/cards/underpeel.png",
-    alt: "The Underpeel league site showing team rosters",
-    width: 960,
-    height: 600,
-    placeholder: true,
-  },
   demo: {
     kind: "iframe",
     title: "The live site",

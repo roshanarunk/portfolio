@@ -6,7 +6,6 @@ export const bankWebsite: Project = {
   tagline: "A styling exercise in modern Tailwind layout.",
   year: "2023",
   tier: 3,
-  featured: false,
   collection: "personal",
   tech: [
     { label: "React", category: "framework" },

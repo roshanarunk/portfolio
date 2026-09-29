@@ -10,16 +10,7 @@
           "src/app/page.tsx"
         ],
         "createdAt": "2026-09-11T03:27:36.116Z",
-        "reason": "false positive: the flagged CTA is text-white on bg-emerald-600, and dark:text-neutral-950 on bg-emerald-500 — white/near-white on colour, which is what the rule prescribes"
-      },
-      {
-        "rule": "gray-on-color",
-        "value": "*",
-        "files": [
-          "src/components/home/FilteredWork.tsx"
-        ],
-        "createdAt": "2026-09-16T07:38:51.904Z",
-        "reason": "false positive: the active filter chip is text-white on bg-emerald-600 and dark:text-neutral-950 on bg-emerald-400 — white/near-white on colour, which is what the rule prescribes"
+        "reason": "false positive: the rule pairs dark:text-neutral-950 with the light-mode background. Real pairs are text-white on bg-emerald-700 (5.37:1) and dark:text-neutral-950 on dark:bg-emerald-400 (10.24:1)"
       },
       {
         "rule": "gray-on-color",
@@ -28,7 +19,25 @@
           "src/components/demos/gp2040/GP2040Demo.tsx"
         ],
         "createdAt": "2026-09-16T21:56:06.035Z",
-        "reason": "false positive: the toggle is text-white on bg-emerald-600 and dark:text-neutral-950 on bg-emerald-400 — white/near-white on colour, which is what the rule prescribes"
+        "reason": "false positive: the toggle is text-white on bg-emerald-700 (5.37:1) and dark:text-neutral-950 on dark:bg-emerald-400 (10.24:1); the rule pairs the dark text with the light background"
+      },
+      {
+        "rule": "gray-on-color",
+        "value": "*",
+        "files": [
+          "src/components/project/ProjectIndex.tsx"
+        ],
+        "createdAt": "2026-09-29T00:02:34.190Z",
+        "reason": "false positive (critique 2026-09-28 contrast check): active chip is text-white on bg-emerald-700 (5.37:1) and dark:text-neutral-950 on dark:bg-emerald-400 (10.24:1); the rule pairs the dark text with the light background"
+      },
+      {
+        "rule": "gray-on-color",
+        "value": "*",
+        "files": [
+          "src/app/not-found.tsx"
+        ],
+        "createdAt": "2026-09-29T00:02:34.300Z",
+        "reason": "false positive: same CTA classes as the home page, text-white on bg-emerald-700 (5.37:1) and dark:text-neutral-950 on dark:bg-emerald-400 (10.24:1)"
       }
     ]
   }

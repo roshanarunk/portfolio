@@ -6,7 +6,6 @@ export const valoLineup: Project = {
   tagline: "A desktop overlay that reads the game and aims for you.",
   year: "2024",
   tier: 2,
-  featured: false,
   collection: "hooj",
   tech: [
     { label: "Python", category: "language" },

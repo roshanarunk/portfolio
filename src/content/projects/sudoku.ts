@@ -6,7 +6,6 @@ export const sudoku: Project = {
   tagline: "A backtracking solver you can watch think.",
   year: "2022",
   tier: 1,
-  featured: false,
   collection: "personal",
   tech: [
     { label: "Python", category: "language" },

@@ -6,7 +6,6 @@ export const mangareader: Project = {
   tagline: "A native iOS reader for comic archives.",
   year: "2024",
   tier: 2,
-  featured: false,
   collection: "personal",
   tech: [
     { label: "Swift", category: "language" },

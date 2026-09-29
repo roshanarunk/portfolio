@@ -6,7 +6,6 @@ export const cc3k: Project = {
   tagline: "A roguelike you can play here, ported from the C++.",
   year: "2021",
   tier: 1,
-  featured: true,
   collection: "coursework",
   tech: [
     { label: "C++", category: "language" },
@@ -41,13 +40,6 @@ export const cc3k: Project = {
     },
   ],
   disclosure: "Source code unavailable at the University of Waterloo's request.",
-  cardImage: {
-    src: "/images/cards/cc3k.png",
-    alt: "The ChamberCrawler3000 dungeon, rendered as tiles in the browser",
-    width: 960,
-    height: 600,
-    placeholder: true,
-  },
   demo: {
     kind: "live",
     cardLabel: "Playable here",

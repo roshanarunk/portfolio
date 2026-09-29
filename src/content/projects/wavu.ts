@@ -6,7 +6,6 @@ export const wavu: Project = {
   tagline: "A 3D Tekken-style fighter with rollback netcode, playable in the browser.",
   year: "2026",
   tier: 1,
-  featured: false,
   collection: "personal",
   tech: [
     { label: "C#", category: "language" },

@@ -210,7 +210,7 @@ export function WinProbabilityDemo() {
                     <span className="text-neutral-700 dark:text-neutral-300">
                       {driver.label}
                     </span>
-                    <span className="font-mono text-neutral-500 tabular-nums">
+                    <span className="font-mono text-neutral-600 tabular-nums dark:text-neutral-400">
                       {driver.value >= 0 ? "+" : ""}
                       {driver.value.toFixed(2)}
                     </span>
@@ -250,13 +250,13 @@ export function WinProbabilityDemo() {
             )}
           >
             <div>
-              <dt className="text-neutral-500">Accuracy</dt>
+              <dt className="text-neutral-600 dark:text-neutral-400">Accuracy</dt>
               <dd className="font-mono text-neutral-900 tabular-nums dark:text-neutral-100">
                 {(model.metrics.accuracy * 100).toFixed(1)}%
               </dd>
             </div>
             <div>
-              <dt className="text-neutral-500">ROC-AUC</dt>
+              <dt className="text-neutral-600 dark:text-neutral-400">ROC-AUC</dt>
               <dd className="font-mono text-neutral-900 tabular-nums dark:text-neutral-100">
                 {model.metrics.auc.toFixed(3)}
               </dd>

@@ -6,7 +6,6 @@ export const valheatmap: Project = {
   tagline: "Spatial Valorant analytics over 245,000 matches and 36 million kills.",
   year: "2023–2026",
   tier: 1,
-  featured: false,
   collection: "hooj",
   tech: [
     { label: "Python", category: "language" },

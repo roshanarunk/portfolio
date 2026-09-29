@@ -129,7 +129,7 @@ export function GP2040Demo({ resetToken }: DemoComponentProps) {
           className={cn(
             "tx rounded-md border px-3 py-1.5 text-xs font-medium",
             rapid
-              ? "border-emerald-600 bg-emerald-600 text-white dark:border-emerald-400 dark:bg-emerald-400 dark:text-neutral-950"
+              ? "border-emerald-700 bg-emerald-700 text-white dark:border-emerald-400 dark:bg-emerald-400 dark:text-neutral-950"
               : "border-neutral-300 text-neutral-700 dark:border-neutral-700 dark:text-neutral-300",
           )}
         >

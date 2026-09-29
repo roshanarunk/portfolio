@@ -7,7 +7,6 @@ export const fundies: Project = {
     "A Footsies-like 2D fighter with rollback netcode and a 356-test simulation.",
   year: "2026",
   tier: 1,
-  featured: false,
   collection: "personal",
   tech: [
     { label: "C#", category: "language" },

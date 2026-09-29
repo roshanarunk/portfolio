@@ -188,7 +188,7 @@ export function HeatMapDemo({ reducedMotion }: DemoComponentProps) {
                 </tbody>
               </table>
               {kills.length === 0 && (
-                <p className="p-6 text-center text-sm text-neutral-500">
+                <p className="p-6 text-center text-sm text-neutral-600 dark:text-neutral-400">
                   No kills match these filters.
                 </p>
               )}

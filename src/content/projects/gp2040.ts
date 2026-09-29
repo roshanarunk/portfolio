@@ -6,7 +6,6 @@ export const gp2040: Project = {
   tagline: "Rapid trigger and guided calibration for analogue switches, in firmware.",
   year: "2026",
   tier: 1,
-  featured: false,
   collection: "personal",
   tech: [
     { label: "C++", category: "language" },

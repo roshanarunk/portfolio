@@ -43,6 +43,9 @@ export function Header() {
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "rounded-md px-3 py-1.5 text-sm",
+                  // With Resume added the row overflows a phone; the name
+                  // already links home, so Home is the one that goes.
+                  item.href === "/" && "max-sm:hidden",
                   active
                     ? "font-medium text-neutral-900 dark:text-neutral-100"
                     : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100",
@@ -52,6 +55,15 @@ export function Header() {
               </Link>
             );
           })}
+          {/* A file, not a route, so it sits outside `nav` and never shows as current. */}
+          <a
+            href={site.resume}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-md px-3 py-1.5 text-sm text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+          >
+            Resume
+          </a>
           <ThemeToggle />
         </nav>
       </Container>

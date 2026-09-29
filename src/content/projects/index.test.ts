@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { projects, getProject, featuredProjects } from "./index";
+import { projects, getProject, RUN_NOW } from "./index";
 
 const PUBLIC_DIR = join(process.cwd(), "public");
 
@@ -22,10 +22,6 @@ function assetPaths(): { project: string; src: string }[] {
     }
     if (demo.kind === "iframe" || demo.kind === "video") {
       paths.push({ project: project.slug, src: demo.posterSrc });
-    }
-    // Carousel artwork: a missing file would ship as a broken image.
-    if (project.cardImage) {
-      paths.push({ project: project.slug, src: project.cardImage.src });
     }
   }
   return paths;
@@ -80,18 +76,20 @@ describe("project content", () => {
     }
   });
 
-  it("gives every featured project card artwork", () => {
-    for (const project of featuredProjects) {
-      expect(project.cardImage, project.slug).toBeDefined();
-      expect(project.cardImage!.width, project.slug).toBeGreaterThan(0);
-      expect(project.cardImage!.height, project.slug).toBeGreaterThan(0);
-      expect(project.cardImage!.alt, project.slug).toBeTruthy();
+  /**
+   * The landing page's "Run one now" row exists to prove the demos run. A card
+   * there that pointed at a writeup, or at a slug that was renamed, would break
+   * that promise for whoever picked it.
+   */
+  it("fills the Run one now row with demos that run in the browser", () => {
+    expect(RUN_NOW.length).toBeGreaterThanOrEqual(3);
+    for (const item of RUN_NOW) {
+      const project = getProject(item.slug);
+      expect(project, item.slug).toBeDefined();
+      expect(project!.demo.kind, item.slug).toBe("live");
+      expect(item.action, item.slug).toBeTruthy();
+      expect(item.input, item.slug).toBeTruthy();
     }
-  });
-
-  it("features a handful of projects, not all of them", () => {
-    expect(featuredProjects.length).toBeGreaterThan(0);
-    expect(featuredProjects.length).toBeLessThan(projects.length);
   });
 
   it("discloses work that is not original or not live", () => {

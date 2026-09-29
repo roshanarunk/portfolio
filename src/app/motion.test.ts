@@ -106,48 +106,16 @@ describe("the page entrance animation", () => {
   });
 });
 
-describe("the filter swap animation", () => {
-  it("brings a card forward from behind the one it replaces", () => {
+describe("the filter arrival animation", () => {
+  it("brings a card forward from behind the grid", () => {
     expect(css).toMatch(/@keyframes swap-in\s*\{/);
     // Starting smaller and lower reads as arriving from depth.
     expect(css).toMatch(/scale\(0\.88\)\s*translateY\(10px\)/);
     expect(css).toMatch(/scale\(1\)\s*translateY\(0\)/);
   });
 
-  it("staggers the row so it resolves left to right", () => {
-    const delays = [
-      ...css.matchAll(/\.swap-(\d)\s*\{\s*animation-delay:\s*(\d+)ms/g),
-    ].map((m) => Number(m[2]));
-
-    expect(delays.length).toBeGreaterThanOrEqual(2);
-    for (let i = 1; i < delays.length; i++) {
-      expect(delays[i]).toBeGreaterThan(delays[i - 1]);
-    }
-  });
-
-  it("slides the outgoing card left as it fades", () => {
-    expect(css).toMatch(/@keyframes swap-out\s*\{/);
-    const block = css.slice(
-      css.indexOf("@keyframes swap-out"),
-      css.indexOf("@keyframes swap-out") + 300,
-    );
-    expect(block).toMatch(/translateX\(-\d+px\)/);
-    expect(block).toMatch(/opacity:\s*0/);
-  });
-
-  /**
-   * The outgoing card is taken out of flow and stacked beneath the incoming
-   * one, so the grid does not reflow mid-animation and the new card genuinely
-   * emerges from behind the old.
-   */
-  it("stacks the outgoing card under the incoming one", () => {
-    const out = css.slice(css.indexOf(".swap-out"), css.indexOf(".swap-out") + 320);
-    expect(out).toMatch(/position:\s*absolute/);
-    expect(out).toMatch(/z-index:\s*0/);
-    expect(out).toMatch(/pointer-events:\s*none/);
-
-    expect(css).toMatch(/\.swap-slot\s*\{[^}]*position:\s*relative/);
-    expect(css).toMatch(/\.swap-slot\s*>\s*\.swap-in\s*\{[^}]*z-index:\s*1/);
+  it("holds the from-state through its delay, so a late card does not flash", () => {
+    expect(css).toMatch(/\.swap-in\s*\{[^}]*animation:\s*swap-in[^;]*both/);
   });
 
   /** A card scaling toward the viewer is exactly what the preference is about. */
@@ -158,27 +126,5 @@ describe("the filter swap animation", () => {
     expect(reduced).not.toMatch(/scale\(/);
     expect(reduced).toMatch(/opacity:\s*0/);
     expect(reduced).not.toMatch(/animation:\s*none/);
-  });
-
-  it("drops the slide under reduced motion too", () => {
-    const reduced = reducedBlockFor("swap-out");
-    expect(reduced).toMatch(/@keyframes swap-out\s*\{/);
-    expect(reduced).not.toMatch(/translateX/);
-  });
-});
-
-describe("the swap slot layout", () => {
-  /**
-   * The slot is the grid item, so the grid stretches it to the tallest in the
-   * row. The animation wrappers sit between the slot and the card, so they have
-   * to pass that height through — without this the card sizes to its own
-   * content and the row goes ragged.
-   */
-  it("passes the stretched grid height down to the card", () => {
-    const slot = css.slice(css.indexOf(".swap-slot"), css.indexOf(".swap-slot") + 420);
-    expect(slot).toMatch(/\.swap-slot\s*\{[^}]*display:\s*flex/);
-    expect(css).toMatch(/\.swap-slot\s*>\s*\.swap-in\s*\{[^}]*display:\s*flex/);
-    expect(css).toMatch(/\.swap-slot\s*>\s*\.swap-in\s*\{[^}]*width:\s*100%/);
-    expect(css).toMatch(/\.swap-slot\s*>\s*\.swap-in\s*>\s*\*\s*\{[^}]*width:\s*100%/);
   });
 });

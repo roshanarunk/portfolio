@@ -18,9 +18,9 @@ export default function AboutPage() {
         <div className="mt-6 space-y-4 leading-relaxed text-neutral-700 dark:text-neutral-300">
           <p>
             I am a software engineer who tends to build things for people I know. Most
-            of the work on this site started as somebody&apos;s actual problem: a
-            coaching org with no website, a spreadsheet nobody wanted to update by hand,
-            a friend who could not read comics on their phone.
+            of the work on this site started as a real problem somebody had: a Valorant
+            league with no website, a spreadsheet nobody wanted to update by hand, a
+            friend who could not read comics on their phone.
           </p>
           <p>
             That shapes how I work. I care about whether something gets used more than
@@ -33,9 +33,9 @@ export default function AboutPage() {
             through line is that I learn a stack when a problem needs it.
           </p>
           <p>
-            I am currently looking for internships and early-career roles. If something
-            here is relevant to what your team is working on, I would like to hear about
-            it.
+            I studied Computer Science at the University of Waterloo, graduating in
+            2026, and I am looking for new grad software roles. If something here is
+            relevant to what your team is working on, I would like to hear about it.
           </p>
         </div>
 
@@ -50,9 +50,10 @@ export default function AboutPage() {
             runs its real fitted coefficients client-side.
           </p>
           <p>
-            Not everything can be. An Android AR app needs a headset and a Windows
-            overlay needs Windows. Those get a video or a code writeup, which is more
-            honest than a mockup pretending to be live.
+            Not everything can be. An iOS app needs an iPhone and a Windows overlay
+            needs Windows, so those get screenshots, a video or a code writeup, which is
+            more honest than a mockup pretending to be live. Sometimes part of a project can come
+            along: the VRVision headset cannot, but its shaders run on your webcam.
           </p>
           <p>
             Built with Next.js, TypeScript and Tailwind, exported as a fully static
@@ -68,6 +69,15 @@ export default function AboutPage() {
             className="underline underline-offset-4 hover:text-neutral-900 dark:hover:text-neutral-100"
           >
             {site.email}
+          </a>
+          , or read the{" "}
+          <a
+            href={site.resume}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4 hover:text-neutral-900 dark:hover:text-neutral-100"
+          >
+            resume
           </a>
           .
         </p>

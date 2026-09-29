@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { Pause, Play } from "lucide-react";
 import { useEffect, useReducer, useRef, useState } from "react";
 import {
   type Board,
@@ -55,13 +57,32 @@ function reducer(state: RunState, action: Action): RunState {
   };
 }
 
-export function HeroSolver() {
+export function HeroSolver({ href }: { href: string }) {
   const [state, dispatch] = useReducer(reducer, undefined, init);
   const reducedMotion = useReducedMotion();
-  // Someone who asked for reduced motion gets a still board until they opt in,
-  // so `running` is derived rather than written from an effect.
-  const [startedByHand, setStartedByHand] = useState(false);
-  const running = !reducedMotion || startedByHand;
+  /*
+   * The visitor's own choice, if they have made one. Until then the board runs
+   * unless they asked for reduced motion, so `wantsToRun` is derived rather
+   * than written from an effect. Either way there is a control: an animation
+   * that loops forever needs a way to stop it (WCAG 2.2.2).
+   */
+  const [choice, setChoice] = useState<"run" | "pause" | null>(null);
+  const wantsToRun = choice === "run" || (choice === null && !reducedMotion);
+
+  // Off screen, the loop is burning a core for nobody.
+  const figureRef = useRef<HTMLElement>(null);
+  const [onScreen, setOnScreen] = useState(true);
+  useEffect(() => {
+    const el = figureRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(([entry]) =>
+      setOnScreen(entry.isIntersecting),
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const running = wantsToRun && onScreen;
 
   const genRef = useRef<Generator<SolveStep, boolean, void> | null>(null);
   const boardRef = useRef<Board | null>(null);
@@ -117,11 +138,16 @@ export function HeroSolver() {
   const active = state.step && "pos" in state.step ? state.step.pos : null;
 
   return (
-    <figure className="m-0">
-      <div
-        className="grid aspect-square w-full grid-cols-9 gap-px overflow-hidden rounded-xl border border-neutral-200 bg-neutral-200 p-px dark:border-neutral-800 dark:bg-neutral-800"
-        role="img"
-        aria-label={`The Sudoku solver working through the hardest board: ${state.steps.toLocaleString()} decisions so far`}
+    <figure ref={figureRef} className="m-0">
+      {/*
+        The board is the way in: it is the most convincing thing on the page, so
+        it opens the full demo. The label is fixed — one that changed with the
+        counter would be re-read by a screen reader on every frame.
+      */}
+      <Link
+        href={href}
+        aria-label="Open the Sudoku demo. The board shows my solver working through the hardest known puzzle."
+        className="tx-move grid aspect-square w-full grid-cols-9 gap-px overflow-hidden rounded-xl border border-neutral-200 bg-neutral-200 p-px hover:border-emerald-600/60 hover:shadow-sm dark:border-neutral-800 dark:bg-neutral-800 dark:hover:border-emerald-400/50"
       >
         {state.board.map((row, r) =>
           row.map((value, c) => {
@@ -130,6 +156,7 @@ export function HeroSolver() {
             return (
               <span
                 key={`${r}-${c}`}
+                aria-hidden
                 className={cn(
                   "flex items-center justify-center bg-white text-[0.8rem] tabular-nums sm:text-sm dark:bg-neutral-950",
                   given
@@ -143,9 +170,21 @@ export function HeroSolver() {
             );
           }),
         )}
-      </div>
+      </Link>
 
-      <figcaption className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 font-mono text-xs text-neutral-500 dark:text-neutral-400">
+      <figcaption className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 font-mono text-xs text-neutral-600 dark:text-neutral-400">
+        <button
+          type="button"
+          onClick={() => setChoice(wantsToRun ? "pause" : "run")}
+          className="tx -my-1 inline-flex items-center gap-1.5 rounded-md py-1 pr-1 text-emerald-700 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300"
+        >
+          {wantsToRun ? (
+            <Pause aria-hidden className="size-3.5" />
+          ) : (
+            <Play aria-hidden className="size-3.5" />
+          )}
+          {wantsToRun ? "Pause" : state.steps > 0 ? "Resume" : "Run it"}
+        </button>
         <span>
           <span className="text-neutral-900 tabular-nums dark:text-neutral-100">
             {state.steps.toLocaleString()}
@@ -158,16 +197,10 @@ export function HeroSolver() {
           </span>{" "}
           backtracks
         </span>
-        {!running && (
-          <button
-            type="button"
-            onClick={() => setStartedByHand(true)}
-            className="text-emerald-700 underline underline-offset-4 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300"
-          >
-            Run it
-          </button>
-        )}
       </figcaption>
+      <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
+        My Python solver, ported and running live. Open the board to try it yourself.
+      </p>
     </figure>
   );
 }

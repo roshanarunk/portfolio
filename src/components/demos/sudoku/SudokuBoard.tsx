@@ -134,7 +134,7 @@ export function SudokuBoard({
                   : "text-blue-600 dark:text-blue-400",
                 stepClass(state, row, col),
                 selected && "ring-2 ring-neutral-900 ring-inset dark:ring-neutral-100",
-                "focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset",
+                "focus-visible:ring-2 focus-visible:ring-[var(--focus)] focus-visible:ring-inset",
               )}
             >
               {value !== 0 ? (

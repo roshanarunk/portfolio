@@ -6,7 +6,6 @@ export const leagueMl: Project = {
   tagline: "Can a game's outcome be called from its 14th minute?",
   year: "2024",
   tier: 1,
-  featured: true,
   collection: "personal",
   tech: [
     { label: "Python", category: "language" },
@@ -37,13 +36,6 @@ export const leagueMl: Project = {
         "Split by game rather than by row, using GroupShuffleSplit so both teams stay together. The export script verifies the pairing holds before it trains, so a reordered dataset fails loudly instead of quietly reporting a better number than it earned.",
     },
   ],
-  cardImage: {
-    src: "/images/cards/league-ml.png",
-    alt: "The League win-probability predictor with its feature sliders",
-    width: 960,
-    height: 600,
-    placeholder: true,
-  },
   demo: {
     kind: "live",
     componentId: "league-ml",

@@ -23,6 +23,31 @@ const TILE = 12;
 
 type Mode = "move" | "attack" | "use";
 
+/**
+ * Spoken names for the touch controls. The engine's two-letter codes are the
+ * C++ game's own commands, but read aloud they came out as "move no" and
+ * "attack ea".
+ */
+const DIRECTION_NAME: Record<Direction, string> = {
+  no: "north",
+  so: "south",
+  ea: "east",
+  we: "west",
+  ne: "north-east",
+  nw: "north-west",
+  se: "south-east",
+  sw: "south-west",
+};
+
+const MODE_VERB: Record<Mode, string> = {
+  move: "Move",
+  attack: "Attack",
+  use: "Drink the potion to the",
+};
+
+/** How many log lines stay on screen. */
+const LOG_SHOWN = 40;
+
 /** Background colour for each terrain character. */
 const TILE_COLOUR: Record<string, string> = {
   "#": "#3f3f46",
@@ -240,6 +265,22 @@ export function CC3KGame() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
+  /*
+   * The map is 79 tiles wide, far wider than a phone, so the board scrolls
+   * sideways there. Keep the player in view as they move rather than leaving
+   * them to walk off the edge of the visible strip. A no-op wherever the whole
+   * map already fits.
+   */
+  const playerX = session?.game.player.x;
+  const floor = session?.game.floor;
+  useEffect(() => {
+    const board = boardRef.current;
+    if (!board || playerX === undefined) return;
+    if (board.scrollWidth <= board.clientWidth) return;
+    const target = playerX * TILE - board.clientWidth / 2;
+    board.scrollTo({ left: Math.max(0, target) });
+  }, [playerX, floor]);
+
   if (error) {
     return (
       <div className="p-12 text-center text-sm text-neutral-600 dark:text-neutral-400">
@@ -250,7 +291,7 @@ export function CC3KGame() {
 
   if (!floorMaps) {
     return (
-      <div className="p-12 text-center text-sm text-neutral-500">
+      <div className="p-12 text-center text-sm text-neutral-600 dark:text-neutral-400">
         Loading the dungeon…
       </div>
     );
@@ -273,7 +314,7 @@ export function CC3KGame() {
               <span className="font-medium text-neutral-900 dark:text-neutral-100">
                 {spec.name}
               </span>
-              <span className="mt-0.5 block font-mono text-xs text-neutral-500">
+              <span className="mt-0.5 block font-mono text-xs text-neutral-600 dark:text-neutral-400">
                 {spec.startHP} HP · {spec.atk} atk · {spec.def} def
               </span>
               <span className="mt-1 block text-xs text-neutral-600 dark:text-neutral-400">
@@ -282,7 +323,7 @@ export function CC3KGame() {
             </button>
           ))}
         </div>
-        <p className="mt-4 text-xs text-neutral-500 dark:text-neutral-400">
+        <p className="mt-4 text-xs text-neutral-600 dark:text-neutral-400">
           Five floors, the same map and spawn rules as the C++ original. Find the
           staircase on each one.
         </p>
@@ -312,7 +353,7 @@ export function CC3KGame() {
             ] as const
           ).map(([label, value, tone]) => (
             <div key={label} className="flex gap-1.5">
-              <dt className="text-neutral-500">{label}</dt>
+              <dt className="text-neutral-600 dark:text-neutral-400">{label}</dt>
               <dd className={cn("text-neutral-900 dark:text-neutral-100", tone)}>
                 {value}
               </dd>
@@ -351,7 +392,7 @@ export function CC3KGame() {
         onKeyDown={onKeyDown}
         role="application"
         aria-label="Dungeon map. Arrow keys to move, A to attack, P to drink a potion."
-        className="overflow-x-auto rounded-lg bg-neutral-950 p-2 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:bg-black"
+        className="overflow-x-auto rounded-lg bg-neutral-950 p-2 outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus)] dark:bg-black"
       >
         <div
           className="mx-auto"
@@ -399,15 +440,28 @@ export function CC3KGame() {
         </div>
       </div>
 
+      {/*
+        On a phone the controls come first, directly under the map, so the
+        thumb does not have to travel past the log on every turn. From lg up
+        they return to the side column.
+      */}
       <div className="mt-3 grid gap-4 lg:grid-cols-[1fr_16rem]">
-        <div>
+        <div className="order-2 lg:order-1">
           <ol
             className="h-24 overflow-y-auto rounded-lg bg-neutral-100 p-2 font-mono text-xs leading-relaxed dark:bg-neutral-900"
             aria-live="polite"
             aria-label="Game log"
           >
-            {game.log.slice(-40).map((entry, i) => (
-              <li key={i} className="text-neutral-700 dark:text-neutral-300">
+            {/*
+              Keyed by position in the whole log, not in the visible slice:
+              once the log passes the limit, slice indices shift on every turn,
+              so each line would look new and be announced again.
+            */}
+            {game.log.slice(-LOG_SHOWN).map((entry, i) => (
+              <li
+                key={Math.max(0, game.log.length - LOG_SHOWN) + i}
+                className="text-neutral-700 dark:text-neutral-300"
+              >
                 {entry}
               </li>
             ))}
@@ -429,7 +483,7 @@ export function CC3KGame() {
           )}
         </div>
 
-        <div className="space-y-3">
+        <div className="order-1 space-y-3 lg:order-2">
           {/* Touch controls: typing is unavailable on a phone. */}
           <div className="grid grid-cols-3 gap-1">
             {(
@@ -450,8 +504,8 @@ export function CC3KGame() {
                   key={dir}
                   type="button"
                   onClick={() => act(dir)}
-                  aria-label={`${mode} ${dir}`}
-                  className="rounded border border-neutral-300 py-2 text-sm hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
+                  aria-label={`${MODE_VERB[mode]} ${DIRECTION_NAME[dir]}`}
+                  className="min-h-11 rounded border border-neutral-300 text-sm hover:bg-neutral-100 lg:min-h-0 lg:py-2 dark:border-neutral-700 dark:hover:bg-neutral-800"
                 >
                   {glyph}
                 </button>
@@ -507,7 +561,7 @@ export function CC3KGame() {
             ))}
           </dl>
 
-          <p className="text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+          <p className="text-xs leading-relaxed text-neutral-600 dark:text-neutral-400">
             Arrows or 1–9 move, <kbd>a</kbd> then a direction attacks, <kbd>p</kbd>{" "}
             drinks a potion beside you. Merchants leave you alone until you hit one.
           </p>

@@ -5,27 +5,23 @@ import { cn } from "@/lib/utils";
 
 /**
  * "Interactive" was system-speak: it could equally mean "has a UI". These say
- * what the visitor actually gets to do.
+ * what the visitor actually gets to do. An embedded site is used on the page
+ * just like a ported demo, so both say "Try it here"; "Live site" read as a
+ * link out, and was one label too many for the same promise.
  */
 const demoLabel: Record<Project["demo"]["kind"], string | null> = {
   live: "Try it here",
-  iframe: "Live site",
+  iframe: "Try it here",
   video: "Video",
   gallery: null,
   writeup: null,
 };
 
-export function ProjectCard({
-  project,
-  featured = false,
-}: {
-  project: Project;
-  featured?: boolean;
-}) {
+export function ProjectCard({ project }: { project: Project }) {
   const label = project.demo.cardLabel ?? demoLabel[project.demo.kind];
   // Anything a visitor can use on the page earns the accent, including an
-  // embedded game — not only demos ported to run as live components.
-  const runsHere = project.demo.kind === "live" || project.demo.cardLabel !== undefined;
+  // embedded site — not only demos ported to run as live components.
+  const runsHere = project.demo.kind === "live" || project.demo.kind === "iframe";
 
   return (
     <Link
@@ -36,32 +32,21 @@ export function ProjectCard({
         "dark:border-neutral-800 dark:hover:border-neutral-600",
         // A playable project earns the accent; the rest stay quiet, so the
         // colour means something rather than decorating every card.
-        runsHere && "hover:border-emerald-500/60 dark:hover:border-emerald-400/50",
-        featured && "sm:col-span-2 sm:flex-row sm:items-start sm:gap-6",
+        runsHere && "hover:border-emerald-600/60 dark:hover:border-emerald-400/50",
       )}
     >
-      <div className={cn("flex flex-col", featured && "sm:flex-1")}>
+      <div className="flex flex-1 flex-col">
         <div className="flex items-start justify-between gap-3">
-          <h3
-            className={cn(
-              "font-medium text-neutral-900 dark:text-neutral-100",
-              featured && "text-lg",
-            )}
-          >
+          <h3 className="font-medium text-neutral-900 dark:text-neutral-100">
             {project.title}
           </h3>
           <ArrowUpRight
             aria-hidden
-            className="tx size-4 shrink-0 text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-100"
+            className="tx size-4 shrink-0 text-neutral-500 group-hover:text-neutral-900 dark:text-neutral-400 dark:group-hover:text-neutral-100"
           />
         </div>
 
-        <p
-          className={cn(
-            "mt-1 flex-1 text-sm text-neutral-600 dark:text-neutral-400",
-            featured && "sm:text-base",
-          )}
-        >
+        <p className="mt-1 flex-1 text-sm text-neutral-600 dark:text-neutral-400">
           {project.tagline}
         </p>
 
@@ -81,7 +66,7 @@ export function ProjectCard({
           {project.tech.slice(0, 3).map((tech) => (
             <span
               key={tech.label}
-              className="text-xs text-neutral-500 dark:text-neutral-400"
+              className="text-xs text-neutral-600 dark:text-neutral-400"
             >
               {tech.label}
             </span>

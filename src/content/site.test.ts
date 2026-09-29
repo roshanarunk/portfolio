@@ -43,6 +43,11 @@ describe("contact details", () => {
     expect(site.linkedin).toMatch(/^https:\/\/(www\.)?linkedin\.com\/in\/.+/);
   });
 
+  /** Reaching the resume is the site's second job; a dead link fails it. */
+  it("links a resume that exists on disk", () => {
+    expect(existsSync(join(PUBLIC_DIR, site.resume.replace(/^\//, "")))).toBe(true);
+  });
+
   it("has a GitHub profile and an email", () => {
     expect(site.github).toMatch(/^https:\/\/github\.com\/.+/);
     expect(site.email).toMatch(/^[^@\s]+@[^@\s]+\.[^@\s]+$/);

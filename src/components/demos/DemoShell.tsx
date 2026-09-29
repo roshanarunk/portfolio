@@ -90,7 +90,7 @@ export function DemoShell({
               className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
             >
               <ExternalLink aria-hidden className="size-3.5" />
-              Source
+              Source file
             </a>
           )}
         </div>

@@ -6,7 +6,6 @@ export const sf6assist: Project = {
   tagline: "A frame-accurate combo trainer that admits what it cannot verify.",
   year: "2026",
   tier: 1,
-  featured: false,
   collection: "personal",
   tech: [
     { label: "Node.js", category: "platform" },
